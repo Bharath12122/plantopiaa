@@ -20,6 +20,8 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         plant: {
           free: "#F2FCE2",
           pro: "#9b87f5",
