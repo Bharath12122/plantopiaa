@@ -3,6 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -10,7 +11,12 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
+        toast.success("Successfully signed in!");
         navigate("/");
+      } else if (event === "SIGNED_OUT") {
+        toast.info("Signed out");
+      } else if (event === "USER_UPDATED") {
+        console.log("User updated:", session);
       }
     });
 
@@ -34,9 +40,28 @@ const Auth = () => {
                   brandAccent: '#7C3AED'
                 }
               }
+            },
+            style: {
+              button: {
+                borderRadius: '0.5rem',
+                padding: '10px 15px',
+              },
+              input: {
+                borderRadius: '0.5rem',
+              },
+              message: {
+                borderRadius: '0.5rem',
+                padding: '10px',
+                marginBottom: '10px',
+              }
             }
           }}
           providers={[]}
+          redirectTo={window.location.origin}
+          onError={(error) => {
+            console.error("Auth error:", error);
+            toast.error(error.message || "An error occurred during authentication");
+          }}
         />
       </div>
     </div>
