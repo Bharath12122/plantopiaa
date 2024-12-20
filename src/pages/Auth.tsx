@@ -9,6 +9,15 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if user is already authenticated
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/");
+      }
+    };
+    checkUser();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
         toast.success("Successfully signed in!");
@@ -57,7 +66,7 @@ const Auth = () => {
             }
           }}
           providers={[]}
-          view="sign_in"
+          view="sign_up"
           showLinks={true}
           redirectTo={window.location.origin}
           localization={{
