@@ -1,6 +1,7 @@
 import { Leaf, Sun, Droplet } from "lucide-react";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
+import { LogoutButton } from "@/components/LogoutButton";
 
 const Index = () => {
   const subscriptions = [
@@ -48,6 +49,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-plant-free">
+      <LogoutButton />
       {/* Hero Section */}
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
