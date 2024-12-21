@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Leaf, Book, Video, Calendar, Shield, Upload, GraduationCap, MessageSquare } from "lucide-react";
+import { Leaf, Book, Video, Calendar, Shield, Upload, GraduationCap } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,7 +39,7 @@ const ProFeatures = () => {
     {
       icon: <Book className="w-12 h-12 text-plant-pro animate-float" />,
       title: "Educational Resources",
-      description: "Access to exclusive articles, videos, and step-by-step guides",
+      description: "Access to exclusive articles and step-by-step guides",
     },
     {
       icon: <Video className="w-12 h-12 text-plant-pro animate-float" />,
@@ -48,7 +48,7 @@ const ProFeatures = () => {
     },
     {
       icon: <Calendar className="w-12 h-12 text-plant-pro animate-float" />,
-      title: "Personalized Care Schedules",
+      title: "Care Schedules",
       description: "Custom watering and care schedules for your plants",
     },
     {
@@ -95,7 +95,7 @@ const ProFeatures = () => {
           </TabsContent>
 
           <TabsContent value="resources" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
               <Card className="p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex flex-col items-center text-center">
                   <GraduationCap className="w-12 h-12 text-plant-pro mb-4" />
@@ -110,14 +110,6 @@ const ProFeatures = () => {
                   <h3 className="text-xl font-semibold mb-2">Articles</h3>
                   <p className="text-gray-600">In-depth articles and guides</p>
                   <Button className="mt-4 bg-plant-pro text-white">Read More</Button>
-                </div>
-              </Card>
-              <Card className="p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex flex-col items-center text-center">
-                  <MessageSquare className="w-12 h-12 text-plant-pro mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Community</h3>
-                  <p className="text-gray-600">Connect with other plant enthusiasts</p>
-                  <Button className="mt-4 bg-plant-pro text-white">Join Now</Button>
                 </div>
               </Card>
             </div>
