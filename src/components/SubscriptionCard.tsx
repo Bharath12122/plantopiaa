@@ -14,6 +14,7 @@ interface SubscriptionCardProps {
   features: Feature[];
   variant: "free" | "pro" | "premium";
   popular?: boolean;
+  onSelect?: () => void;
 }
 
 export const SubscriptionCard = ({
@@ -23,6 +24,7 @@ export const SubscriptionCard = ({
   features,
   variant,
   popular,
+  onSelect,
 }: SubscriptionCardProps) => {
   const bgColors = {
     free: "bg-plant-free hover:bg-plant-free/90",
@@ -59,7 +61,10 @@ export const SubscriptionCard = ({
         </ul>
       </CardContent>
       <CardFooter>
-        <Button className={`w-full ${bgColors[variant]} ${textColors[variant]}`}>
+        <Button 
+          className={`w-full ${bgColors[variant]} ${textColors[variant]}`}
+          onClick={onSelect}
+        >
           Get Started
         </Button>
       </CardFooter>

@@ -2,8 +2,11 @@ import { Leaf, Sun, Droplet } from "lucide-react";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+  
   const subscriptions = [
     {
       title: "Free",
@@ -31,6 +34,7 @@ const Index = () => {
       ],
       variant: "pro" as const,
       popular: true,
+      onSelect: () => navigate("/pro"),
     },
     {
       title: "Premium",
