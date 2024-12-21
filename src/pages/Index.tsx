@@ -48,6 +48,7 @@ const Index = () => {
         { text: "Priority support", included: true },
       ],
       variant: "premium" as const,
+      onSelect: () => navigate("/premium"),
     },
   ];
 
