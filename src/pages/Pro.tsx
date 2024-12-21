@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Leaf, Book, Video, Calendar, Shield, Star, Upload, GraduationCap, MessageSquare } from "lucide-react";
+import { Leaf, Book, Video, Calendar, Shield, Upload, GraduationCap, MessageSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,8 +43,8 @@ const ProFeatures = () => {
     },
     {
       icon: <Video className="w-12 h-12 text-plant-pro animate-float" />,
-      title: "Expert Consultation",
-      description: "One-on-one video consultations with plant experts",
+      title: "Plant Care Videos",
+      description: "Detailed video guides for plant care and maintenance",
     },
     {
       icon: <Calendar className="w-12 h-12 text-plant-pro animate-float" />,
@@ -55,23 +55,17 @@ const ProFeatures = () => {
       icon: <Shield className="w-12 h-12 text-plant-pro animate-float" />,
       title: "Disease Detection",
       description: "Early detection and treatment recommendations",
-    },
-    {
-      icon: <Star className="w-12 h-12 text-plant-pro animate-float" />,
-      title: "Business Guidance",
-      description: "Professional advice for plant-based businesses",
-    },
+    }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-plant-free">
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-8">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="resources">Educational Resources</TabsTrigger>
             <TabsTrigger value="upload">Plant Upload</TabsTrigger>
-            <TabsTrigger value="consultation">Consultation</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-8">
@@ -142,28 +136,6 @@ const ProFeatures = () => {
                   className="bg-plant-pro text-white hover:bg-plant-pro-dark"
                 >
                   Upload Image
-                </Button>
-              </div>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="consultation" className="space-y-8">
-            <Card className="p-8">
-              <div className="text-center">
-                <Video className="w-16 h-16 text-plant-pro mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-4">Expert Consultation</h2>
-                <p className="text-gray-600 mb-6">
-                  Schedule one-on-one video consultations with plant experts
-                </p>
-                <Button
-                  onClick={() => toast({
-                    title: "Coming Soon",
-                    description: "Video consultation feature will be available soon!",
-                    duration: 3000,
-                  })}
-                  className="bg-plant-pro text-white hover:bg-plant-pro-dark"
-                >
-                  Schedule Consultation
                 </Button>
               </div>
             </Card>
