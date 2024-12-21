@@ -9,7 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      educational_resources: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          resource_type: string
+          title: string
+          url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          resource_type: string
+          title: string
+          url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          resource_type?: string
+          title?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      "New pro version": {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      plants: {
+        Row: {
+          created_at: string
+          description: string | null
+          growth_conditions: Json | null
+          id: string
+          image_url: string | null
+          medicinal_uses: string[] | null
+          name: string
+          scientific_name: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          growth_conditions?: Json | null
+          id?: string
+          image_url?: string | null
+          medicinal_uses?: string[] | null
+          name: string
+          scientific_name?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          growth_conditions?: Json | null
+          id?: string
+          image_url?: string | null
+          medicinal_uses?: string[] | null
+          name?: string
+          scientific_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          is_pro: boolean | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          is_pro?: boolean | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_pro?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
