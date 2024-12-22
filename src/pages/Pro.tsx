@@ -5,7 +5,7 @@ import { ProHeader } from "@/components/pro/ProHeader";
 import { ProUpload } from "@/components/pro/ProUpload";
 import { ProFeatures } from "@/components/pro/ProFeatures";
 
-const ProFeatures = () => {
+const ProPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,4 +29,4 @@ const ProFeatures = () => {
   );
 };
 
-export default ProFeatures;
+export default ProPage;
