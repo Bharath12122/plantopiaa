@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Leaf, Book, Video, Calendar, Shield, Upload, GraduationCap, ArrowRight, Star } from "lucide-react";
+import { Leaf, Book, Video, Calendar, Shield, Upload, GraduationCap, ArrowRight, Star, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,7 @@ const ProFeatures = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -42,11 +43,29 @@ const ProFeatures = () => {
       return;
     }
 
+    setIsProcessing(true);
     setPreviewImage(URL.createObjectURL(file));
-    toast({
-      title: "Processing image",
-      description: "Your plant image is being analyzed...",
-    });
+    
+    try {
+      toast({
+        title: "Processing image",
+        description: "Your plant image is being analyzed...",
+      });
+      
+      // Simulate processing time (remove in production)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Your existing upload logic here
+      
+    } catch (error) {
+      toast({
+        title: "Error processing image",
+        description: "Please try again",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const features = [
@@ -111,26 +130,41 @@ const ProFeatures = () => {
           onDragOver={(e) => e.preventDefault()}
         >
           <div className="text-center">
-            <Upload className="w-16 h-16 text-plant-pro mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Upload Plant Image</h2>
-            <p className="text-gray-300 mb-6">
-              Drag and drop your image here or click to browse
-            </p>
+            {isProcessing ? (
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="w-16 h-16 text-plant-pro animate-processing" />
+                <p className="text-gray-300">Processing your image...</p>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-16 h-16 text-plant-pro mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white mb-4">Upload Plant Image</h2>
+                <p className="text-gray-300 mb-6">
+                  Drag and drop your image here or click to browse
+                </p>
+              </>
+            )}
+            
             <input
               type="file"
               id="file-upload"
               className="hidden"
               accept="image/*"
               onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+              disabled={isProcessing}
             />
-            <Button
-              onClick={() => document.getElementById('file-upload')?.click()}
-              className="bg-gradient-to-r from-plant-pro to-plant-pro-dark text-white hover:opacity-90"
-            >
-              Select Image <ArrowRight className="ml-2" />
-            </Button>
             
-            {previewImage && (
+            {!isProcessing && (
+              <Button
+                onClick={() => document.getElementById('file-upload')?.click()}
+                className="bg-gradient-to-r from-plant-pro to-plant-pro-dark text-white hover:opacity-90"
+                disabled={isProcessing}
+              >
+                Select Image <ArrowRight className="ml-2" />
+              </Button>
+            )}
+            
+            {previewImage && !isProcessing && (
               <div className="mt-6 rounded-lg overflow-hidden shadow-xl">
                 <img 
                   src={previewImage} 
