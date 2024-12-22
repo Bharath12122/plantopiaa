@@ -26,18 +26,22 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       }
 
       const fileExt = file.name.split('.').pop();
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      // Upload file to Supabase storage
+      const { error: uploadError } = await supabase.storage
         .from('plant-images')
-        .upload(filePath, file);
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) throw uploadError;
 
       // Get the public URL for the uploaded image
       const { data: { publicUrl } } = supabase.storage
         .from('plant-images')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       // Simulate plant identification (in a real app, this would call an AI service)
       const identifiedPlant = {
