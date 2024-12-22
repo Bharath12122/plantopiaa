@@ -24,8 +24,8 @@ export default {
         foreground: "hsl(var(--foreground))",
         plant: {
           free: "#F2FCE2",
-          pro: "#0EA5E9",
-          "pro-dark": "#0284C7",
+          pro: "#a2d96e",
+          "pro-dark": "#8bc952",
           premium: "#F97316",
           "premium-accent": "#FB923C",
         },
@@ -45,10 +45,10 @@ export default {
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(14, 165, 233, 0.3)",
+            boxShadow: "0 0 20px rgba(162, 217, 110, 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 30px rgba(14, 165, 233, 0.6)",
+            boxShadow: "0 0 30px rgba(162, 217, 110, 0.6)",
           },
         },
         "processing": {
