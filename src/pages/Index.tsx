@@ -80,7 +80,7 @@ const Index = () => {
 
         {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
-        <h2 className="text-3xl font-bold mb-8 text-[#9b87f5]">
+        <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
           Choose Your Plan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -91,13 +91,13 @@ const Index = () => {
       </div>
 
       <button
-        className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow hover:scale-105 duration-300"
+        className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
         onClick={() => toast({
           title: "Need Help?",
           description: "Our support team is here to assist you!",
         })}
       >
-        <HelpCircle className="h-6 w-6 text-[#9b87f5]" />
+        <HelpCircle className="h-6 w-6 text-[#9b87f5] group-hover:text-[#7E69AB] transition-colors" />
       </button>
 
       <ChatbotTrigger />
