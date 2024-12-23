@@ -89,7 +89,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/pro" element={<ProtectedRoute><Pro /></ProtectedRoute>} />
           <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
-          <Route path="/premium/landing" element={<ProtectedRoute><PremiumLanding /></ProtectedRoute>} />
+          <Route path="/premium/landing" element={<PremiumLanding />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
