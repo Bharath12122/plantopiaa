@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Pro from "./pages/Pro";
@@ -19,7 +20,17 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Auth check failed:", error);
+          // If there's an auth error, clear the session
+          await supabase.auth.signOut();
+          setIsAuthenticated(false);
+          toast.error("Session expired. Please sign in again.");
+          return;
+        }
+
         setIsAuthenticated(!!session);
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -29,14 +40,24 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'TOKEN_REFRESHED') {
+        setIsAuthenticated(true);
+      } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        setIsAuthenticated(false);
+        // Clear any cached data
+        queryClient.clear();
+      } else {
+        setIsAuthenticated(!!session);
+      }
       setIsLoading(false);
     });
 
     checkAuth();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (isLoading) {
