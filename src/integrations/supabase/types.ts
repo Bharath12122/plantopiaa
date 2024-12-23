@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      anonymous_interactions: {
+        Row: {
+          created_at: string
+          id: string
+          interaction_type: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interaction_type: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       educational_resources: {
         Row: {
           content: string | null
