@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Upload } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -12,10 +14,21 @@ interface PlantUploadProps {
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const { interactionCount, trackInteraction } = useAnonymousInteractions();
+  const FREE_SCANS_LIMIT = 3;
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (interactionCount >= FREE_SCANS_LIMIT) {
+      toast({
+        title: "Free scan limit reached",
+        description: "Upgrade to Pro for unlimited plant scans!",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsUploading(true);
     try {
@@ -28,38 +41,72 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-      // Upload file to Supabase storage
-      const { error: uploadError } = await supabase.storage
-        .from('plant-images')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64Image = e.target?.result?.toString().split(',')[1];
+        
+        if (!base64Image) {
+          throw new Error("Failed to process image");
+        }
+
+        // Call Plant.ID API through our Edge Function
+        const response = await fetch('/functions/v1/identify-plant', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ image: base64Image }),
         });
 
-      if (uploadError) throw uploadError;
+        if (!response.ok) {
+          throw new Error("Failed to identify plant");
+        }
 
-      // Get the public URL for the uploaded image
-      const { data: { publicUrl } } = supabase.storage
-        .from('plant-images')
-        .getPublicUrl(fileName);
+        const identificationData = await response.json();
+        const plantInfo = identificationData.suggestions[0];
 
-      // Simulate plant identification (in a real app, this would call an AI service)
-      const identifiedPlant = {
-        name: "Monstera Deliciosa",
-        careTips: [
-          "Water when top soil is dry",
-          "Indirect bright light",
-          "High humidity preferred",
-        ],
-        image: publicUrl
+        // Upload image to Supabase storage
+        const { error: uploadError } = await supabase.storage
+          .from('plant-images')
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        // Get the public URL for the uploaded image
+        const { data: { publicUrl } } = supabase.storage
+          .from('plant-images')
+          .getPublicUrl(fileName);
+
+        // Track the interaction
+        await trackInteraction('plant_scan');
+
+        const plantData = {
+          name: plantInfo.plant_name,
+          scientificName: plantInfo.scientific_name,
+          description: plantInfo.wiki_description?.value || "No description available",
+          careTips: plantInfo.care_instructions || [
+            "Water when top soil is dry",
+            "Provide adequate light",
+            "Maintain proper humidity",
+          ],
+          image: publicUrl,
+          uses: plantInfo.plant_details?.uses || ["Decorative"],
+        };
+
+        onUploadSuccess(plantData);
+
+        toast({
+          title: "Plant identified successfully!",
+          description: "Scroll down to see the results.",
+        });
       };
 
-      onUploadSuccess(identifiedPlant);
-
-      toast({
-        title: "Plant identified successfully!",
-        description: "Scroll down to see the results.",
-      });
+      reader.readAsDataURL(file);
     } catch (error: any) {
       console.error("Upload error:", error);
       toast({
@@ -76,6 +123,17 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg animate-fade-in">
       <h2 className="text-2xl font-semibold mb-4">Get Started</h2>
       <p className="text-gray-600 mb-4">Upload a photo of your plant for instant identification</p>
+      
+      <div className="mb-4">
+        <Progress 
+          value={(interactionCount / FREE_SCANS_LIMIT) * 100} 
+          className="h-2"
+        />
+        <p className="text-sm text-gray-500 mt-2">
+          {FREE_SCANS_LIMIT - interactionCount} free scans remaining
+        </p>
+      </div>
+
       <div className="relative">
         <Input
           type="file"
@@ -83,16 +141,20 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           onChange={handleFileUpload}
           className="hidden"
           id="plant-upload"
-          disabled={isUploading}
+          disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         />
         <Button
           asChild
           className="w-full bg-green-500 hover:bg-green-600"
-          disabled={isUploading}
+          disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         >
-          <label htmlFor="plant-upload" className="cursor-pointer">
-            <Upload className="mr-2" />
-            {isUploading ? "Uploading..." : "Upload Plant Image"}
+          <label htmlFor="plant-upload" className="cursor-pointer flex items-center justify-center">
+            {isUploading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="mr-2 h-4 w-4" />
+            )}
+            {isUploading ? "Processing..." : "Upload Plant Image"}
           </label>
         </Button>
       </div>
