@@ -15,7 +15,10 @@ export const useAnonymousInteractions = () => {
       const { data, error } = await supabase
         .from('anonymous_interactions')
         .select('*')
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
+        .headers({
+          'x-session-id': sessionId
+        });
 
       if (!error && data) {
         setInteractionCount(data.length);
@@ -38,7 +41,10 @@ export const useAnonymousInteractions = () => {
 
     const { error } = await supabase
       .from('anonymous_interactions')
-      .insert([{ session_id: sessionId, interaction_type: type }]);
+      .insert([{ session_id: sessionId, interaction_type: type }])
+      .headers({
+        'x-session-id': sessionId
+      });
 
     if (!error) {
       const newCount = interactionCount + 1;
