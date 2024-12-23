@@ -38,72 +38,81 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         throw new Error("You must be logged in to upload files");
       }
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-
       // Convert image to base64
       const reader = new FileReader();
       reader.onload = async (e) => {
-        const base64Image = e.target?.result?.toString().split(',')[1];
-        
-        if (!base64Image) {
-          throw new Error("Failed to process image");
-        }
+        try {
+          const base64Image = e.target?.result?.toString().split(',')[1];
+          
+          if (!base64Image) {
+            throw new Error("Failed to process image");
+          }
 
-        // Call Plant.ID API through our Edge Function
-        const response = await fetch('/functions/v1/identify-plant', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ image: base64Image }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to identify plant");
-        }
-
-        const identificationData = await response.json();
-        const plantInfo = identificationData.suggestions[0];
-
-        // Upload image to Supabase storage
-        const { error: uploadError } = await supabase.storage
-          .from('plant-images')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false
+          console.log('Calling identify-plant function...');
+          
+          // Call Plant.ID API through Edge Function
+          const { data, error } = await supabase.functions.invoke('identify-plant', {
+            body: { image: base64Image }
           });
 
-        if (uploadError) throw uploadError;
+          if (error) {
+            throw error;
+          }
 
-        // Get the public URL for the uploaded image
-        const { data: { publicUrl } } = supabase.storage
-          .from('plant-images')
-          .getPublicUrl(fileName);
+          if (!data || !data.suggestions || data.suggestions.length === 0) {
+            throw new Error("No plant matches found");
+          }
 
-        // Track the interaction
-        await trackInteraction('plant_scan');
+          console.log('Plant identification successful:', data);
 
-        const plantData = {
-          name: plantInfo.plant_name,
-          scientificName: plantInfo.scientific_name,
-          description: plantInfo.wiki_description?.value || "No description available",
-          careTips: plantInfo.care_instructions || [
-            "Water when top soil is dry",
-            "Provide adequate light",
-            "Maintain proper humidity",
-          ],
-          image: publicUrl,
-          uses: plantInfo.plant_details?.uses || ["Decorative"],
-        };
+          const plantInfo = data.suggestions[0];
+          
+          // Upload original image to Supabase storage
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-        onUploadSuccess(plantData);
+          const { error: uploadError, data: uploadData } = await supabase.storage
+            .from('plant-images')
+            .upload(fileName, file);
 
-        toast({
-          title: "Plant identified successfully!",
-          description: "Scroll down to see the results.",
-        });
+          if (uploadError) throw uploadError;
+
+          // Get the public URL for the uploaded image
+          const { data: { publicUrl } } = supabase.storage
+            .from('plant-images')
+            .getPublicUrl(fileName);
+
+          // Track the interaction
+          await trackInteraction('plant_scan');
+
+          const plantData = {
+            name: plantInfo.plant_name,
+            scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name,
+            description: plantInfo.plant_details?.wiki_description?.value || "No description available",
+            careTips: [
+              "Water when top soil is dry",
+              "Provide adequate light",
+              "Maintain proper humidity",
+              ...(plantInfo.plant_details?.propagation_methods || []),
+            ],
+            image: publicUrl,
+            uses: plantInfo.plant_details?.edible_parts || ["Decorative"],
+          };
+
+          onUploadSuccess(plantData);
+
+          toast({
+            title: "Plant identified successfully!",
+            description: "Scroll down to see the results.",
+          });
+        } catch (error: any) {
+          console.error("Processing error:", error);
+          toast({
+            title: "Failed to identify plant",
+            description: error.message || "Please try again later.",
+            variant: "destructive",
+          });
+        }
       };
 
       reader.readAsDataURL(file);
