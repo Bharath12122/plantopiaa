@@ -34,7 +34,7 @@ serve(async (req) => {
 
     try {
       const completion = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [{
           role: "system",
           content: "You are a business analyst specializing in plant and agriculture businesses. Provide concise, actionable insights."
