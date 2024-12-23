@@ -12,13 +12,20 @@ export const useAnonymousInteractions = () => {
   useEffect(() => {
     const fetchInteractions = async () => {
       const sessionId = getOrCreateSessionId();
+      
+      // Set global headers for this request
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        supabase.auth.setSession({
+          access_token: '',
+          refresh_token: '',
+        });
+      }
+      
       const { data, error } = await supabase
         .from('anonymous_interactions')
         .select('*')
-        .eq('session_id', sessionId)
-        .headers({
-          'x-session-id': sessionId
-        });
+        .eq('session_id', sessionId);
 
       if (!error && data) {
         setInteractionCount(data.length);
@@ -39,12 +46,21 @@ export const useAnonymousInteractions = () => {
       return false;
     }
 
+    // Set global headers for this request
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      supabase.auth.setSession({
+        access_token: '',
+        refresh_token: '',
+      });
+    }
+
     const { error } = await supabase
       .from('anonymous_interactions')
-      .insert([{ session_id: sessionId, interaction_type: type }])
-      .headers({
-        'x-session-id': sessionId
-      });
+      .insert([{ 
+        session_id: sessionId, 
+        interaction_type: type 
+      }]);
 
     if (!error) {
       const newCount = interactionCount + 1;
