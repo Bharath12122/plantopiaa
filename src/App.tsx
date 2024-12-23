@@ -33,11 +33,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         
         if (error) {
           console.error("Auth check failed:", error);
+          
+          // Handle network errors specifically
+          if (error.status === 404) {
+            console.error("Network error - invalid URL format detected");
+            toast.error("Network error. Please try again later.");
+            return;
+          }
+          
           // Clear any stale session data
           await supabase.auth.signOut();
           setIsAuthenticated(false);
           
-          if (error.message.includes("refresh_token_not_found")) {
+          if (error.message?.includes("refresh_token_not_found")) {
             toast.error("Session expired. Please sign in again.");
           } else {
             toast.error("Authentication error. Please try again.");
@@ -49,8 +57,15 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(!!session?.access_token);
       } catch (error: any) {
         console.error("Auth check failed:", error);
+        
+        // Handle network-related errors
+        if (error.status === 404) {
+          toast.error("Network error. Please check your connection.");
+        } else {
+          toast.error("Authentication error. Please try again.");
+        }
+        
         setIsAuthenticated(false);
-        toast.error("Authentication error. Please try again.");
       } finally {
         setIsLoading(false);
       }
