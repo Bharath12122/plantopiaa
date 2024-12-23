@@ -1,82 +1,62 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { getOrCreateSessionId } from '@/utils/sessionManager';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useAnonymousInteractions = () => {
-  const [interactionCount, setInteractionCount] = useState(0);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const { toast } = useToast();
-  const FREE_LIMIT = 10;
+  const [sessionId, setSessionId] = useState<string>("");
 
   useEffect(() => {
+    const storedSessionId = localStorage.getItem("anonymous_session_id");
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    } else {
+      const newSessionId = uuidv4();
+      localStorage.setItem("anonymous_session_id", newSessionId);
+      setSessionId(newSessionId);
+    }
+
     const fetchInteractions = async () => {
-      const sessionId = getOrCreateSessionId();
-      
-      // Set global headers for this request
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        supabase.auth.setSession({
-          access_token: '',
-          refresh_token: '',
-        });
-      }
+      if (!sessionId) return;
       
       const { data, error } = await supabase
-        .from('anonymous_interactions')
-        .select('*')
-        .eq('session_id', sessionId);
+        .from("anonymous_interactions")
+        .select("session_id, interaction_type")
+        .eq("session_id", sessionId);
 
-      if (!error && data) {
-        setInteractionCount(data.length);
-        if (data.length >= FREE_LIMIT) {
-          setShowLoginPrompt(true);
-        }
+      if (error) {
+        console.error("Error fetching interactions:", error);
       }
+      return data;
     };
 
     fetchInteractions();
-  }, []);
+  }, [sessionId]);
 
-  const trackInteraction = async (type: string) => {
-    const sessionId = getOrCreateSessionId();
-    
-    if (interactionCount >= FREE_LIMIT) {
-      setShowLoginPrompt(true);
-      return false;
-    }
+  const trackInteraction = async (interactionType: string) => {
+    if (!sessionId) return;
 
-    // Set global headers for this request
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      supabase.auth.setSession({
-        access_token: '',
-        refresh_token: '',
-      });
-    }
+    try {
+      const { error } = await supabase
+        .from("anonymous_interactions")
+        .insert([
+          {
+            session_id: sessionId,
+            interaction_type: interactionType,
+          },
+        ]);
 
-    const { error } = await supabase
-      .from('anonymous_interactions')
-      .insert([{ 
-        session_id: sessionId, 
-        interaction_type: type 
-      }]);
-
-    if (!error) {
-      const newCount = interactionCount + 1;
-      setInteractionCount(newCount);
-      
-      if (newCount >= FREE_LIMIT) {
-        setShowLoginPrompt(true);
-        toast({
-          title: "Free limit reached",
-          description: "You've reached the limit for free usage. Please sign up or log in to continue exploring more plant insights!",
-        });
+      if (error) {
+        console.error("Error tracking interaction:", error);
       }
-      return true;
+    } catch (error) {
+      console.error("Error tracking interaction:", error);
     }
-    return false;
   };
 
-  return { interactionCount, showLoginPrompt, trackInteraction, setShowLoginPrompt };
+  return {
+    showLoginPrompt,
+    setShowLoginPrompt,
+    trackInteraction,
+  };
 };
