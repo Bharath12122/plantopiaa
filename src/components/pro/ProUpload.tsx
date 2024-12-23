@@ -53,8 +53,8 @@ export const ProUpload = () => {
     <div 
       className={cn(
         "w-full max-w-2xl mx-auto mb-16 p-8 rounded-xl border-2 border-dashed",
-        "border-[#a2d96e]/50 hover:border-[#a2d96e] transition-colors",
-        "bg-[#1C1C1C] backdrop-blur-sm"
+        "border-[#9b87f5]/50 hover:border-[#9b87f5] transition-colors",
+        "bg-[#1A1F2C] backdrop-blur-sm"
       )}
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
@@ -62,12 +62,12 @@ export const ProUpload = () => {
       <div className="text-center">
         {isProcessing ? (
           <div className="flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-16 h-16 text-[#a2d96e] animate-processing" />
+            <Loader2 className="w-16 h-16 text-[#9b87f5] animate-processing" />
             <p className="text-gray-300">Processing your image...</p>
           </div>
         ) : (
           <>
-            <Upload className="w-16 h-16 text-[#a2d96e] mx-auto mb-4" />
+            <Upload className="w-16 h-16 text-[#9b87f5] mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-4">Upload Plant Image</h2>
             <p className="text-gray-400 mb-6">
               Drag and drop your image here or click to browse
@@ -87,7 +87,7 @@ export const ProUpload = () => {
         {!isProcessing && (
           <button
             onClick={() => document.getElementById('file-upload')?.click()}
-            className="bg-[#a2d96e] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#8bc952] transition-all inline-flex items-center gap-2"
+            className="bg-[#9b87f5] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#7E69AB] transition-all inline-flex items-center gap-2"
             disabled={isProcessing}
           >
             Select Image <Upload className="w-5 h-5" />
