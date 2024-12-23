@@ -16,7 +16,7 @@ import PremiumLanding from "./pages/PremiumLanding";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
       retry: 1,
     },
   },
@@ -33,35 +33,55 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         
         if (error) {
           console.error("Auth check failed:", error);
+          // Clear any stale session data
           await supabase.auth.signOut();
           setIsAuthenticated(false);
-          toast.error("Session expired. Please sign in again.");
+          
+          if (error.message.includes("refresh_token_not_found")) {
+            toast.error("Session expired. Please sign in again.");
+          } else {
+            toast.error("Authentication error. Please try again.");
+          }
           return;
         }
 
-        setIsAuthenticated(!!session);
-      } catch (error) {
+        // Only set authenticated if we have both a session and a valid access token
+        setIsAuthenticated(!!session?.access_token);
+      } catch (error: any) {
         console.error("Auth check failed:", error);
         setIsAuthenticated(false);
+        toast.error("Authentication error. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
 
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'TOKEN_REFRESHED') {
-        setIsAuthenticated(true);
-      } else if (event === 'SIGNED_OUT') {
-        setIsAuthenticated(false);
-        queryClient.clear();
-      } else {
-        setIsAuthenticated(!!session);
+      console.log("Auth state changed:", event);
+      
+      switch (event) {
+        case 'TOKEN_REFRESHED':
+          setIsAuthenticated(true);
+          break;
+        case 'SIGNED_OUT':
+          setIsAuthenticated(false);
+          queryClient.clear();
+          break;
+        case 'SIGNED_IN':
+          setIsAuthenticated(true);
+          break;
+        default:
+          // For all other events, check if we have a valid session
+          setIsAuthenticated(!!session?.access_token);
       }
       setIsLoading(false);
     });
 
+    // Initial auth check
     checkAuth();
 
+    // Cleanup subscription
     return () => {
       subscription.unsubscribe();
     };
