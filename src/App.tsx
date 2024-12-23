@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Pro from "./pages/Pro";
 import Premium from "./pages/Premium";
+import PremiumLanding from "./pages/PremiumLanding";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -88,6 +89,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/pro" element={<ProtectedRoute><Pro /></ProtectedRoute>} />
           <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
+          <Route path="/premium/landing" element={<ProtectedRoute><PremiumLanding /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

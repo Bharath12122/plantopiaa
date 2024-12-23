@@ -105,12 +105,7 @@ const Premium = () => {
         <div className="text-center mb-16">
           <Button 
             className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:shadow-lg"
-            onClick={() => {
-              toast({
-                title: "Coming Soon!",
-                description: "Premium subscriptions will be available shortly.",
-              });
-            }}
+            onClick={() => navigate('/premium/landing')}
           >
             Join Premium Today
           </Button>
