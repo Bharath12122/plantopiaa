@@ -34,10 +34,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         if (error) {
           console.error("Auth check failed:", error);
           
-          // Handle network errors specifically
-          if (error.status === 404) {
-            console.error("Network error - invalid URL format detected");
-            toast.error("Network error. Please try again later.");
+          // Handle malformed URL errors
+          if (error.message?.includes("failed to call url") && error.status === 404) {
+            console.error("Invalid URL format detected:", error.url);
+            toast.error("Configuration error. Please contact support.");
             return;
           }
           
@@ -58,9 +58,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       } catch (error: any) {
         console.error("Auth check failed:", error);
         
-        // Handle network-related errors
-        if (error.status === 404) {
-          toast.error("Network error. Please check your connection.");
+        // Handle network and URL-related errors
+        if (error.message?.includes("failed to call url")) {
+          console.error("Network or URL error:", error);
+          toast.error("Network configuration error. Please try again later.");
         } else {
           toast.error("Authentication error. Please try again.");
         }
