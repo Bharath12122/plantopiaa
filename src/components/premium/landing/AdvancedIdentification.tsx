@@ -13,17 +13,17 @@ export const AdvancedIdentification = () => {
           Advanced Plant Identification
         </h2>
         <div className="space-y-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <Search className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Identify rare and medicinal plants</p>
+            <p className="text-white/90">Identify rare and medicinal plants</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <FileText className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Detailed plant history and properties</p>
+            <p className="text-white/90">Detailed plant history and properties</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <Leaf className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Personalized care recommendations</p>
+            <p className="text-white/90">Personalized care recommendations</p>
           </div>
           <Button
             onClick={() => {

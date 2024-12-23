@@ -13,17 +13,17 @@ export const EducationalLibrary = () => {
           Educational Resources
         </h2>
         <div className="space-y-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <Video className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Expert video tutorials</p>
+            <p className="text-white/90">Expert video tutorials</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <BookOpen className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Comprehensive guides</p>
+            <p className="text-white/90">Comprehensive guides</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <FileText className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Business strategy templates</p>
+            <p className="text-white/90">Business strategy templates</p>
           </div>
           <Button
             onClick={() => {

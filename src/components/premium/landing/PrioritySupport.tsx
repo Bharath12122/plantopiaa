@@ -18,17 +18,17 @@ export const PrioritySupport = () => {
           Priority Support
         </h2>
         <div className="space-y-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <Clock className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Fast response times</p>
+            <p className="text-white/90">Fast response times</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <MessageCircle className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Dedicated support team</p>
+            <p className="text-white/90">Dedicated support team</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <HeadphonesIcon className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">24/7 premium assistance</p>
+            <p className="text-white/90">24/7 premium assistance</p>
           </div>
           <Button
             onClick={() => {

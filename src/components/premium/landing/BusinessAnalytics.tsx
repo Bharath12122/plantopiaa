@@ -14,17 +14,17 @@ export const BusinessAnalytics = () => {
           Business Analytics & Growth
         </h2>
         <div className="space-y-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <TrendingUp className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Track ROI and business performance</p>
+            <p className="text-white/90">Track ROI and business performance</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <Target className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Set and monitor growth targets</p>
+            <p className="text-white/90">Set and monitor growth targets</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 bg-white/5 p-4 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
             <BarChart className="w-8 h-8 text-[#9b87f5]" />
-            <p className="text-gray-700">Detailed analytics dashboard</p>
+            <p className="text-white/90">Detailed analytics dashboard</p>
           </div>
         </div>
       </div>
