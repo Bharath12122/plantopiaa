@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const BusinessAnalytics = () => {
   const [loading, setLoading] = useState(false);
@@ -105,9 +105,16 @@ export const BusinessAnalytics = () => {
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 className="border-[#9b87f5]/20 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
               />
-              <Tooltip content="Limited to 5 searches per day">
-                <Info className="w-5 h-5 text-[#9b87f5] cursor-help" />
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="w-5 h-5 text-[#9b87f5] cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Limited to 5 searches per day</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             {searchesRemaining !== null && (
               <p className="text-sm text-[#7E69AB]">
