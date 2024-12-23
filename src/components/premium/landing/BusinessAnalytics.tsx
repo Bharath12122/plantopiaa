@@ -27,12 +27,21 @@ export const BusinessAnalytics = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if it's a quota error
+        if (error.status === 429 || (data && data.isQuotaError)) {
+          toast.error("AI service is currently unavailable. Please try again later or contact support.");
+          console.error("OpenAI quota exceeded:", error);
+          return;
+        }
+        throw error;
+      }
+
       setInsight(data.insight);
       toast.success("Generated new business insight!");
     } catch (error) {
       console.error('Error generating insight:', error);
-      toast.error("Failed to generate business insight");
+      toast.error("Failed to generate business insight. Please try again later.");
     } finally {
       setLoading(false);
     }

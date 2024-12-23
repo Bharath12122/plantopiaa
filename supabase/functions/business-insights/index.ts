@@ -60,63 +60,82 @@ serve(async (req) => {
 
     console.log('Sending prompt to OpenAI:', prompt);
 
-    // Call OpenAI API
-    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a business analytics expert specializing in plant nursery and cultivation businesses. Provide concise, actionable insights and recommendations.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-      }),
-    });
-
-    if (!openAIResponse.ok) {
-      const errorData = await openAIResponse.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${errorData}`);
-    }
-
-    const aiData = await openAIResponse.json();
-    console.log('OpenAI response:', aiData);
-
-    if (!aiData.choices || !aiData.choices[0] || !aiData.choices[0].message) {
-      console.error('Invalid OpenAI response format:', aiData);
-      throw new Error('Invalid response from OpenAI');
-    }
-
-    const insight = aiData.choices[0].message.content;
-
-    // Store the insight in the database
-    const { error: insertError } = await supabaseClient
-      .from('business_insights')
-      .insert({
-        user_id: userId,
-        insight_type: metricType,
-        content: insight,
-        relevance_score: 0.95
+    try {
+      // Call OpenAI API
+      const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a business analytics expert specializing in plant nursery and cultivation businesses. Provide concise, actionable insights and recommendations.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+        }),
       });
 
-    if (insertError) {
-      console.error('Error storing insight:', insertError);
-      throw new Error('Failed to store business insight');
-    }
+      if (!openAIResponse.ok) {
+        const errorData = await openAIResponse.text();
+        console.error('OpenAI API error:', errorData);
+        
+        // Check if it's a quota error
+        if (errorData.includes('insufficient_quota')) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'OpenAI API quota exceeded. Please try again later or contact support.',
+              isQuotaError: true
+            }),
+            { 
+              status: 429,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            }
+          );
+        }
+        
+        throw new Error(`OpenAI API error: ${errorData}`);
+      }
 
-    return new Response(
-      JSON.stringify({ insight }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      const aiData = await openAIResponse.json();
+      console.log('OpenAI response:', aiData);
+
+      if (!aiData.choices?.[0]?.message?.content) {
+        throw new Error('Invalid response format from OpenAI');
+      }
+
+      const insight = aiData.choices[0].message.content;
+
+      // Store the insight in the database
+      const { error: insertError } = await supabaseClient
+        .from('business_insights')
+        .insert({
+          user_id: userId,
+          insight_type: metricType,
+          content: insight,
+          relevance_score: 0.95
+        });
+
+      if (insertError) {
+        console.error('Error storing insight:', insertError);
+        throw new Error('Failed to store business insight');
+      }
+
+      return new Response(
+        JSON.stringify({ insight }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (openAIError) {
+      console.error('OpenAI processing error:', openAIError);
+      throw openAIError;
+    }
   } catch (error) {
     console.error('Error in business-insights function:', error);
     return new Response(
