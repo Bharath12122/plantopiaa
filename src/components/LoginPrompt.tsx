@@ -14,7 +14,7 @@ export const LoginPrompt = ({ open, onOpenChange }: LoginPromptProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
             Continue Your Plant Journey
           </DialogTitle>
           <DialogDescription className="text-gray-600">
@@ -24,14 +24,14 @@ export const LoginPrompt = ({ open, onOpenChange }: LoginPromptProps) => {
         <div className="flex flex-col gap-4 mt-4">
           <Button
             onClick={() => navigate("/auth")}
-            className="bg-gradient-to-r from-purple-600 to-purple-400 hover:opacity-90 text-white"
+            className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 text-white"
           >
             Sign Up Now
           </Button>
           <Button
             variant="outline"
             onClick={() => navigate("/auth")}
-            className="border-purple-400 text-purple-600 hover:bg-purple-50"
+            className="border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5]/10"
           >
             Log In
           </Button>
