@@ -20,7 +20,7 @@ export const VideoConsultation = () => {
           One-on-One Expert Consultations
         </h2>
         <div className="space-y-6">
-          <Card className="p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
+          <Card className="p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
             <div className="flex items-center space-x-6">
               <Video className="w-10 h-10 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
               <div>
@@ -30,7 +30,7 @@ export const VideoConsultation = () => {
             </div>
           </Card>
           
-          <Card className="p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
+          <Card className="p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
             <div className="flex items-center space-x-6">
               <Calendar className="w-10 h-10 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
               <div>
@@ -40,7 +40,7 @@ export const VideoConsultation = () => {
             </div>
           </Card>
           
-          <Card className="p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
+          <Card className="p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group">
             <div className="flex items-center space-x-6">
               <MessageSquare className="w-10 h-10 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
               <div>
@@ -59,7 +59,7 @@ export const VideoConsultation = () => {
         </div>
       </div>
       
-      <Card className="p-8 bg-white/90 border-[#2A3B1D]/10 relative group overflow-hidden rounded-2xl">
+      <Card className="p-8 bg-white border-[#2A3B1D]/10 relative group overflow-hidden rounded-2xl">
         <div className="aspect-video rounded-xl bg-[#F2FCE2] flex items-center justify-center overflow-hidden relative">
           <Video className="w-20 h-20 text-[#2A3B1D] transition-all duration-700 group-hover:scale-110 group-hover:rotate-12" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#2A3B1D]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

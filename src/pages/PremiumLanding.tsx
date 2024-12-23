@@ -5,13 +5,13 @@ import { BusinessAnalytics } from "@/components/premium/landing/BusinessAnalytic
 import { AdvancedIdentification } from "@/components/premium/landing/AdvancedIdentification";
 import { PrioritySupport } from "@/components/premium/landing/PrioritySupport";
 import { EducationalLibrary } from "@/components/premium/landing/EducationalLibrary";
-import { Crown, ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 
 const PremiumLanding = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#E2F0D2]">
+    <div className="min-h-screen bg-[#F2FCE2]">
       <div className="container mx-auto px-4 py-8">
         {/* Navigation */}
         <Button
@@ -24,10 +24,7 @@ const PremiumLanding = () => {
         </Button>
 
         {/* Hero Section */}
-        <div className="text-center mb-20 relative">
-          <div className="flex items-center justify-center mb-8">
-            <Crown className="w-16 h-16 text-[#2A3B1D] animate-float" />
-          </div>
+        <div className="text-center mb-20">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-[#2A3B1D]">
             Premium Plant Care
           </h1>
@@ -43,7 +40,6 @@ const PremiumLanding = () => {
 
         {/* Features Grid */}
         <div className="grid gap-24">
-          {/* Feature Sections */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
             <VideoConsultation />
           </div>
@@ -70,7 +66,6 @@ const PremiumLanding = () => {
           <Button 
             className="bg-[#2A3B1D] hover:bg-[#2A3B1D]/90 text-white px-16 py-8 text-xl font-semibold rounded-2xl transition-all duration-300 hover:scale-105 group"
             onClick={() => {
-              // TODO: Implement subscription logic
               console.log("Subscribe to Premium");
             }}
           >

@@ -13,15 +13,15 @@ export const EducationalLibrary = () => {
           Educational Resources
         </h2>
         <div className="space-y-6">
-          <Card className="flex items-center space-x-4 p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
+          <Card className="flex items-center space-x-4 p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
             <Video className="w-8 h-8 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
             <p className="text-[#2A3B1D]/90">Expert video tutorials</p>
           </Card>
-          <Card className="flex items-center space-x-4 p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
+          <Card className="flex items-center space-x-4 p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
             <BookOpen className="w-8 h-8 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
             <p className="text-[#2A3B1D]/90">Comprehensive guides</p>
           </Card>
-          <Card className="flex items-center space-x-4 p-6 bg-white/90 border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
+          <Card className="flex items-center space-x-4 p-6 bg-white border-[#2A3B1D]/10 hover:border-[#2A3B1D]/30 transition-colors duration-300 group rounded-xl">
             <FileText className="w-8 h-8 text-[#2A3B1D] group-hover:scale-110 transition-transform duration-300" />
             <p className="text-[#2A3B1D]/90">Business strategy templates</p>
           </Card>
@@ -38,7 +38,7 @@ export const EducationalLibrary = () => {
           </Button>
         </div>
       </div>
-      <Card className="p-6 bg-white/90 border-[#2A3B1D]/10 rounded-2xl">
+      <Card className="p-6 bg-white border-[#2A3B1D]/10 rounded-2xl">
         <div className="aspect-video rounded-lg bg-[#F2FCE2] flex items-center justify-center">
           <BookOpen className="w-16 h-16 text-[#2A3B1D] animate-pulse" />
         </div>
