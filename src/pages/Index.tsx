@@ -60,32 +60,29 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-plant-free">
+    <div className="min-h-screen bg-gradient-to-br from-white to-[#9b87f5]/5">
       <LogoutButton />
       
-      {/* Hero Section */}
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
-          <Leaf className="h-16 w-16 text-plant-premium animate-float" />
+          <Leaf className="h-16 w-16 text-[#9b87f5] animate-float" />
         </div>
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
           Plant Care Assistant
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           Your AI-powered companion for plant identification, care, and growth
         </p>
 
-        {/* Upload Section */}
         <PlantUpload onUploadSuccess={setIdentifiedPlant} />
 
-        {/* Features Grid */}
         <Features />
 
-        {/* Identified Plant Results */}
         {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
-        {/* Subscription Cards */}
-        <h2 className="text-3xl font-bold mb-8">Choose Your Plan</h2>
+        <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
+          Choose Your Plan
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {subscriptions.map((sub) => (
             <SubscriptionCard key={sub.title} {...sub} />
@@ -93,7 +90,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Help Button */}
       <button
         className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
         onClick={() => toast({
@@ -101,10 +97,9 @@ const Index = () => {
           description: "Our support team is here to assist you!",
         })}
       >
-        <HelpCircle className="h-6 w-6 text-green-500" />
+        <HelpCircle className="h-6 w-6 text-[#9b87f5]" />
       </button>
 
-      {/* Chatbot Trigger */}
       <ChatbotTrigger />
     </div>
   );

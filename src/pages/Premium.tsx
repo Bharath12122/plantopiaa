@@ -12,32 +12,32 @@ const Premium = () => {
 
   const features = [
     {
-      icon: <Video className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <Video className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "1-on-1 Consultation",
       description: "Personal video consultations with plant experts",
     },
     {
-      icon: <BarChart className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <BarChart className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "Business Guidance",
       description: "Expert advice on growing your plant business",
     },
     {
-      icon: <Thermometer className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <Thermometer className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "Temperature Management",
       description: "Advanced climate control recommendations",
     },
     {
-      icon: <Droplet className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <Droplet className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "Smart Watering",
       description: "AI-powered watering schedules",
     },
     {
-      icon: <Heart className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <Heart className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "Preventative Care",
       description: "Early disease detection and prevention",
     },
     {
-      icon: <Shield className="w-12 h-12 text-plant-premium animate-float" />,
+      icon: <Shield className="w-12 h-12 text-[#9b87f5] animate-float" />,
       title: "Priority Support",
       description: "24/7 access to expert assistance",
     },
@@ -57,11 +57,10 @@ const Premium = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-plant-premium/5 to-plant-premium-accent/5">
-      {/* Header Section */}
+    <div className="min-h-screen bg-gradient-to-br from-[#9b87f5]/5 to-[#7E69AB]/5">
       <div className="container pt-8">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-plant-premium to-plant-premium-accent bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
             Premium Business Solutions
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -69,10 +68,9 @@ const Premium = () => {
           </p>
         </div>
 
-        {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {features.map((feature, index) => (
-            <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-plant-premium/5">
+            <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-[#9b87f5]/5 border-[#9b87f5]/20">
               <div className="flex flex-col items-center text-center">
                 {feature.icon}
                 <h3 className="text-xl font-semibold mt-4 mb-2">{feature.title}</h3>
@@ -82,14 +80,13 @@ const Premium = () => {
           ))}
         </div>
 
-        {/* Testimonials Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-plant-premium to-plant-premium-accent bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
             Success Stories
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-plant-premium/5">
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-[#9b87f5]/5 border-[#9b87f5]/20">
                 <div className="flex flex-col">
                   <p className="text-gray-600 italic mb-4">"{testimonial.content}"</p>
                   <div className="mt-auto">
@@ -102,10 +99,9 @@ const Premium = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
         <div className="text-center mb-16">
           <Button 
-            className="bg-gradient-to-r from-plant-premium to-plant-premium-accent hover:opacity-90 text-white px-8 py-6 text-lg rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105"
+            className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 text-white px-8 py-6 text-lg rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105"
             onClick={() => {
               toast({
                 title: "Coming Soon!",
