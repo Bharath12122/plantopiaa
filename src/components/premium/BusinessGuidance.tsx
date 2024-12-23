@@ -1,10 +1,10 @@
-import { Tools, Thermometer, Sprout } from "lucide-react";
+import { Wrench, Thermometer, Sprout } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 export const BusinessGuidance = () => {
   const features = [
     {
-      icon: <Tools className="w-12 h-12 text-[#9b87f5]" />,
+      icon: <Wrench className="w-12 h-12 text-[#9b87f5]" />,
       title: "Tools & Accessories",
       description: "Get personalized recommendations for professional equipment",
     },
