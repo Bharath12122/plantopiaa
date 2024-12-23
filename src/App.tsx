@@ -11,7 +11,15 @@ import Auth from "./pages/Auth";
 import Pro from "./pages/Pro";
 import Premium from "./pages/Premium";
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -24,7 +32,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         
         if (error) {
           console.error("Auth check failed:", error);
-          // If there's an auth error, clear the session
           await supabase.auth.signOut();
           setIsAuthenticated(false);
           toast.error("Session expired. Please sign in again.");
@@ -45,7 +52,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(true);
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
-        // Clear any cached data
         queryClient.clear();
       } else {
         setIsAuthenticated(!!session);
@@ -71,43 +77,46 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };
 
+// Wrap the app with React.StrictMode
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/auth" element={<Auth />} />
-          <Route
-            path="/pro"
-            element={
-              <ProtectedRoute>
-                <Pro />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/premium"
-            element={
-              <ProtectedRoute>
-                <Premium />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/pro"
+              element={
+                <ProtectedRoute>
+                  <Pro />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/premium"
+              element={
+                <ProtectedRoute>
+                  <Premium />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </React.StrictMode>
 );
 
 export default App;
