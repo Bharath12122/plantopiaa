@@ -57,10 +57,10 @@ const Premium = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-white to-[#9b87f5]/5">
       <div className="container pt-8">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#9b87f5]">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
             Premium Business Solutions
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -72,10 +72,12 @@ const Premium = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="p-6 hover:shadow-lg transition-all duration-300 border-[#9b87f5]/20"
+              className="p-6 hover:shadow-xl transition-all duration-300 border-[#9b87f5]/20 hover:scale-105 bg-white/50 backdrop-blur-sm"
             >
               <div className="flex flex-col items-center text-center">
-                {feature.icon}
+                <div className="mb-4 transform transition-transform hover:scale-110">
+                  {feature.icon}
+                </div>
                 <h3 className="text-xl font-semibold mt-4 mb-2 text-[#9b87f5]">
                   {feature.title}
                 </h3>
@@ -93,7 +95,7 @@ const Premium = () => {
             {testimonials.map((testimonial, index) => (
               <Card 
                 key={index} 
-                className="p-6 hover:shadow-lg transition-all duration-300 border-[#9b87f5]/20"
+                className="p-6 hover:shadow-xl transition-all duration-300 border-[#9b87f5]/20 hover:scale-105 bg-white/50 backdrop-blur-sm"
               >
                 <div className="flex flex-col">
                   <p className="text-gray-600 italic mb-4">{testimonial.content}</p>
@@ -111,7 +113,7 @@ const Premium = () => {
 
         <div className="text-center mb-16">
           <Button 
-            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-lg rounded-lg"
+            className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:shadow-lg"
             onClick={() => {
               toast({
                 title: "Coming Soon!",

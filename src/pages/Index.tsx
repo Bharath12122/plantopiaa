@@ -65,9 +65,9 @@ const Index = () => {
       
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
-          <Leaf className="h-16 w-16 text-[#9b87f5]" />
+          <Leaf className="h-16 w-16 text-[#9b87f5] animate-pulse" />
         </div>
-        <h1 className="text-5xl font-bold mb-6 text-[#9b87f5]">
+        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
           Plant Care Assistant
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -91,7 +91,7 @@ const Index = () => {
       </div>
 
       <button
-        className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow hover:scale-105 duration-300"
         onClick={() => toast({
           title: "Need Help?",
           description: "Our support team is here to assist you!",
