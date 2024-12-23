@@ -26,8 +26,8 @@ export default {
           free: "#F2FCE2",
           pro: "#a2d96e",
           "pro-dark": "#8bc952",
-          premium: "#F97316",
-          "premium-accent": "#FB923C",
+          premium: "#9b87f5",
+          "premium-accent": "#7E69AB",
         },
       },
       keyframes: {
@@ -45,10 +45,10 @@ export default {
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(162, 217, 110, 0.3)",
+            boxShadow: "0 0 20px rgba(155, 135, 245, 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 30px rgba(162, 217, 110, 0.6)",
+            boxShadow: "0 0 30px rgba(155, 135, 245, 0.6)",
           },
         },
         "processing": {

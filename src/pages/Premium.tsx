@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Video, Calendar, Shield, MessageSquare, BarChart, Thermometer, Droplet, Heart, Crown, Gem, Star } from "lucide-react";
+import { Video, Calendar, Shield, MessageSquare, Crown, Gem, Star } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BusinessGuidance } from "@/components/premium/BusinessGuidance";
+import { ConsultationSection } from "@/components/premium/ConsultationSection";
+import { DashboardPreview } from "@/components/premium/DashboardPreview";
 
 const Premium = () => {
   const navigate = useNavigate();
@@ -23,21 +25,6 @@ const Premium = () => {
     },
     {
       icon: <Gem className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Temperature Management",
-      description: "Advanced climate control recommendations",
-    },
-    {
-      icon: <Droplet className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Smart Watering",
-      description: "AI-powered watering schedules",
-    },
-    {
-      icon: <Heart className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Preventative Care",
-      description: "Early disease detection and prevention",
-    },
-    {
-      icon: <Shield className="w-12 h-12 text-[#9b87f5]" />,
       title: "Priority Support",
       description: "24/7 access to expert assistance",
     },
@@ -58,7 +45,7 @@ const Premium = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-[#9b87f5]/5">
-      <div className="container pt-8">
+      <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
             Premium Business Solutions
@@ -68,7 +55,11 @@ const Premium = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <BusinessGuidance />
+        <ConsultationSection />
+        <DashboardPreview />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {features.map((feature, index) => (
             <Card 
               key={index} 
