@@ -15,6 +15,7 @@ serve(async (req) => {
 
   try {
     const { userId, metricType, query } = await req.json();
+    console.log('Received request:', { userId, metricType, query });
 
     // Initialize Supabase client
     const supabaseClient = createClient(
@@ -35,11 +36,15 @@ serve(async (req) => {
       throw new Error('Failed to fetch business metrics');
     }
 
+    console.log('Fetched metrics:', metrics);
+
     // Prepare data for OpenAI
     const prompt = `Based on the following business metrics:
       ${JSON.stringify(metrics)}
       
       ${query || 'Provide key business insights and recommendations'}`;
+
+    console.log('Sending prompt to OpenAI:', prompt);
 
     // Call OpenAI API
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -63,7 +68,20 @@ serve(async (req) => {
       }),
     });
 
+    if (!openAIResponse.ok) {
+      const errorData = await openAIResponse.text();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${errorData}`);
+    }
+
     const aiData = await openAIResponse.json();
+    console.log('OpenAI response:', aiData);
+
+    if (!aiData.choices || !aiData.choices[0] || !aiData.choices[0].message) {
+      console.error('Invalid OpenAI response format:', aiData);
+      throw new Error('Invalid response from OpenAI');
+    }
+
     const insight = aiData.choices[0].message.content;
 
     // Store the insight in the database
@@ -88,7 +106,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in business-insights function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
