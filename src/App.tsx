@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           
           // Handle malformed URL errors
           if (error.message?.includes("failed to call url") && error.status === 404) {
-            console.error("Invalid URL format detected:", error.url);
+            console.error("Invalid URL format detected");
             toast.error("Configuration error. Please contact support.");
             return;
           }

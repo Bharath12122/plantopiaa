@@ -30,6 +30,66 @@ export type Database = {
         }
         Relationships: []
       }
+      business_insights: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          insight_type: string
+          relevance_score: number | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          insight_type: string
+          relevance_score?: number | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          insight_type?: string
+          relevance_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      business_metrics: {
+        Row: {
+          created_at: string
+          expenses: number | null
+          id: string
+          inventory_count: number | null
+          metric_date: string
+          revenue: number | null
+          sales_count: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expenses?: number | null
+          id?: string
+          inventory_count?: number | null
+          metric_date?: string
+          revenue?: number | null
+          sales_count?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expenses?: number | null
+          id?: string
+          inventory_count?: number | null
+          metric_date?: string
+          revenue?: number | null
+          sales_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       educational_resources: {
         Row: {
           content: string | null
@@ -71,6 +131,47 @@ export type Database = {
           id?: number
         }
         Relationships: []
+      }
+      plant_performance: {
+        Row: {
+          cost: number | null
+          created_at: string
+          id: string
+          performance_date: string
+          plant_id: string
+          revenue: number | null
+          sales_volume: number | null
+          user_id: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          id?: string
+          performance_date?: string
+          plant_id: string
+          revenue?: number | null
+          sales_volume?: number | null
+          user_id: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          id?: string
+          performance_date?: string
+          plant_id?: string
+          revenue?: number | null
+          sales_volume?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plant_performance_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plants: {
         Row: {
