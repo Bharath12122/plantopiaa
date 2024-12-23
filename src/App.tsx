@@ -77,40 +77,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };
 
-// Wrap the app with React.StrictMode
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename="/">
           <Routes>
-            <Route 
-              path="/" 
-              element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/pro"
-              element={
-                <ProtectedRoute>
-                  <Pro />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/premium"
-              element={
-                <ProtectedRoute>
-                  <Premium />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/pro" element={<ProtectedRoute><Pro /></ProtectedRoute>} />
+            <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
