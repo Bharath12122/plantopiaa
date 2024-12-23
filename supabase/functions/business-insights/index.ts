@@ -17,6 +17,10 @@ serve(async (req) => {
     const { userId, metricType, query } = await req.json();
     console.log('Received request:', { userId, metricType, query });
 
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -34,6 +38,16 @@ serve(async (req) => {
     if (metricsError) {
       console.error('Error fetching metrics:', metricsError);
       throw new Error('Failed to fetch business metrics');
+    }
+
+    if (!metrics || metrics.length === 0) {
+      console.log('No metrics found for user:', userId);
+      return new Response(
+        JSON.stringify({ 
+          insight: "No business metrics available yet. Start tracking your business performance to receive insights."
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Fetched metrics:', metrics);
