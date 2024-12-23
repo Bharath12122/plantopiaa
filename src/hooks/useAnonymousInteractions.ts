@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useAnonymousInteractions = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
+  const [interactionCount, setInteractionCount] = useState<number>(0);
 
   useEffect(() => {
     const storedSessionId = localStorage.getItem("anonymous_session_id");
@@ -26,8 +27,9 @@ export const useAnonymousInteractions = () => {
 
       if (error) {
         console.error("Error fetching interactions:", error);
+      } else {
+        setInteractionCount(data?.length || 0);
       }
-      return data;
     };
 
     fetchInteractions();
@@ -48,6 +50,8 @@ export const useAnonymousInteractions = () => {
 
       if (error) {
         console.error("Error tracking interaction:", error);
+      } else {
+        setInteractionCount(prev => prev + 1);
       }
     } catch (error) {
       console.error("Error tracking interaction:", error);
@@ -58,5 +62,6 @@ export const useAnonymousInteractions = () => {
     showLoginPrompt,
     setShowLoginPrompt,
     trackInteraction,
+    interactionCount,
   };
 };
