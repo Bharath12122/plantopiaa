@@ -65,9 +65,9 @@ const Index = () => {
       
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
-          <Leaf className="h-16 w-16 text-[#9b87f5] animate-float" />
+          <Leaf className="h-16 w-16 text-[#9b87f5]" />
         </div>
-        <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-6 text-[#9b87f5]">
           Plant Care Assistant
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -80,7 +80,7 @@ const Index = () => {
 
         {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
-        <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold mb-8 text-[#9b87f5]">
           Choose Your Plan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
