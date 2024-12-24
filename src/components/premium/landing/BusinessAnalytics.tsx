@@ -41,21 +41,25 @@ export const BusinessAnalytics = () => {
         search_keyword: searchKeyword.trim()
       });
 
+      // Make sure we're using the correct URL format for the function call
       const { data, error } = await supabase.functions.invoke('business-insights', {
         body: {
           userId: session.user.id,
-          keyword: searchKeyword,
-          query: `Generate business insights for ${searchKeyword}`
+          keyword: searchKeyword.trim()
         }
       });
 
       if (error) {
+        console.error('Function invocation error:', error);
         if (error.status === 429 || (data && data.isQuotaError)) {
-          toast.error("AI service is currently unavailable. Please try again later or contact support.");
-          console.error("OpenAI quota exceeded:", error);
+          toast.error("AI service is currently unavailable. Please try again later.");
           return;
         }
         throw error;
+      }
+
+      if (!data || !data.insight) {
+        throw new Error('Invalid response from business insights function');
       }
 
       setInsight(data.insight);
@@ -65,7 +69,7 @@ export const BusinessAnalytics = () => {
       setSearchesRemaining(remainingSearches);
       
       toast.success("Generated new business insight!");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating insight:', error);
       toast.error("Failed to generate business insight. Please try again later.");
     } finally {
