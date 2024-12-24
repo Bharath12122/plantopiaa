@@ -34,8 +34,7 @@ serve(async (req) => {
       )
     }
 
-    console.log('Generating insights for keyword:', keyword)
-
+    console.log('Making request to OpenAI API')
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -60,28 +59,29 @@ serve(async (req) => {
       const error = await response.json()
       console.error('OpenAI API error:', error)
       
-      // Check if it's a quota error
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ 
             error: 'AI service is currently unavailable. Please try again later.',
-            isQuotaError: true
+            isQuotaError: true 
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
         )
       }
       
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate insights' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
     }
 
     const data = await response.json()
-    const insight = data.choices[0]?.message?.content || "No insights available for this topic. Please try another keyword."
+    console.log('Received response from OpenAI')
+    
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI API')
+    }
+
+    const insight = data.choices[0].message.content
 
     console.log('Successfully generated insight')
-
     return new Response(
       JSON.stringify({ insight }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
