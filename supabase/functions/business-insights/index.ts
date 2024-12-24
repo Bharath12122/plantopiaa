@@ -14,25 +14,35 @@ serve(async (req) => {
 
   try {
     const { keyword, userId } = await req.json()
+    console.log('Received request with keyword:', keyword, 'and userId:', userId)
 
     // Validate input
     if (!keyword || !userId) {
+      console.error('Missing required parameters')
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
     }
 
-    // Initialize OpenAI
-    const configuration = new Configuration({
-      apiKey: Deno.env.get('OPENAI_API_KEY'),
-    })
-    const openai = new OpenAIApi(configuration)
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openAIApiKey) {
+      console.error('OpenAI API key not configured')
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
+    }
 
-    console.log(`Generating insights for keyword: ${keyword}`)
+    console.log('Generating insights for keyword:', keyword)
 
-    try {
-      const completion = await openai.createChatCompletion({
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [{
           role: "system",
@@ -43,37 +53,30 @@ serve(async (req) => {
         }],
         max_tokens: 500,
         temperature: 0.7,
-      })
+      }),
+    })
 
-      const insight = completion.data.choices[0]?.message?.content || "No insights available for this topic. Please try another keyword."
-
-      console.log('Successfully generated insight')
-
-      return new Response(
-        JSON.stringify({ insight }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-
-    } catch (error) {
+    if (!response.ok) {
+      const error = await response.json()
       console.error('OpenAI API error:', error)
-      
-      // Check if it's a quota error
-      if (error.response?.status === 429 || error.message?.includes('quota')) {
-        return new Response(
-          JSON.stringify({ 
-            error: 'OpenAI API quota exceeded',
-            isQuotaError: true,
-            details: error.toString()
-          }),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 429
-          }
-        )
-      }
-
-      throw error
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to generate insights',
+          details: error
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
     }
+
+    const data = await response.json()
+    const insight = data.choices[0]?.message?.content || "No insights available for this topic. Please try another keyword."
+
+    console.log('Successfully generated insight')
+
+    return new Response(
+      JSON.stringify({ insight }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
   } catch (error) {
     console.error('Error:', error)
