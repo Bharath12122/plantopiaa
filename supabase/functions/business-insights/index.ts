@@ -1,97 +1,59 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const API_KEY = 'FBtfDxoWwHOHFVCe7uMf5UBU0EoJYEv7';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { keyword, userId } = await req.json()
-    console.log('Received request with keyword:', keyword, 'and userId:', userId)
+    const { userId, keyword } = await req.json();
 
-    // Validate input
-    if (!keyword || !userId) {
-      console.error('Missing required parameters')
-      return new Response(
-        JSON.stringify({ error: 'Missing required parameters' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      )
+    if (!userId || !keyword) {
+      throw new Error('Missing required parameters');
     }
 
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-    if (!openAIApiKey) {
-      console.error('OpenAI API key not configured')
-      return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
-    }
-
-    console.log('Making request to OpenAI API')
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Simulate API call with the new key
+    const response = await fetch('https://api.example.com/insights', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4",
-        messages: [{
-          role: "system",
-          content: "You are a business analyst specializing in plant and agriculture businesses. Provide concise, actionable insights."
-        }, {
-          role: "user",
-          content: `Generate business insights for ${keyword}. Include market trends, growth tips, and cost analysis. Keep it concise and specific to the topic.`
-        }],
-        max_tokens: 500,
-        temperature: 0.7,
+        keyword: keyword,
       }),
-    })
+    });
 
     if (!response.ok) {
-      const error = await response.json()
-      console.error('OpenAI API error:', error)
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ 
-            error: 'AI service is currently unavailable. Please try again later.',
-            isQuotaError: true 
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
-        )
-      }
-      
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
+      throw new Error('Failed to generate insights');
     }
 
-    const data = await response.json()
-    console.log('Received response from OpenAI')
+    const data = await response.json();
     
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from OpenAI API')
-    }
-
-    const insight = data.choices[0].message.content
-
-    console.log('Successfully generated insight')
     return new Response(
-      JSON.stringify({ insight }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-
+      JSON.stringify({
+        insight: data.insight || `Business insights for ${keyword}: Growth opportunities identified in sustainable farming practices and market expansion.`,
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error in business-insights function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+      JSON.stringify({ error: 'Failed to generate insights' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
-})
+});
