@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { HeadphonesIcon, Clock, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { SupportChat } from "./SupportChat";
 
 export const PrioritySupport = () => {
-  const { toast } = useToast();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <section className="grid md:grid-cols-2 gap-8 items-center">
@@ -31,18 +32,14 @@ export const PrioritySupport = () => {
             <p className="text-[#2A3B1D]/90">24/7 premium assistance</p>
           </Card>
           <Button
-            onClick={() => {
-              toast({
-                title: "Coming Soon!",
-                description: "Priority support will be available shortly.",
-              });
-            }}
+            onClick={() => setIsChatOpen(true)}
             className="w-full md:w-auto bg-[#2A3B1D] hover:bg-[#2A3B1D]/90 text-white px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105"
           >
             Contact Support
           </Button>
         </div>
       </div>
+      <SupportChat open={isChatOpen} onOpenChange={setIsChatOpen} />
     </section>
   );
 };
