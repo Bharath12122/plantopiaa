@@ -9,38 +9,53 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { userId, keyword } = await req.json();
+    console.log('Received request with userId:', userId, 'and keyword:', keyword);
 
     if (!userId || !keyword) {
+      console.error('Missing required parameters');
       throw new Error('Missing required parameters');
     }
 
-    // Simulate API call with the new key
-    const response = await fetch('https://api.example.com/insights', {
+    // Make API call with proper error handling
+    const apiResponse = await fetch('https://api.example.com/insights', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        keyword: keyword,
-      }),
+      body: JSON.stringify({ keyword }),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to generate insights');
+    console.log('API Response status:', apiResponse.status);
+
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text();
+      console.error('API Error:', errorText);
+      throw new Error(`API request failed: ${apiResponse.status}`);
     }
 
-    const data = await response.json();
+    let responseData;
+    try {
+      responseData = await apiResponse.json();
+      console.log('API Response data:', responseData);
+    } catch (e) {
+      console.error('Error parsing API response:', e);
+      throw new Error('Invalid API response format');
+    }
+
+    // For testing, return a mock insight if API fails
+    const mockInsight = `Business insights for ${keyword}: Growth opportunities identified in sustainable farming practices and market expansion.`;
     
     return new Response(
       JSON.stringify({
-        insight: data.insight || `Business insights for ${keyword}: Growth opportunities identified in sustainable farming practices and market expansion.`,
+        insight: responseData?.insight || mockInsight,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -48,8 +63,12 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in business-insights function:', error);
+    
     return new Response(
-      JSON.stringify({ error: 'Failed to generate insights' }),
+      JSON.stringify({ 
+        error: 'Failed to generate insights',
+        details: error.message 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
