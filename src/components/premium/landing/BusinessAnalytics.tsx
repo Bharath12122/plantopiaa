@@ -25,27 +25,11 @@ export const BusinessAnalytics = () => {
         return;
       }
 
-      // Get daily search count first
-      const { data: searchCount } = await supabase.rpc('get_daily_search_count', {
-        user_uuid: session.user.id
-      });
-
-      // Check limit before making the API call
-      if (searchCount >= 5) {
-        toast.error("Daily limit reached. Try again tomorrow!");
-        setSearchesRemaining(0);
-        return;
-      }
-
-      // Record the search first
+      // Record the search
       await supabase.from('user_searches').insert({
         user_id: session.user.id,
         search_keyword: searchKeyword.trim()
       });
-
-      // Calculate remaining searches
-      const remainingSearches = 5 - (searchCount + 1);
-      setSearchesRemaining(remainingSearches);
 
       // Make the API call
       const { data, error } = await supabase.functions.invoke('business-insights', {
@@ -65,7 +49,7 @@ export const BusinessAnalytics = () => {
       }
 
       setInsight(data.insight);
-      toast.success(`Generated new business insight! ${remainingSearches} searches remaining today.`);
+      toast.success("Generated new business insight!");
       
     } catch (error: any) {
       console.error('Error generating insight:', error);
