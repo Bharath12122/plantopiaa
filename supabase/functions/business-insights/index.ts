@@ -23,44 +23,31 @@ serve(async (req) => {
       throw new Error('Missing required parameters');
     }
 
-    // Make API call with proper error handling
-    const apiResponse = await fetch('https://api.example.com/insights', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ keyword }),
-    });
+    // For testing purposes, generate a mock insight based on the keyword
+    // This simulates the API response while we set up the actual API integration
+    const generateMockInsight = (keyword: string) => {
+      const insights = [
+        `Market analysis shows growing demand for ${keyword} in sustainable agriculture.`,
+        `Recent trends indicate ${keyword} has potential for vertical farming applications.`,
+        `Business opportunities identified in ${keyword} cultivation for local markets.`,
+        `Industry experts suggest ${keyword} has significant growth potential in organic farming.`
+      ];
+      return insights[Math.floor(Math.random() * insights.length)];
+    };
 
-    console.log('API Response status:', apiResponse.status);
-
-    if (!apiResponse.ok) {
-      const errorText = await apiResponse.text();
-      console.error('API Error:', errorText);
-      throw new Error(`API request failed: ${apiResponse.status}`);
-    }
-
-    let responseData;
-    try {
-      responseData = await apiResponse.json();
-      console.log('API Response data:', responseData);
-    } catch (e) {
-      console.error('Error parsing API response:', e);
-      throw new Error('Invalid API response format');
-    }
-
-    // For testing, return a mock insight if API fails
-    const mockInsight = `Business insights for ${keyword}: Growth opportunities identified in sustainable farming practices and market expansion.`;
+    const mockInsight = generateMockInsight(keyword);
+    console.log('Generated mock insight:', mockInsight);
     
     return new Response(
       JSON.stringify({
-        insight: responseData?.insight || mockInsight,
+        insight: mockInsight,
+        status: 'success'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
+
   } catch (error) {
     console.error('Error in business-insights function:', error);
     
