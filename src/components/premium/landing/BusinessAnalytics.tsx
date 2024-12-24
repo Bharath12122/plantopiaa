@@ -25,23 +25,29 @@ export const BusinessAnalytics = () => {
         return;
       }
 
-      // Get daily search count
+      // Get daily search count first
       const { data: searchCount } = await supabase.rpc('get_daily_search_count', {
         user_uuid: session.user.id
       });
 
+      // Check limit before making the API call
       if (searchCount >= 5) {
-        toast.error("You've reached your daily search limit. Please try again tomorrow.");
+        toast.error("Daily limit reached. Try again tomorrow!");
+        setSearchesRemaining(0);
         return;
       }
 
-      // Record the search
+      // Record the search first
       await supabase.from('user_searches').insert({
         user_id: session.user.id,
         search_keyword: searchKeyword.trim()
       });
 
-      // Make sure we're using the correct URL format for the function call
+      // Calculate remaining searches
+      const remainingSearches = 5 - (searchCount + 1);
+      setSearchesRemaining(remainingSearches);
+
+      // Make the API call
       const { data, error } = await supabase.functions.invoke('business-insights', {
         body: {
           userId: session.user.id,
@@ -51,10 +57,6 @@ export const BusinessAnalytics = () => {
 
       if (error) {
         console.error('Function invocation error:', error);
-        if (error.status === 429 || (data && data.isQuotaError)) {
-          toast.error("AI service is currently unavailable. Please try again later.");
-          return;
-        }
         throw error;
       }
 
@@ -63,12 +65,8 @@ export const BusinessAnalytics = () => {
       }
 
       setInsight(data.insight);
+      toast.success(`Generated new business insight! ${remainingSearches} searches remaining today.`);
       
-      // Update remaining searches
-      const remainingSearches = 5 - (searchCount + 1);
-      setSearchesRemaining(remainingSearches);
-      
-      toast.success("Generated new business insight!");
     } catch (error: any) {
       console.error('Error generating insight:', error);
       toast.error("Failed to generate business insight. Please try again later.");
@@ -78,7 +76,7 @@ export const BusinessAnalytics = () => {
   };
 
   return (
-    <section className="grid md:grid-cols-2 gap-8 items-center bg-gradient-to-br from-plant-premium/5 to-plant-premium-accent/5">
+    <section className="grid md:grid-cols-2 gap-8 items-center bg-gradient-to-br from-[#9b87f5]/10 to-[#7E69AB]/10">
       <InsightsDisplay insight={insight} />
       <div className="order-1 md:order-2">
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
