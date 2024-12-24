@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.3.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,7 +42,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4",
         messages: [{
           role: "system",
           content: "You are a business analyst specializing in plant and agriculture businesses. Provide concise, actionable insights."
@@ -59,11 +58,20 @@ serve(async (req) => {
     if (!response.ok) {
       const error = await response.json()
       console.error('OpenAI API error:', error)
+      
+      // Check if it's a quota error
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'AI service is currently unavailable. Please try again later.',
+            isQuotaError: true
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+        )
+      }
+      
       return new Response(
-        JSON.stringify({ 
-          error: 'Failed to generate insights',
-          details: error
-        }),
+        JSON.stringify({ error: 'Failed to generate insights' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       )
     }
