@@ -4,10 +4,12 @@ import { toast } from "sonner";
 import { SearchForm } from "./business/SearchForm";
 import { InsightsDisplay } from "./business/InsightsDisplay";
 import { FeaturesList } from "./business/FeaturesList";
+import { WikipediaResults } from "./business/WikipediaResults";
 
 export const BusinessAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [insight, setInsight] = useState("");
+  const [wikiResults, setWikiResults] = useState<any>(null);
   const [searchesRemaining, setSearchesRemaining] = useState<number | null>(null);
 
   const generateInsight = async (searchKeyword: string) => {
@@ -25,13 +27,37 @@ export const BusinessAnalytics = () => {
         return;
       }
 
-      // Record the search
-      await supabase.from('user_searches').insert({
-        user_id: session.user.id,
-        search_keyword: searchKeyword.trim()
+      // Check daily search limit
+      const { data: searchCount } = await supabase.rpc('get_daily_wikipedia_search_count', {
+        user_uuid: session.user.id
       });
 
-      // Make the API call
+      if (searchCount >= 5) {
+        toast.error("You've reached your daily search limit. Try again tomorrow!");
+        return;
+      }
+
+      // Record the search
+      await supabase.from('wikipedia_searches').insert({
+        user_id: session.user.id,
+        search_query: searchKeyword.trim()
+      });
+
+      // Fetch Wikipedia data
+      const wikiResponse = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+          searchKeyword
+        )}&format=json&origin=*`
+      );
+
+      if (!wikiResponse.ok) {
+        throw new Error('Failed to fetch Wikipedia data');
+      }
+
+      const wikiData = await wikiResponse.json();
+      setWikiResults(wikiData.query.search);
+
+      // Make the business insights API call
       const { data, error } = await supabase.functions.invoke('business-insights', {
         body: {
           userId: session.user.id,
@@ -61,7 +87,10 @@ export const BusinessAnalytics = () => {
 
   return (
     <section className="grid md:grid-cols-2 gap-8 items-center bg-gradient-to-br from-[#9b87f5]/10 to-[#7E69AB]/10">
-      <InsightsDisplay insight={insight} />
+      <div className="space-y-8">
+        <InsightsDisplay insight={insight} />
+        {wikiResults && <WikipediaResults results={wikiResults} />}
+      </div>
       <div className="order-1 md:order-2">
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
           Business Analytics & Growth

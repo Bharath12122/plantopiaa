@@ -254,12 +254,39 @@ export type Database = {
         }
         Relationships: []
       }
+      wikipedia_searches: {
+        Row: {
+          created_at: string
+          id: string
+          search_query: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          search_query: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          search_query?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       get_daily_search_count: {
+        Args: {
+          user_uuid: string
+        }
+        Returns: number
+      }
+      get_daily_wikipedia_search_count: {
         Args: {
           user_uuid: string
         }
