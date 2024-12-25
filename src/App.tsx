@@ -34,10 +34,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         if (error) {
           console.error("Auth check failed:", error);
           
-          // Handle malformed URL errors
-          if (error.message?.includes("failed to call url") && error.status === 404) {
-            console.error("Invalid URL format detected");
-            toast.error("Configuration error. Please contact support.");
+          // Handle URL configuration errors
+          if (error.message?.includes("failed to call url")) {
+            console.error("URL configuration error:", error);
+            toast.error("Please check your Supabase URL configuration");
+            setIsAuthenticated(false);
             return;
           }
           
@@ -53,27 +54,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // Only set authenticated if we have both a session and a valid access token
         setIsAuthenticated(!!session?.access_token);
       } catch (error: any) {
         console.error("Auth check failed:", error);
-        
-        // Handle network and URL-related errors
-        if (error.message?.includes("failed to call url")) {
-          console.error("Network or URL error:", error);
-          toast.error("Network configuration error. Please try again later.");
-        } else {
-          toast.error("Authentication error. Please try again.");
-        }
-        
         setIsAuthenticated(false);
+        toast.error("Authentication error. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
 
     // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event);
       
       switch (event) {
@@ -88,7 +80,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           setIsAuthenticated(true);
           break;
         default:
-          // For all other events, check if we have a valid session
           setIsAuthenticated(!!session?.access_token);
       }
       setIsLoading(false);
