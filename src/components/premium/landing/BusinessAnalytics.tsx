@@ -90,13 +90,13 @@ export const BusinessAnalytics = () => {
   };
 
   return (
-    <section className="grid md:grid-cols-2 gap-8 items-center bg-gradient-to-br from-[#F2FCE2] to-[#a2d96e]/10">
+    <section className="grid md:grid-cols-2 gap-8 items-center bg-[#F2FCE2]">
       <div className="space-y-8">
         <InsightsDisplay insight={insight} />
         {wikiResults && <WikipediaResults results={wikiResults} />}
       </div>
       <div className="order-1 md:order-2">
-        <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-[#a2d96e] to-[#8bc952] bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold mb-6 text-[#2A3B1D]">
           Business Analytics & Growth
         </h2>
         <div className="space-y-6">

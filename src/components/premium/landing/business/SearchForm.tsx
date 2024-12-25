@@ -27,15 +27,15 @@ export const SearchForm = ({ onSearch, loading, searchesRemaining }: SearchFormP
     <form onSubmit={handleSubmit} className="space-y-2">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Type a business or plant-related topic (e.g., mushroom business)"
+          placeholder="Type a business or plant-related topic"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="border-[#a2d96e]/20 focus:border-[#a2d96e] focus:ring-[#a2d96e]"
+          className="border-[#2A3B1D]/20 focus:border-[#2A3B1D] focus:ring-[#2A3B1D] bg-white/80"
         />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <Info className="w-5 h-5 text-[#a2d96e] cursor-help" />
+              <Info className="w-5 h-5 text-[#2A3B1D] cursor-help" />
             </TooltipTrigger>
             <TooltipContent>
               <p>Limited to 5 searches per day</p>
@@ -44,14 +44,14 @@ export const SearchForm = ({ onSearch, loading, searchesRemaining }: SearchFormP
         </TooltipProvider>
       </div>
       {searchesRemaining !== null && (
-        <p className="text-sm text-[#8bc952]">
+        <p className="text-sm text-[#2A3B1D]">
           {searchesRemaining} searches remaining today
         </p>
       )}
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#a2d96e] hover:bg-[#8bc952] text-white transition-all duration-300 hover:shadow-lg"
+        className="w-full bg-[#2A3B1D] hover:bg-[#2A3B1D]/90 text-white transition-all duration-300 hover:shadow-lg"
       >
         {loading ? "Generating Insight..." : "Generate Business Insight"}
       </Button>

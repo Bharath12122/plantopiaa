@@ -16,7 +16,7 @@ export const VideoConsultation = () => {
         
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full md:w-auto bg-[#a2d96e] hover:bg-[#8bc952] text-white px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105">
+            <Button className="w-full md:w-auto bg-[#2A3B1D] hover:bg-[#2A3B1D]/90 text-white px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105">
               Book a Consultation
             </Button>
           </DialogTrigger>
@@ -24,12 +24,14 @@ export const VideoConsultation = () => {
             <DialogHeader>
               <DialogTitle className="text-[#2A3B1D]">Schedule Your Consultation</DialogTitle>
             </DialogHeader>
-            <BookingCalendar onBookingComplete={() => {
-              const closeButton = document.querySelector('[aria-label="Close"]');
-              if (closeButton instanceof HTMLButtonElement) {
-                closeButton.click();
-              }
-            }} />
+            <div className="flex justify-center items-center">
+              <BookingCalendar onBookingComplete={() => {
+                const closeButton = document.querySelector('[aria-label="Close"]');
+                if (closeButton instanceof HTMLButtonElement) {
+                  closeButton.click();
+                }
+              }} />
+            </div>
           </DialogContent>
         </Dialog>
       </div>
