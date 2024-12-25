@@ -30,12 +30,12 @@ export const SearchForm = ({ onSearch, loading, searchesRemaining }: SearchFormP
           placeholder="Type a business or plant-related topic (e.g., mushroom business)"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="border-[#9b87f5]/20 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
+          className="border-[#a2d96e]/20 focus:border-[#a2d96e] focus:ring-[#a2d96e]"
         />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <Info className="w-5 h-5 text-[#9b87f5] cursor-help" />
+              <Info className="w-5 h-5 text-[#a2d96e] cursor-help" />
             </TooltipTrigger>
             <TooltipContent>
               <p>Limited to 5 searches per day</p>
@@ -44,14 +44,14 @@ export const SearchForm = ({ onSearch, loading, searchesRemaining }: SearchFormP
         </TooltipProvider>
       </div>
       {searchesRemaining !== null && (
-        <p className="text-sm text-[#7E69AB]">
+        <p className="text-sm text-[#8bc952]">
           {searchesRemaining} searches remaining today
         </p>
       )}
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 hover:shadow-lg"
+        className="w-full bg-[#a2d96e] hover:bg-[#8bc952] text-white transition-all duration-300 hover:shadow-lg"
       >
         {loading ? "Generating Insight..." : "Generate Business Insight"}
       </Button>

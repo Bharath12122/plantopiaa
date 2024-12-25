@@ -8,7 +8,7 @@ export const VideoConsultation = () => {
   return (
     <section className="grid md:grid-cols-2 gap-12 items-center">
       <div className="space-y-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-plant-pro leading-tight">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#2A3B1D] leading-tight">
           One-on-One Expert Consultations
         </h2>
         
@@ -16,13 +16,13 @@ export const VideoConsultation = () => {
         
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full md:w-auto bg-plant-pro hover:bg-plant-pro-dark text-white px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105">
+            <Button className="w-full md:w-auto bg-[#a2d96e] hover:bg-[#8bc952] text-white px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105">
               Book a Consultation
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle className="text-plant-pro">Schedule Your Consultation</DialogTitle>
+              <DialogTitle className="text-[#2A3B1D]">Schedule Your Consultation</DialogTitle>
             </DialogHeader>
             <BookingCalendar onBookingComplete={() => {
               const closeButton = document.querySelector('[aria-label="Close"]');
