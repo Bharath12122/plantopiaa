@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.1.0'
+import OpenAI from "https://esm.sh/openai@4.28.0"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,17 +20,16 @@ serve(async (req) => {
       throw new Error('Missing required parameters')
     }
 
-    // Initialize OpenAI
-    const configuration = new Configuration({
+    // Initialize OpenAI with the latest API version
+    const openai = new OpenAI({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
     })
-    const openai = new OpenAIApi(configuration)
 
     // Generate business insights using OpenAI
     const prompt = `Generate business insights for ${keyword}. Include growth analysis, business strategy, and performance metrics. Format the response as JSON with these three sections.`
     
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -43,7 +42,7 @@ serve(async (req) => {
       ],
     })
 
-    const responseText = completion.data.choices[0].message?.content || ''
+    const responseText = completion.choices[0].message?.content || ''
     console.log('OpenAI response:', responseText)
 
     // Parse the response into JSON
