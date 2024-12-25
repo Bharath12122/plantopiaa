@@ -13,6 +13,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
+  const [showUpload, setShowUpload] = useState(false);
   
   const subscriptions = [
     {
@@ -59,6 +60,17 @@ const Index = () => {
     },
   ];
 
+  const handleTryFreeClick = () => {
+    setShowUpload(true);
+    // Scroll to the upload section
+    setTimeout(() => {
+      const uploadSection = document.getElementById('upload-section');
+      if (uploadSection) {
+        uploadSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-[#F2FCE2]">
       <LogoutButton />
@@ -77,7 +89,7 @@ const Index = () => {
 
         <div className="flex gap-4 justify-center mb-16">
           <Button 
-            onClick={() => document.getElementById('plant-upload')?.click()}
+            onClick={handleTryFreeClick}
             className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6"
           >
             Try For Free
@@ -115,9 +127,11 @@ const Index = () => {
           </div>
         </div>
 
-        <div id="plant-upload" className="hidden">
-          <PlantUpload onUploadSuccess={setIdentifiedPlant} />
-        </div>
+        {showUpload && (
+          <div id="upload-section" className="scroll-mt-8">
+            <PlantUpload onUploadSuccess={setIdentifiedPlant} />
+          </div>
+        )}
 
         {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
