@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 export const VideoConsultation = () => {
@@ -59,23 +58,43 @@ export const VideoConsultation = () => {
     bookingDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
     try {
-      const { error } = await supabase
-        .from('consultation_bookings')
-        .insert([
-          { booking_date: bookingDate.toISOString() }
-        ]);
+      // First get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) throw userError;
+      
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to book a consultation.",
+          variant: "destructive"
+        });
+        return;
+      }
 
-      if (error) throw error;
+      // Insert the booking with the user_id
+      const { error: bookingError } = await supabase
+        .from('consultation_bookings')
+        .insert({
+          booking_date: bookingDate.toISOString(),
+          user_id: user.id
+        });
+
+      if (bookingError) throw bookingError;
 
       toast({
         title: "Success!",
         description: "Your consultation has been booked successfully.",
       });
-    } catch (error) {
+
+      // Reset selection
+      setDate(undefined);
+      setSelectedSlot(undefined);
+    } catch (error: any) {
       console.error('Error booking consultation:', error);
       toast({
         title: "Error",
-        description: "Failed to book consultation. Please try again.",
+        description: error.message || "Failed to book consultation. Please try again.",
         variant: "destructive"
       });
     }
