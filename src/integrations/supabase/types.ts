@@ -90,6 +90,30 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_bookings: {
+        Row: {
+          booking_date: string
+          created_at: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          booking_date: string
+          created_at?: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          booking_date?: string
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       educational_resources: {
         Row: {
           content: string | null
@@ -280,6 +304,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_available_slots: {
+        Args: {
+          start_date: string
+          end_date: string
+        }
+        Returns: {
+          available_slot: string
+        }[]
+      }
       get_daily_search_count: {
         Args: {
           user_uuid: string
