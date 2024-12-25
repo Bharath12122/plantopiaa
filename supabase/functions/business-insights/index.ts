@@ -25,78 +25,105 @@ serve(async (req) => {
       apiKey: Deno.env.get('OPENAI_API_KEY'),
     })
 
-    // Generate business insights using OpenAI
-    const prompt = `Generate business insights for ${keyword}. Include growth analysis, business strategy, and performance metrics. Format the response as JSON with these three sections.`
-    
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a business analyst providing insights in JSON format with three sections: growthAnalysis, businessStrategy, and performanceMetrics."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-    })
-
-    const responseText = completion.choices[0].message?.content || ''
-    console.log('OpenAI response:', responseText)
-
-    // Parse the response into JSON
-    let insights
     try {
-      insights = JSON.parse(responseText)
-    } catch (e) {
-      console.error('Failed to parse OpenAI response:', e)
-      // Provide a structured fallback if parsing fails
-      insights = {
-        growthAnalysis: responseText.substring(0, 200),
-        businessStrategy: "Strategy analysis unavailable",
-        performanceMetrics: "Metrics analysis unavailable"
-      }
-    }
-
-    // Store the insight in the database
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    const { error: dbError } = await supabase
-      .from('business_insights')
-      .insert({
-        user_id: userId,
-        insight_type: 'general',
-        content: JSON.stringify(insights),
+      // Generate business insights using OpenAI
+      const prompt = `Generate business insights for ${keyword}. Include growth analysis, business strategy, and performance metrics. Format the response as JSON with these three sections.`
+      
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are a business analyst providing insights in JSON format with three sections: growthAnalysis, businessStrategy, and performanceMetrics."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
       })
 
-    if (dbError) {
-      console.error('Database error:', dbError)
-      throw new Error('Failed to store insight')
-    }
+      const responseText = completion.choices[0].message?.content || ''
+      console.log('OpenAI response:', responseText)
 
-    // Return the response with CORS headers
-    return new Response(
-      JSON.stringify({
-        insight: {
-          insights: insights
+      // Parse the response into JSON
+      let insights
+      try {
+        insights = JSON.parse(responseText)
+      } catch (e) {
+        console.error('Failed to parse OpenAI response:', e)
+        // Provide a structured fallback if parsing fails
+        insights = {
+          growthAnalysis: responseText.substring(0, 200),
+          businessStrategy: "Strategy analysis unavailable",
+          performanceMetrics: "Metrics analysis unavailable"
         }
-      }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json',
+      }
+
+      // Store the insight in the database
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      )
+
+      const { error: dbError } = await supabase
+        .from('business_insights')
+        .insert({
+          user_id: userId,
+          insight_type: 'general',
+          content: JSON.stringify(insights),
+        })
+
+      if (dbError) {
+        console.error('Database error:', dbError)
+        throw new Error('Failed to store insight')
+      }
+
+      // Return the response with CORS headers
+      return new Response(
+        JSON.stringify({
+          insight: {
+            insights: insights
+          }
+        }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    )
+      )
+
+    } catch (openAiError: any) {
+      console.error('OpenAI API error:', openAiError)
+      
+      // Check if it's a rate limit error
+      if (openAiError.status === 429 || (openAiError.error && openAiError.error.includes('429'))) {
+        return new Response(
+          JSON.stringify({ 
+            error: "We've reached our API limit. Please try again in a few minutes.",
+            code: "RATE_LIMIT_ERROR"
+          }),
+          { 
+            status: 429,
+            headers: { 
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+      }
+      
+      throw openAiError // Re-throw other errors
+    }
 
   } catch (error) {
     console.error('Error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: "An error occurred while generating business insights."
+      }),
       { 
         status: 500,
         headers: { 

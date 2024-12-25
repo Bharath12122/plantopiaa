@@ -66,6 +66,11 @@ export const BusinessAnalytics = () => {
       });
 
       if (error) {
+        // Check if it's a rate limit error
+        if (error.status === 429 || (error.message && error.message.includes('429'))) {
+          toast.error("We've reached our API limit. Please try again in a few minutes.");
+          return;
+        }
         console.error('Function invocation error:', error);
         throw error;
       }
@@ -79,7 +84,7 @@ export const BusinessAnalytics = () => {
       
     } catch (error: any) {
       console.error('Error generating insight:', error);
-      toast.error("Failed to generate business insight. Please try again later.");
+      toast.error(error.message || "Failed to generate business insight. Please try again later.");
     } finally {
       setLoading(false);
     }
