@@ -1,91 +1,110 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const API_KEY = 'FBtfDxoWwHOHFVCe7uMf5UBU0EoJYEv7';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.1.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { userId, keyword } = await req.json();
-    console.log('Received request with userId:', userId, 'and keyword:', keyword);
-
-    if (!userId || !keyword) {
-      console.error('Missing required parameters');
-      throw new Error('Missing required parameters');
+    const { keyword, userId } = await req.json()
+    
+    if (!keyword || !userId) {
+      throw new Error('Missing required parameters')
     }
 
-    // Generate comprehensive business insights
-    const generateInsights = (keyword: string) => {
-      // Growth Analysis
-      const growthAnalysis = [
-        `Market analysis indicates a ${Math.floor(Math.random() * 30 + 20)}% growth potential for ${keyword} in the next quarter.`,
-        `Emerging market trends show increasing demand for organic ${keyword} products.`,
-        `Data suggests expanding ${keyword} operations could yield 25-35% revenue growth.`,
-        `Consumer interest in ${keyword} has grown by ${Math.floor(Math.random() * 40 + 30)}% this year.`
-      ];
+    // Initialize OpenAI
+    const configuration = new Configuration({
+      apiKey: Deno.env.get('OPENAI_API_KEY'),
+    })
+    const openai = new OpenAIApi(configuration)
 
-      // Business Strategies
-      const businessStrategies = [
-        `Consider implementing vertical integration for ${keyword} production to reduce costs by 20%.`,
-        `Diversifying ${keyword} product line could capture 3 new market segments.`,
-        `Strategic partnerships with local distributors could boost ${keyword} sales by 40%.`,
-        `Investing in sustainable ${keyword} practices could attract eco-conscious consumers.`
-      ];
-
-      // Performance Metrics
-      const performanceMetrics = [
-        `Current ${keyword} market share shows room for ${Math.floor(Math.random() * 15 + 10)}% growth.`,
-        `Industry benchmarks suggest optimizing ${keyword} production efficiency by 25%.`,
-        `Competitor analysis reveals opportunities in premium ${keyword} segments.`,
-        `Supply chain optimization could reduce ${keyword} costs by 15-20%.`
-      ];
-
-      // Select one insight from each category
-      const selectedGrowth = growthAnalysis[Math.floor(Math.random() * growthAnalysis.length)];
-      const selectedStrategy = businessStrategies[Math.floor(Math.random() * businessStrategies.length)];
-      const selectedMetrics = performanceMetrics[Math.floor(Math.random() * performanceMetrics.length)];
-
-      // Combine insights
-      return {
-        growthAnalysis: selectedGrowth,
-        businessStrategy: selectedStrategy,
-        performanceMetrics: selectedMetrics
-      };
-    };
-
-    const insights = generateInsights(keyword);
-    console.log('Generated insights:', insights);
+    // Generate business insights using OpenAI
+    const prompt = `Generate business insights for ${keyword}. Include growth analysis, business strategy, and performance metrics. Format the response as JSON with these three sections.`
     
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a business analyst providing insights in JSON format with three sections: growthAnalysis, businessStrategy, and performanceMetrics."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+    })
+
+    const responseText = completion.data.choices[0].message?.content || ''
+    console.log('OpenAI response:', responseText)
+
+    // Parse the response into JSON
+    let insights
+    try {
+      insights = JSON.parse(responseText)
+    } catch (e) {
+      console.error('Failed to parse OpenAI response:', e)
+      // Provide a structured fallback if parsing fails
+      insights = {
+        growthAnalysis: responseText.substring(0, 200),
+        businessStrategy: "Strategy analysis unavailable",
+        performanceMetrics: "Metrics analysis unavailable"
+      }
+    }
+
+    // Store the insight in the database
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const { error: dbError } = await supabase
+      .from('business_insights')
+      .insert({
+        user_id: userId,
+        insight_type: 'general',
+        content: JSON.stringify(insights),
+      })
+
+    if (dbError) {
+      console.error('Database error:', dbError)
+      throw new Error('Failed to store insight')
+    }
+
+    // Return the response with CORS headers
     return new Response(
       JSON.stringify({
-        insights,
-        status: 'success'
+        insight: {
+          insights: insights
+        }
       }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      },
+    )
 
   } catch (error) {
-    console.error('Error in business-insights function:', error);
-    
+    console.error('Error:', error)
     return new Response(
-      JSON.stringify({ 
-        error: 'Failed to generate insights',
-        details: error.message 
-      }),
-      {
+      JSON.stringify({ error: error.message }),
+      { 
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      },
+    )
   }
-});
+})
