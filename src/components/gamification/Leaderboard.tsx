@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: string;
-  total_points: number;
+  total_points: number | null;
   profiles: {
     full_name: string | null;
-  };
+  } | null;
 }
 
 export const Leaderboard = () => {
@@ -22,7 +22,7 @@ export const Leaderboard = () => {
         .select(`
           id,
           total_points,
-          profiles!inner (
+          profiles:user_id (
             full_name
           )
         `)
@@ -60,9 +60,9 @@ export const Leaderboard = () => {
             >
               <div className="flex items-center gap-2">
                 <span className="font-bold text-amber-500">#{index + 1}</span>
-                <span>{leader.profiles.full_name || 'Anonymous User'}</span>
+                <span>{leader.profiles?.full_name || 'Anonymous User'}</span>
               </div>
-              <span className="font-semibold">{leader.total_points} pts</span>
+              <span className="font-semibold">{leader.total_points || 0} pts</span>
             </div>
           ))}
         </div>
