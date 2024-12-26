@@ -31,21 +31,27 @@ export const ChallengeSystem = () => {
           description: "Identify 3 different plants today",
           points: 50,
           requirement_count: 3,
-          challenge_type: "daily_scans"
+          challenge_type: "daily_scans",
+          created_at: new Date().toISOString(),
+          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
         },
         {
           title: "Knowledge Seeker",
           description: "Read 2 plant care guides",
           points: 30,
           requirement_count: 2,
-          challenge_type: "guide_reads"
+          challenge_type: "guide_reads",
+          created_at: new Date().toISOString(),
+          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
         },
         {
           title: "Community Helper",
           description: "Help identify a plant in the community",
           points: 40,
           requirement_count: 1,
-          challenge_type: "community_help"
+          challenge_type: "community_help",
+          created_at: new Date().toISOString(),
+          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
         }
       ];
 
@@ -53,11 +59,7 @@ export const ChallengeSystem = () => {
       for (const challenge of dailyChallenges) {
         const { error: insertError } = await supabase
           .from('challenges')
-          .upsert({
-            ...challenge,
-            start_date: new Date(),
-            end_date: new Date(new Date().setHours(23, 59, 59, 999))
-          });
+          .upsert(challenge);
 
         if (insertError) console.error('Error inserting challenge:', insertError);
       }
