@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 export const StreakTracker = () => {
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const [previousStreak, setPreviousStreak] = useState(0);
 
   useEffect(() => {
     const fetchStreak = async () => {
@@ -23,12 +26,47 @@ export const StreakTracker = () => {
         return;
       }
 
-      setStreak(data?.streak_count || 0);
+      const currentStreak = data?.streak_count || 0;
+      
+      // Check if streak milestone reached
+      if (currentStreak > previousStreak && currentStreak > 0) {
+        if (currentStreak % 5 === 0) { // Milestone every 5 days
+          toast({
+            title: `${currentStreak}-Day Streak! 🎉`,
+            description: "Keep going to earn more rewards!",
+          });
+        }
+      }
+
+      setPreviousStreak(streak);
+      setStreak(currentStreak);
       setLoading(false);
     };
 
     fetchStreak();
-  }, []);
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('streak-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_achievements',
+          filter: `user_id=eq.${supabase.auth.getSession()?.data?.session?.user?.id}`
+        },
+        (payload) => {
+          const newStreak = payload.new.streak_count;
+          setStreak(newStreak);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [toast, streak, previousStreak]);
 
   if (loading) return null;
 
@@ -41,9 +79,16 @@ export const StreakTracker = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-center">
-          <span className="text-3xl font-bold text-yellow-500">{streak}</span>
-          <span className="text-gray-600 ml-2">days</span>
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-3xl font-bold text-yellow-500">{streak}</span>
+            <span className="text-gray-600">days</span>
+          </div>
+          {streak > 0 && (
+            <p className="text-sm text-gray-500">
+              {streak === 1 ? "First day! Keep it up!" : `You're on fire! 🔥`}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

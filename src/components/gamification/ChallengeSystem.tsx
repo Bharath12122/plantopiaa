@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 interface Challenge {
   id: string;
@@ -16,6 +17,7 @@ interface Challenge {
 export const ChallengeSystem = () => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -42,15 +44,47 @@ export const ChallengeSystem = () => {
         return;
       }
 
-      setChallenges(data?.map(challenge => ({
+      const formattedChallenges = data?.map(challenge => ({
         ...challenge,
         progress: challenge.user_challenge_progress?.[0]?.progress || 0
-      })) || []);
+      })) || [];
+
+      // Check for completed challenges
+      formattedChallenges.forEach(challenge => {
+        if (challenge.progress >= challenge.requirement_count) {
+          toast({
+            title: "Challenge Completed! 🎉",
+            description: `You've earned ${challenge.points} points!`,
+          });
+        }
+      });
+
+      setChallenges(formattedChallenges);
       setLoading(false);
     };
 
     fetchChallenges();
-  }, []);
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('challenge-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_challenge_progress'
+        },
+        () => {
+          fetchChallenges();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [toast]);
 
   if (loading) return null;
 
@@ -71,16 +105,20 @@ export const ChallengeSystem = () => {
                   <h4 className="font-semibold">{challenge.title}</h4>
                   <p className="text-sm text-gray-600">{challenge.description}</p>
                 </div>
-                <span className="text-green-500 font-semibold">
-                  {challenge.points} pts
-                </span>
+                <div className="flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-green-500" />
+                  <span className="text-green-500 font-semibold">
+                    {challenge.points} pts
+                  </span>
+                </div>
               </div>
               <Progress
                 value={(challenge.progress / challenge.requirement_count) * 100}
                 className="h-2"
               />
-              <div className="text-sm text-gray-600 text-right">
-                {challenge.progress} / {challenge.requirement_count}
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Progress: {challenge.progress} / {challenge.requirement_count}</span>
+                <span>{Math.round((challenge.progress / challenge.requirement_count) * 100)}%</span>
               </div>
             </div>
           ))}
