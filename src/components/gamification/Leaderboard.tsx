@@ -21,7 +21,7 @@ export const Leaderboard = () => {
           id,
           total_points,
           user_id,
-          profiles!user_achievements_user_id_fkey (
+          profiles!inner (
             full_name
           )
         `)

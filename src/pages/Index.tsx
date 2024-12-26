@@ -19,6 +19,7 @@ const Index = () => {
   const { toast } = useToast();
   const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
   const [showUpload, setShowUpload] = useState(false);
+  const [showGamification, setShowGamification] = useState(false);
   
   const subscriptions = [
     {
@@ -67,12 +68,22 @@ const Index = () => {
 
   const handleTryFreeClick = () => {
     setShowUpload(true);
+    setShowGamification(true);
     setTimeout(() => {
       const uploadSection = document.getElementById('upload-section');
       if (uploadSection) {
         uploadSection.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  };
+
+  const handleUploadSuccess = (plantData: any) => {
+    setIdentifiedPlant(plantData);
+    setShowGamification(true);
+    toast({
+      title: "Achievement Unlocked! 🌟",
+      description: "You've earned your first Plant Explorer badge!",
+    });
   };
 
   return (
@@ -102,18 +113,20 @@ const Index = () => {
 
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              <div className="space-y-4">
-                <StreakTracker />
-                <BadgeShowcase />
+            {showGamification && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
+                <div className="space-y-4">
+                  <StreakTracker />
+                  <BadgeShowcase />
+                </div>
+                <div className="space-y-4">
+                  <Leaderboard />
+                  <ChallengeSystem />
+                </div>
               </div>
-              <div className="space-y-4">
-                <Leaderboard />
-                <ChallengeSystem />
-              </div>
-            </div>
+            )}
             <DailyRewards />
-            <PlantUpload onUploadSuccess={setIdentifiedPlant} />
+            <PlantUpload onUploadSuccess={handleUploadSuccess} />
           </div>
         )}
 
