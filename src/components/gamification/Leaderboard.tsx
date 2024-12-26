@@ -24,9 +24,7 @@ export const Leaderboard = () => {
           id,
           total_points,
           user_id,
-          profiles:user_id(
-            full_name
-          )
+          profiles:profiles(full_name)
         `)
         .order('total_points', { ascending: false })
         .limit(5);
