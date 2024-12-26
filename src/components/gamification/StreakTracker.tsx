@@ -50,27 +50,34 @@ export const StreakTracker = () => {
 
     fetchStreak();
 
-    // Subscribe to realtime updates
-    const channel = supabase
-      .channel('streak-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'user_achievements',
-          filter: `user_id=eq.${supabase.auth.getSession()?.data?.session?.user?.id}`
-        },
-        (payload) => {
-          const newStreak = payload.new.streak_count;
-          setStreak(newStreak);
-        }
-      )
-      .subscribe();
+    // Set up realtime subscription
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
 
-    return () => {
-      supabase.removeChannel(channel);
+      const channel = supabase
+        .channel('streak-updates')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'user_achievements',
+            filter: `user_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            const newStreak = payload.new.streak_count;
+            setStreak(newStreak);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     };
+
+    setupSubscription();
   }, [toast, streak, previousStreak]);
 
   if (loading) return null;
