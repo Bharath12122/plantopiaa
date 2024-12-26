@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: string;
-  full_name: string;
+  full_name: string | null;
   total_points: number;
 }
 
@@ -20,7 +20,8 @@ export const Leaderboard = () => {
         .select(`
           id,
           total_points,
-          profiles:user_id (
+          user_id,
+          profiles!user_achievements_user_id_fkey (
             full_name
           )
         `)

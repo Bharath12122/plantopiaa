@@ -16,7 +16,7 @@ export const StreakTracker = () => {
         .from('user_achievements')
         .select('streak_count')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching streak:', error);
