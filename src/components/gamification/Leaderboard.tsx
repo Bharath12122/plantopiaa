@@ -34,7 +34,9 @@ export const Leaderboard = () => {
         return;
       }
 
-      setLeaders(data || []);
+      // Ensure the data matches our LeaderboardEntry type
+      const typedData = (data || []) as LeaderboardEntry[];
+      setLeaders(typedData);
       setLoading(false);
     };
 
