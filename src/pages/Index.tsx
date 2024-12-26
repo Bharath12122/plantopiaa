@@ -1,4 +1,4 @@
-import { Leaf, HelpCircle, Camera, Sprout, Star } from "lucide-react";
+import { Leaf, Camera } from "lucide-react";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -9,6 +9,10 @@ import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
 import { Button } from "@/components/ui/button";
 import { DailyRewards } from "@/components/DailyRewards";
+import { StreakTracker } from "@/components/gamification/StreakTracker";
+import { BadgeShowcase } from "@/components/gamification/BadgeShowcase";
+import { Leaderboard } from "@/components/gamification/Leaderboard";
+import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -63,7 +67,6 @@ const Index = () => {
 
   const handleTryFreeClick = () => {
     setShowUpload(true);
-    // Scroll to the upload section
     setTimeout(() => {
       const uploadSection = document.getElementById('upload-section');
       if (uploadSection) {
@@ -95,17 +98,20 @@ const Index = () => {
           >
             Try For Free
           </Button>
-          <Button 
-            variant="outline"
-            className="border-[#00B388] text-[#00B388] hover:bg-[#00B388]/10"
-            onClick={() => toast({ title: "Demo coming soon!" })}
-          >
-            Watch Demo
-          </Button>
         </div>
 
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="space-y-4">
+                <StreakTracker />
+                <BadgeShowcase />
+              </div>
+              <div className="space-y-4">
+                <Leaderboard />
+                <ChallengeSystem />
+              </div>
+            </div>
             <DailyRewards />
             <PlantUpload onUploadSuccess={setIdentifiedPlant} />
           </div>
@@ -130,7 +136,7 @@ const Index = () => {
           description: "Our support team is here to assist you!",
         })}
       >
-        <HelpCircle className="h-6 w-6 text-[#00B388] group-hover:text-[#00B388]/80 transition-colors" />
+        <Camera className="h-6 w-6 text-[#00B388] group-hover:text-[#00B388]/80 transition-colors" />
       </button>
 
       <ChatbotTrigger />
