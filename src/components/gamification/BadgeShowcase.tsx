@@ -28,7 +28,60 @@ export const BadgeShowcase = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // First get all available badges
+      // First, ensure we have our basic badges
+      const basicBadges = [
+        {
+          name: "Plant Pioneer",
+          description: "Identify your first plant",
+          icon: "🌱",
+          requirement_type: "plant_scans",
+          requirement_count: 1,
+          points: 10
+        },
+        {
+          name: "Green Thumb",
+          description: "Maintain a 3-day streak",
+          icon: "🌿",
+          requirement_type: "streak_days",
+          requirement_count: 3,
+          points: 30
+        },
+        {
+          name: "Botanical Expert",
+          description: "Identify 10 different plants",
+          icon: "🎓",
+          requirement_type: "plant_scans",
+          requirement_count: 10,
+          points: 50
+        },
+        {
+          name: "Nature's Guardian",
+          description: "Complete 5 daily challenges",
+          icon: "🛡️",
+          requirement_type: "daily_challenges",
+          requirement_count: 5,
+          points: 100
+        },
+        {
+          name: "Plant Whisperer",
+          description: "Maintain a 7-day streak",
+          icon: "🌺",
+          requirement_type: "streak_days",
+          requirement_count: 7,
+          points: 150
+        }
+      ];
+
+      // Insert badges if they don't exist
+      for (const badge of basicBadges) {
+        const { error: insertError } = await supabase
+          .from('badges')
+          .upsert(badge);
+
+        if (insertError) console.error('Error inserting badge:', insertError);
+      }
+
+      // Then get all available badges
       const { data: allBadges, error: badgesError } = await supabase
         .from('badges')
         .select('*');
@@ -74,19 +127,19 @@ export const BadgeShowcase = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-4">
           {badges.map((badge) => (
             <TooltipProvider key={badge.id}>
               <Tooltip>
                 <TooltipTrigger>
                   <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-xl
                       ${badge.is_unlocked 
                         ? 'bg-purple-100 hover:bg-purple-200 transition-colors' 
                         : 'bg-gray-100'}`}
                   >
                     {badge.is_unlocked ? (
-                      <Award className="h-6 w-6 text-purple-500" />
+                      <span>{badge.icon}</span>
                     ) : (
                       <Lock className="h-5 w-5 text-gray-400" />
                     )}
@@ -98,7 +151,7 @@ export const BadgeShowcase = () => {
                     <p className="text-sm">{badge.description}</p>
                     {!badge.is_unlocked && (
                       <p className="text-sm text-gray-500">
-                        Complete {badge.requirement_count} {badge.requirement_type} to unlock
+                        Complete {badge.requirement_count} {badge.requirement_type.replace('_', ' ')} to unlock
                       </p>
                     )}
                   </div>

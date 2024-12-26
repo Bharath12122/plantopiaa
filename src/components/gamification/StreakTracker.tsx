@@ -52,8 +52,8 @@ export const StreakTracker = () => {
 
     // Set up realtime subscription
     const setupSubscription = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) return;
 
       const channel = supabase
         .channel('streak-updates')
@@ -63,7 +63,7 @@ export const StreakTracker = () => {
             event: 'UPDATE',
             schema: 'public',
             table: 'user_achievements',
-            filter: `user_id=eq.${session.user.id}`
+            filter: `user_id=eq.${sessionData.session.user.id}`
           },
           (payload) => {
             const newStreak = payload.new.streak_count;

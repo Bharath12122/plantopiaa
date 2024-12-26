@@ -24,6 +24,45 @@ export const ChallengeSystem = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
+      // First, ensure daily challenges exist
+      const dailyChallenges = [
+        {
+          title: "Plant Explorer",
+          description: "Identify 3 different plants today",
+          points: 50,
+          requirement_count: 3,
+          challenge_type: "daily_scans"
+        },
+        {
+          title: "Knowledge Seeker",
+          description: "Read 2 plant care guides",
+          points: 30,
+          requirement_count: 2,
+          challenge_type: "guide_reads"
+        },
+        {
+          title: "Community Helper",
+          description: "Help identify a plant in the community",
+          points: 40,
+          requirement_count: 1,
+          challenge_type: "community_help"
+        }
+      ];
+
+      // Insert challenges if they don't exist
+      for (const challenge of dailyChallenges) {
+        const { error: insertError } = await supabase
+          .from('challenges')
+          .upsert({
+            ...challenge,
+            start_date: new Date(),
+            end_date: new Date(new Date().setHours(23, 59, 59, 999))
+          });
+
+        if (insertError) console.error('Error inserting challenge:', insertError);
+      }
+
+      // Fetch user's challenge progress
       const { data, error } = await supabase
         .from('challenges')
         .select(`
