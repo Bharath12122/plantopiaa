@@ -12,35 +12,40 @@ export const StreakTracker = () => {
 
   useEffect(() => {
     const fetchStreak = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session) return;
 
-      const { data, error } = await supabase
-        .from('user_achievements')
-        .select('streak_count')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+        const { data, error } = await supabase
+          .from('user_achievements')
+          .select('streak_count')
+          .eq('user_id', sessionData.session.user.id)
+          .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching streak:', error);
-        return;
-      }
-
-      const currentStreak = data?.streak_count || 0;
-      
-      // Check if streak milestone reached
-      if (currentStreak > previousStreak && currentStreak > 0) {
-        if (currentStreak % 5 === 0) { // Milestone every 5 days
-          toast({
-            title: `${currentStreak}-Day Streak! 🎉`,
-            description: "Keep going to earn more rewards!",
-          });
+        if (error) {
+          console.error('Error fetching streak:', error);
+          return;
         }
-      }
 
-      setPreviousStreak(streak);
-      setStreak(currentStreak);
-      setLoading(false);
+        const currentStreak = data?.streak_count || 0;
+        
+        // Check if streak milestone reached
+        if (currentStreak > previousStreak && currentStreak > 0) {
+          if (currentStreak % 5 === 0) { // Milestone every 5 days
+            toast({
+              title: `${currentStreak}-Day Streak! 🎉`,
+              description: "Keep going to earn more rewards!",
+            });
+          }
+        }
+
+        setPreviousStreak(streak);
+        setStreak(currentStreak);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error in fetchStreak:', error);
+        setLoading(false);
+      }
     };
 
     fetchStreak();
