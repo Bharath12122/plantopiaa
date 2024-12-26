@@ -66,11 +66,12 @@ export const BusinessAnalytics = () => {
       });
 
       if (error) {
-        if (error.status === 429 || (error.message && error.message.includes('429'))) {
-          toast.error("We've reached our API limit. Please try again in a few minutes.");
+        // Handle rate limit errors specifically
+        if (error.status === 429) {
+          const errorData = JSON.parse(error.message || '{}');
+          toast.error(errorData.error || "Please wait a moment before trying again.");
           return;
         }
-        console.error('Function invocation error:', error);
         throw error;
       }
 

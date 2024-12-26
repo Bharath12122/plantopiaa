@@ -25,12 +25,42 @@ serve(async (req) => {
       apiKey: Deno.env.get('OPENAI_API_KEY'),
     })
 
+    // Check if user has made too many requests recently
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const { count } = await supabase
+      .from('business_insights')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .gte('created_at', new Date(Date.now() - 60000).toISOString()) // Last minute
+      .single()
+
+    if (count && count > 5) {
+      console.log('Rate limit exceeded for user:', userId)
+      return new Response(
+        JSON.stringify({
+          error: "Rate limit exceeded. Please wait a minute before trying again.",
+          code: "RATE_LIMIT_ERROR"
+        }),
+        { 
+          status: 429,
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+    }
+
     try {
       // Generate business insights using OpenAI
       const prompt = `Generate business insights for ${keyword}. Include growth analysis, business strategy, and performance metrics. Format the response as JSON with these three sections.`
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -52,7 +82,6 @@ serve(async (req) => {
         insights = JSON.parse(responseText)
       } catch (e) {
         console.error('Failed to parse OpenAI response:', e)
-        // Provide a structured fallback if parsing fails
         insights = {
           growthAnalysis: responseText.substring(0, 200),
           businessStrategy: "Strategy analysis unavailable",
@@ -61,11 +90,6 @@ serve(async (req) => {
       }
 
       // Store the insight in the database
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-
       const { error: dbError } = await supabase
         .from('business_insights')
         .insert({
@@ -79,7 +103,6 @@ serve(async (req) => {
         throw new Error('Failed to store insight')
       }
 
-      // Return the response with CORS headers
       return new Response(
         JSON.stringify({
           insight: {
@@ -97,11 +120,10 @@ serve(async (req) => {
     } catch (openAiError: any) {
       console.error('OpenAI API error:', openAiError)
       
-      // Check if it's a rate limit error
       if (openAiError.status === 429 || (openAiError.error && openAiError.error.includes('429'))) {
         return new Response(
           JSON.stringify({ 
-            error: "We've reached our API limit. Please try again in a few minutes.",
+            error: "Service is currently busy. Please try again in a few minutes.",
             code: "RATE_LIMIT_ERROR"
           }),
           { 
@@ -114,7 +136,7 @@ serve(async (req) => {
         )
       }
       
-      throw openAiError // Re-throw other errors
+      throw openAiError
     }
 
   } catch (error) {
