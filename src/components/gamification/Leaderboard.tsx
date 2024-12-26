@@ -24,7 +24,7 @@ export const Leaderboard = () => {
           id,
           total_points,
           user_id,
-          profiles!user_achievements_user_id_fkey (
+          profiles (
             full_name
           )
         `)
@@ -36,7 +36,7 @@ export const Leaderboard = () => {
         return;
       }
 
-      setLeaders(data || []);
+      setLeaders(data as LeaderboardEntry[]);
       setLoading(false);
     };
 
