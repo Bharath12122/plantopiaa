@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface LeaderboardEntry {
   id: string;
   total_points: number | null;
+  user_id: string;
   profiles: {
     full_name: string | null;
   } | null;
@@ -22,7 +23,8 @@ export const Leaderboard = () => {
         .select(`
           id,
           total_points,
-          profiles:user_id (
+          user_id,
+          profiles!user_achievements_user_id_fkey (
             full_name
           )
         `)
@@ -34,9 +36,7 @@ export const Leaderboard = () => {
         return;
       }
 
-      // Ensure the data matches our LeaderboardEntry type
-      const typedData = (data || []) as LeaderboardEntry[];
-      setLeaders(typedData);
+      setLeaders(data || []);
       setLoading(false);
     };
 
