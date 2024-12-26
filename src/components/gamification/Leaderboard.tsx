@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: string;
-  full_name: string | null;
   total_points: number;
+  profiles: {
+    full_name: string | null;
+  };
 }
 
 export const Leaderboard = () => {
@@ -20,7 +22,6 @@ export const Leaderboard = () => {
         .select(`
           id,
           total_points,
-          user_id,
           profiles!inner (
             full_name
           )
@@ -33,11 +34,7 @@ export const Leaderboard = () => {
         return;
       }
 
-      setLeaders(data?.map(entry => ({
-        id: entry.id,
-        full_name: entry.profiles?.full_name || 'Anonymous User',
-        total_points: entry.total_points || 0
-      })) || []);
+      setLeaders(data || []);
       setLoading(false);
     };
 
@@ -63,7 +60,7 @@ export const Leaderboard = () => {
             >
               <div className="flex items-center gap-2">
                 <span className="font-bold text-amber-500">#{index + 1}</span>
-                <span>{leader.full_name}</span>
+                <span>{leader.profiles.full_name || 'Anonymous User'}</span>
               </div>
               <span className="font-semibold">{leader.total_points} pts</span>
             </div>
