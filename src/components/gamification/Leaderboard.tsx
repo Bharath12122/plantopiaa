@@ -18,23 +18,41 @@ export const Leaderboard = () => {
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      const { data, error } = await supabase
+      // First get the user achievements
+      const { data: achievementsData, error: achievementsError } = await supabase
         .from('user_achievements')
         .select(`
           id,
           total_points,
-          user_id,
-          profiles:profiles!user_id(full_name)
+          user_id
         `)
         .order('total_points', { ascending: false })
         .limit(5);
 
-      if (error) {
-        console.error('Error fetching leaderboard:', error);
+      if (achievementsError) {
+        console.error('Error fetching leaderboard:', achievementsError);
         return;
       }
 
-      setLeaders(data as LeaderboardEntry[]);
+      // Then fetch the corresponding profiles
+      const userIds = achievementsData.map(achievement => achievement.user_id);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        return;
+      }
+
+      // Combine the data
+      const leaderboardData = achievementsData.map(achievement => ({
+        ...achievement,
+        profiles: profilesData.find(profile => profile.id === achievement.user_id) || null
+      }));
+
+      setLeaders(leaderboardData);
       setLoading(false);
     };
 
