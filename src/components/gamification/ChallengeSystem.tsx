@@ -25,6 +25,7 @@ export const ChallengeSystem = () => {
       if (!session) return;
 
       // First, ensure daily challenges exist
+      const now = new Date();
       const dailyChallenges = [
         {
           title: "Plant Explorer",
@@ -32,8 +33,9 @@ export const ChallengeSystem = () => {
           points: 50,
           requirement_count: 3,
           challenge_type: "daily_scans",
-          created_at: new Date().toISOString(),
-          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
+          created_at: now.toISOString(),
+          start_date: now.toISOString(),
+          end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
         },
         {
           title: "Knowledge Seeker",
@@ -41,8 +43,9 @@ export const ChallengeSystem = () => {
           points: 30,
           requirement_count: 2,
           challenge_type: "guide_reads",
-          created_at: new Date().toISOString(),
-          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
+          created_at: now.toISOString(),
+          start_date: now.toISOString(),
+          end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
         },
         {
           title: "Community Helper",
@@ -50,8 +53,9 @@ export const ChallengeSystem = () => {
           points: 40,
           requirement_count: 1,
           challenge_type: "community_help",
-          created_at: new Date().toISOString(),
-          end_date: new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
+          created_at: now.toISOString(),
+          start_date: now.toISOString(),
+          end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
         }
       ];
 
