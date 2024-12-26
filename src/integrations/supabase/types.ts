@@ -30,6 +30,39 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          points: number | null
+          requirement_count: number
+          requirement_type: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon: string
+          id?: string
+          name: string
+          points?: number | null
+          requirement_count: number
+          requirement_type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          points?: number | null
+          requirement_count?: number
+          requirement_type?: string
+        }
+        Relationships: []
+      }
       business_insights: {
         Row: {
           content: string
@@ -87,6 +120,42 @@ export type Database = {
           revenue?: number | null
           sales_count?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          challenge_type: string
+          created_at: string
+          description: string
+          end_date: string
+          id: string
+          points: number | null
+          requirement_count: number
+          start_date: string
+          title: string
+        }
+        Insert: {
+          challenge_type: string
+          created_at?: string
+          description: string
+          end_date: string
+          id?: string
+          points?: number | null
+          requirement_count: number
+          start_date: string
+          title: string
+        }
+        Update: {
+          challenge_type?: string
+          created_at?: string
+          description?: string
+          end_date?: string
+          id?: string
+          points?: number | null
+          requirement_count?: number
+          start_date?: string
+          title?: string
         }
         Relationships: []
       }
@@ -256,6 +325,106 @@ export type Database = {
           is_pro?: boolean | null
         }
         Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          created_at: string
+          id: string
+          last_scan_date: string | null
+          streak_count: number | null
+          total_points: number | null
+          total_scans: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_scan_date?: string | null
+          streak_count?: number | null
+          total_points?: number | null
+          total_scans?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_scan_date?: string | null
+          streak_count?: number | null
+          total_points?: number | null
+          total_scans?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed: boolean | null
+          created_at: string
+          id: string
+          progress: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          progress?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          progress?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_searches: {
         Row: {

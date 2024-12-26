@@ -4,10 +4,11 @@ import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
 import { Button } from "@/components/ui/button";
+import { DailyRewards } from "@/components/DailyRewards";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -103,32 +104,9 @@ const Index = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="p-6 bg-white/80 backdrop-blur rounded-lg shadow-md hover:shadow-lg transition-all">
-            <div className="bg-[#E8F5E9] p-4 rounded-full w-16 h-16 mx-auto mb-4">
-              <Camera className="h-8 w-8 text-[#00B388]" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2 text-[#2A3B1D]">Instant Recognition</h3>
-            <p className="text-gray-600">Accurate plant identification in seconds using our advanced AI technology</p>
-          </div>
-          <div className="p-6 bg-white/80 backdrop-blur rounded-lg shadow-md hover:shadow-lg transition-all">
-            <div className="bg-[#E8F5E9] p-4 rounded-full w-16 h-16 mx-auto mb-4">
-              <Sprout className="h-8 w-8 text-[#00B388]" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2 text-[#2A3B1D]">Care Guides</h3>
-            <p className="text-gray-600">Detailed care instructions for every identified plant</p>
-          </div>
-          <div className="p-6 bg-white/80 backdrop-blur rounded-lg shadow-md hover:shadow-lg transition-all">
-            <div className="bg-[#E8F5E9] p-4 rounded-full w-16 h-16 mx-auto mb-4">
-              <Star className="h-8 w-8 text-[#00B388]" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2 text-[#2A3B1D]">Plant Collection</h3>
-            <p className="text-gray-600">Build your personal plant library and track their growth</p>
-          </div>
-        </div>
-
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
+            <DailyRewards />
             <PlantUpload onUploadSuccess={setIdentifiedPlant} />
           </div>
         )}
