@@ -15,6 +15,38 @@ import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const GamificationSection = ({ showGamification }: { showGamification: boolean }) => {
+  if (!showGamification) return null;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
+      <div className="space-y-4">
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <StreakTracker />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <BadgeShowcase />
+        </Suspense>
+      </div>
+      <div className="space-y-4">
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <Leaderboard />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <ChallengeSystem />
+        </Suspense>
+      </div>
+    </div>
+  );
+};
+
+const Index = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
+  const [showUpload, setShowUpload] = useState(false);
+  const [showGamification, setShowGamification] = useState(false);
+
   const subscriptions = [
     {
       title: "Free",
@@ -59,38 +91,6 @@ import { Skeleton } from "@/components/ui/skeleton";
       onSelect: () => navigate("/premium"),
     },
   ];
-
-const GamificationSection = ({ showGamification }: { showGamification: boolean }) => {
-  if (!showGamification) return null;
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
-      <div className="space-y-4">
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <StreakTracker />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <BadgeShowcase />
-        </Suspense>
-      </div>
-      <div className="space-y-4">
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <Leaderboard />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <ChallengeSystem />
-        </Suspense>
-      </div>
-    </div>
-  );
-};
-
-const Index = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
-  const [showUpload, setShowUpload] = useState(false);
-  const [showGamification, setShowGamification] = useState(false);
 
   const handleTryFreeClick = () => {
     setShowUpload(true);
