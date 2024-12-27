@@ -69,6 +69,30 @@ export const BadgeShowcase = () => {
           requirement_type: "streak_days",
           requirement_count: 7,
           points: 150
+        },
+        {
+          name: "Garden Master",
+          description: "Identify 25 different plants",
+          icon: "👑",
+          requirement_type: "plant_scans",
+          requirement_count: 25,
+          points: 200
+        },
+        {
+          name: "Community Hero",
+          description: "Help 10 other users",
+          icon: "⭐",
+          requirement_type: "community_help",
+          requirement_count: 10,
+          points: 250
+        },
+        {
+          name: "Plant Scholar",
+          description: "Read 20 plant care guides",
+          icon: "📚",
+          requirement_type: "guide_reads",
+          requirement_count: 20,
+          points: 300
         }
       ];
 
@@ -84,7 +108,8 @@ export const BadgeShowcase = () => {
       // Then get all available badges
       const { data: allBadges, error: badgesError } = await supabase
         .from('badges')
-        .select('*');
+        .select('*')
+        .limit(8); // Limit to 8 badges
 
       if (badgesError) {
         console.error('Error fetching badges:', badgesError);
@@ -122,21 +147,24 @@ export const BadgeShowcase = () => {
     <Card className="bg-white/80 backdrop-blur mb-4">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Award className="h-5 w-5 text-purple-500" />
+          <Award className="h-5 w-5 text-purple-500 animate-bounce" />
           Your Badges
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-4">
-          {badges.map((badge) => (
+        <div className="flex flex-wrap gap-4 justify-center">
+          {badges.map((badge, index) => (
             <TooltipProvider key={badge.id}>
               <Tooltip>
                 <TooltipTrigger>
                   <div 
                     className={`w-12 h-12 rounded-full flex items-center justify-center text-xl
                       ${badge.is_unlocked 
-                        ? 'bg-purple-100 hover:bg-purple-200 transition-colors' 
+                        ? 'bg-purple-100 hover:bg-purple-200 transition-colors animate-float' 
                         : 'bg-gray-100'}`}
+                    style={{
+                      animationDelay: `${index * 0.1}s`
+                    }}
                   >
                     {badge.is_unlocked ? (
                       <span>{badge.icon}</span>
@@ -159,6 +187,11 @@ export const BadgeShowcase = () => {
               </Tooltip>
             </TooltipProvider>
           ))}
+        </div>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-purple-600 animate-pulse">
+            Complete daily challenges to unlock more badges!
+          </p>
         </div>
       </CardContent>
     </Card>
