@@ -3,7 +3,7 @@ import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
@@ -13,14 +13,8 @@ import { StreakTracker } from "@/components/gamification/StreakTracker";
 import { BadgeShowcase } from "@/components/gamification/BadgeShowcase";
 import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const Index = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
-  const [showUpload, setShowUpload] = useState(false);
-  const [showGamification, setShowGamification] = useState(false);
-  
   const subscriptions = [
     {
       title: "Free",
@@ -65,6 +59,38 @@ const Index = () => {
       onSelect: () => navigate("/premium"),
     },
   ];
+
+const GamificationSection = ({ showGamification }: { showGamification: boolean }) => {
+  if (!showGamification) return null;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
+      <div className="space-y-4">
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <StreakTracker />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <BadgeShowcase />
+        </Suspense>
+      </div>
+      <div className="space-y-4">
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <Leaderboard />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
+          <ChallengeSystem />
+        </Suspense>
+      </div>
+    </div>
+  );
+};
+
+const Index = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
+  const [showUpload, setShowUpload] = useState(false);
+  const [showGamification, setShowGamification] = useState(false);
 
   const handleTryFreeClick = () => {
     setShowUpload(true);
@@ -113,18 +139,7 @@ const Index = () => {
 
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
-            {showGamification && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
-                <div className="space-y-4">
-                  <StreakTracker />
-                  <BadgeShowcase />
-                </div>
-                <div className="space-y-4">
-                  <Leaderboard />
-                  <ChallengeSystem />
-                </div>
-              </div>
-            )}
+            <GamificationSection showGamification={showGamification} />
             <DailyRewards />
             <PlantUpload onUploadSuccess={handleUploadSuccess} />
           </div>
