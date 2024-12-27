@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./ui/use-toast";
 
 const languages = [
   { code: "en", name: "English" },
@@ -16,20 +17,30 @@ const languages = [
 
 export const LanguageSelector = () => {
   const [currentLanguage, setCurrentLanguage] = useState("en");
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUserLanguage = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('preferred_language')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (profile?.preferred_language) {
-          setCurrentLanguage(profile.preferred_language);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('preferred_language')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          
+          if (error) {
+            console.error('Error fetching language preference:', error);
+            return;
+          }
+
+          if (profile?.preferred_language) {
+            setCurrentLanguage(profile.preferred_language);
+          }
         }
+      } catch (error) {
+        console.error('Error in fetchUserLanguage:', error);
       }
     };
 
@@ -37,16 +48,37 @@ export const LanguageSelector = () => {
   }, []);
 
   const handleLanguageChange = async (langCode: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ preferred_language: langCode })
-        .eq('id', session.user.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ preferred_language: langCode })
+          .eq('id', session.user.id);
 
-      if (!error) {
+        if (error) {
+          console.error('Error updating language preference:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update language preference. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         setCurrentLanguage(langCode);
+        toast({
+          title: "Success",
+          description: "Language preference updated successfully.",
+        });
       }
+    } catch (error) {
+      console.error('Error in handleLanguageChange:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update language preference. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
