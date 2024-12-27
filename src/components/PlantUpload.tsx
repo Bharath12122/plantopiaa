@@ -17,6 +17,33 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const FREE_SCANS_LIMIT = 3;
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  const translatePlantData = async (plantData: any, targetLanguage: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('translate-plant-data', {
+        body: { 
+          plantData,
+          targetLanguage
+        }
+      });
+
+      if (error) throw error;
+      return data.translatedData;
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast({
+        title: "Translation failed",
+        description: "Showing results in English",
+        variant: "destructive",
+      });
+      return plantData;
+    }
+  };
+
+  const handleLanguageChange = async (language: string) => {
+    setCurrentLanguage(language);
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -38,15 +65,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         throw new Error("You must be logged in to upload files");
       }
 
-      // Get user's language preference
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('preferred_language')
-        .eq('id', session.user.id)
-        .single();
-
-      const language = profile?.preferred_language || 'en';
-
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
@@ -61,7 +79,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           const { data, error } = await supabase.functions.invoke('identify-plant', {
             body: { 
               image: base64Image,
-              language: language // Pass language preference to the function
+              language: currentLanguage
             }
           });
 
@@ -102,10 +120,12 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             ],
             image: publicUrl,
             uses: plantInfo.plant_details?.edible_parts || ["Decorative"],
-            language: language
+            language: currentLanguage
           };
 
-          onUploadSuccess(plantData);
+          // Translate the plant data if needed
+          const translatedData = await translatePlantData(plantData, currentLanguage);
+          onUploadSuccess(translatedData);
 
           toast({
             title: "Plant identified successfully!",
@@ -138,7 +158,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Get Started</h2>
-        <LanguageSelector />
+        <LanguageSelector onLanguageChange={handleLanguageChange} />
       </div>
       <p className="text-gray-600 mb-4">Upload a photo of your plant for instant identification</p>
       

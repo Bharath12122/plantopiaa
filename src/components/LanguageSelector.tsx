@@ -19,7 +19,11 @@ const languages = [
   { code: "ml", name: "മലയാളം" }, // Malayalam
 ];
 
-export const LanguageSelector = () => {
+interface LanguageSelectorProps {
+  onLanguageChange: (language: string) => void;
+}
+
+export const LanguageSelector = ({ onLanguageChange }: LanguageSelectorProps) => {
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const { toast } = useToast();
 
@@ -41,6 +45,7 @@ export const LanguageSelector = () => {
 
           if (profile?.preferred_language) {
             setCurrentLanguage(profile.preferred_language);
+            onLanguageChange(profile.preferred_language);
           }
         }
       } catch (error) {
@@ -49,7 +54,7 @@ export const LanguageSelector = () => {
     };
 
     fetchUserLanguage();
-  }, []);
+  }, [onLanguageChange]);
 
   const handleLanguageChange = async (langCode: string) => {
     try {
@@ -71,6 +76,7 @@ export const LanguageSelector = () => {
         }
 
         setCurrentLanguage(langCode);
+        onLanguageChange(langCode);
         toast({
           title: "Success",
           description: "Language preference updated successfully.",
