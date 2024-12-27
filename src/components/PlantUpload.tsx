@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
+import { LanguageSelector } from "./LanguageSelector";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -32,13 +33,20 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
     setIsUploading(true);
     try {
-      // Check if user is authenticated
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         throw new Error("You must be logged in to upload files");
       }
 
-      // Convert image to base64
+      // Get user's language preference
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('preferred_language')
+        .eq('id', session.user.id)
+        .single();
+
+      const language = profile?.preferred_language || 'en';
+
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
@@ -50,14 +58,14 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           console.log('Calling identify-plant function...');
           
-          // Call Plant.ID API through Edge Function
           const { data, error } = await supabase.functions.invoke('identify-plant', {
-            body: { image: base64Image }
+            body: { 
+              image: base64Image,
+              language: language // Pass language preference to the function
+            }
           });
 
-          if (error) {
-            throw error;
-          }
+          if (error) throw error;
 
           if (!data || !data.suggestions || data.suggestions.length === 0) {
             throw new Error("No plant matches found");
@@ -67,7 +75,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           const plantInfo = data.suggestions[0];
           
-          // Upload original image to Supabase storage
           const fileExt = file.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
@@ -77,12 +84,10 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           if (uploadError) throw uploadError;
 
-          // Get the public URL for the uploaded image
           const { data: { publicUrl } } = supabase.storage
             .from('plant-images')
             .getPublicUrl(fileName);
 
-          // Track the interaction
           await trackInteraction('plant_scan');
 
           const plantData = {
@@ -97,6 +102,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             ],
             image: publicUrl,
             uses: plantInfo.plant_details?.edible_parts || ["Decorative"],
+            language: language
           };
 
           onUploadSuccess(plantData);
@@ -129,8 +135,11 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg animate-fade-in">
-      <h2 className="text-2xl font-semibold mb-4">Get Started</h2>
+    <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Get Started</h2>
+        <LanguageSelector />
+      </div>
       <p className="text-gray-600 mb-4">Upload a photo of your plant for instant identification</p>
       
       <div className="mb-4">

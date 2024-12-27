@@ -17,13 +17,11 @@ export const StreakTracker = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let mounted = true;
     const fetchUserAchievement = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          setLoading(false);
-          return;
-        }
+        if (!session || !mounted) return;
 
         const { data: existingAchievement, error: fetchError } = await supabase
           .from('user_achievements')
@@ -33,15 +31,17 @@ export const StreakTracker = () => {
 
         if (fetchError) {
           console.error('Error fetching user achievement:', fetchError);
-          toast({
-            title: "Error",
-            description: "Failed to load streak data. Please try again.",
-            variant: "destructive",
-          });
+          if (mounted) {
+            toast({
+              title: "Error",
+              description: "Failed to load streak data",
+              variant: "destructive",
+            });
+          }
           return;
         }
 
-        if (!existingAchievement) {
+        if (!existingAchievement && mounted) {
           const { data: newAchievement, error: insertError } = await supabase
             .from('user_achievements')
             .insert({
@@ -53,20 +53,18 @@ export const StreakTracker = () => {
             .select()
             .single();
 
-          if (insertError) {
-            console.error('Error creating user achievement:', insertError);
-            return;
+          if (!insertError && mounted) {
+            setUserAchievement(newAchievement);
           }
-
-          setUserAchievement(newAchievement);
-        } else {
+        } else if (mounted) {
           setUserAchievement(existingAchievement);
         }
-
-        setLoading(false);
       } catch (error) {
         console.error('Error in fetchUserAchievement:', error);
-        setLoading(false);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -82,20 +80,23 @@ export const StreakTracker = () => {
           table: 'user_achievements'
         },
         (payload) => {
-          const updatedAchievement = payload.new as UserAchievement;
-          setUserAchievement(updatedAchievement);
+          if (mounted) {
+            const updatedAchievement = payload.new as UserAchievement;
+            setUserAchievement(updatedAchievement);
+          }
         }
       )
       .subscribe();
 
     return () => {
+      mounted = false;
       supabase.removeChannel(channel);
     };
   }, [toast]);
 
   if (loading) {
     return (
-      <Card className="bg-white/80 backdrop-blur mb-4">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Flame className="h-5 w-5 text-orange-500" />
@@ -115,7 +116,7 @@ export const StreakTracker = () => {
   const daysUntilBonus = 7 - ((userAchievement?.streak_count || 0) % 7);
 
   return (
-    <Card className="bg-white/80 backdrop-blur mb-4">
+    <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Flame className="h-5 w-5 text-orange-500" />
