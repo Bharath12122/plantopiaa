@@ -18,21 +18,28 @@ export const StreakTracker = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // First, ensure user has an achievement record
-      const { error: insertError } = await supabase
+      // First, try to get existing achievement
+      const { data: existingAchievement } = await supabase
         .from('user_achievements')
-        .upsert({
-          user_id: session.user.id,
-          streak_count: 0,
-          total_points: 0,
-          total_scans: 0
-        }, {
-          onConflict: 'user_id'
-        });
+        .select('id')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
-      if (insertError) {
-        console.error('Error ensuring user achievement:', insertError);
-        return;
+      // If no achievement exists, create one
+      if (!existingAchievement) {
+        const { error: insertError } = await supabase
+          .from('user_achievements')
+          .insert({
+            user_id: session.user.id,
+            streak_count: 0,
+            total_points: 0,
+            total_scans: 0
+          });
+
+        if (insertError) {
+          console.error('Error creating user achievement:', insertError);
+          return;
+        }
       }
 
       // Then fetch the user achievement data
