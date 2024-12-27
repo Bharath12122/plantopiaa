@@ -13,6 +13,10 @@ import { useToast } from "./ui/use-toast";
 const languages = [
   { code: "en", name: "English" },
   { code: "kn", name: "ಕನ್ನಡ" }, // Kannada
+  { code: "hi", name: "हिंदी" }, // Hindi
+  { code: "te", name: "తెలుగు" }, // Telugu
+  { code: "ta", name: "தமிழ்" }, // Tamil
+  { code: "ml", name: "മലയാളം" }, // Malayalam
 ];
 
 export const LanguageSelector = () => {
@@ -90,7 +94,7 @@ export const LanguageSelector = () => {
           {languages.find(lang => lang.code === currentLanguage)?.name}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
