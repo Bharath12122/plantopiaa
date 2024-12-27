@@ -134,23 +134,27 @@ export const ChallengeSystem = () => {
   if (loading) return null;
 
   return (
-    <Card className="bg-white/80 backdrop-blur mb-4">
+    <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Star className="h-5 w-5 text-green-500" />
+          <Star className="h-5 w-5 text-green-500 animate-spin-slow" />
           Daily Challenges
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {challenges.map((challenge) => (
-            <div key={challenge.id} className="space-y-2">
+        <div className="space-y-6">
+          {challenges.map((challenge, index) => (
+            <div 
+              key={challenge.id} 
+              className="space-y-3 animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <div className="flex justify-between items-center">
                 <div>
-                  <h4 className="font-semibold">{challenge.title}</h4>
+                  <h4 className="font-semibold text-lg">{challenge.title}</h4>
                   <p className="text-sm text-gray-600">{challenge.description}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full animate-pulse">
                   <Gift className="h-4 w-4 text-green-500" />
                   <span className="text-green-500 font-semibold">
                     {challenge.points} pts
@@ -159,7 +163,7 @@ export const ChallengeSystem = () => {
               </div>
               <Progress
                 value={(challenge.progress / challenge.requirement_count) * 100}
-                className="h-2"
+                className="h-2 animate-glow"
               />
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Progress: {challenge.progress} / {challenge.requirement_count}</span>
@@ -167,6 +171,11 @@ export const ChallengeSystem = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-green-600 animate-bounce font-medium">
+            New challenges refresh daily! Keep coming back for more rewards!
+          </p>
         </div>
       </CardContent>
     </Card>

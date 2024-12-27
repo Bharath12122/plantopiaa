@@ -144,7 +144,7 @@ export const BadgeShowcase = () => {
   if (loading) return null;
 
   return (
-    <Card className="bg-white/80 backdrop-blur mb-4">
+    <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Award className="h-5 w-5 text-purple-500 animate-bounce" />
@@ -152,15 +152,15 @@ export const BadgeShowcase = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 place-items-center">
           {badges.map((badge, index) => (
             <TooltipProvider key={badge.id}>
               <Tooltip>
                 <TooltipTrigger>
                   <div 
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-xl
+                    className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl
                       ${badge.is_unlocked 
-                        ? 'bg-purple-100 hover:bg-purple-200 transition-colors animate-float' 
+                        ? 'bg-purple-100 hover:bg-purple-200 transition-colors animate-float shadow-lg' 
                         : 'bg-gray-100'}`}
                     style={{
                       animationDelay: `${index * 0.1}s`
@@ -169,7 +169,7 @@ export const BadgeShowcase = () => {
                     {badge.is_unlocked ? (
                       <span>{badge.icon}</span>
                     ) : (
-                      <Lock className="h-5 w-5 text-gray-400" />
+                      <Lock className="h-6 w-6 text-gray-400" />
                     )}
                   </div>
                 </TooltipTrigger>
@@ -188,8 +188,8 @@ export const BadgeShowcase = () => {
             </TooltipProvider>
           ))}
         </div>
-        <div className="mt-6 text-center">
-          <p className="text-sm text-purple-600 animate-pulse">
+        <div className="mt-8 text-center">
+          <p className="text-sm text-purple-600 animate-pulse font-medium">
             Complete daily challenges to unlock more badges!
           </p>
         </div>
