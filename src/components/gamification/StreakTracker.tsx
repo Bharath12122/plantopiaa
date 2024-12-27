@@ -25,7 +25,6 @@ export const StreakTracker = () => {
           return;
         }
 
-        // First check if user has an achievement record
         const { data: existingAchievement, error: fetchError } = await supabase
           .from('user_achievements')
           .select('streak_count, total_points, last_scan_date')
@@ -43,7 +42,6 @@ export const StreakTracker = () => {
         }
 
         if (!existingAchievement) {
-          // Create new achievement record if none exists
           const { data: newAchievement, error: insertError } = await supabase
             .from('user_achievements')
             .insert({
@@ -74,7 +72,6 @@ export const StreakTracker = () => {
 
     fetchUserAchievement();
 
-    // Subscribe to realtime updates
     const channel = supabase
       .channel('streak-updates')
       .on(
@@ -98,7 +95,7 @@ export const StreakTracker = () => {
 
   if (loading) {
     return (
-      <Card className="bg-white/80 backdrop-blur mb-4 animate-pulse">
+      <Card className="bg-white/80 backdrop-blur mb-4">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Flame className="h-5 w-5 text-orange-500" />
@@ -118,29 +115,29 @@ export const StreakTracker = () => {
   const daysUntilBonus = 7 - ((userAchievement?.streak_count || 0) % 7);
 
   return (
-    <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
+    <Card className="bg-white/80 backdrop-blur mb-4">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Flame className="h-5 w-5 text-orange-500 animate-bounce" />
+          <Flame className="h-5 w-5 text-orange-500" />
           Daily Streak
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
-            <span className="text-4xl font-bold text-orange-500 animate-float">
+            <span className="text-4xl font-bold text-orange-500">
               {userAchievement?.streak_count || 0}
             </span>
             <span className="text-gray-600">days</span>
           </div>
           <Progress 
             value={streakProgress}
-            className="h-2 animate-glow" 
+            className="h-2" 
           />
           <p className="text-sm text-gray-600">
             {daysUntilBonus} days until next streak bonus!
           </p>
-          <div className="mt-4 bg-orange-50 p-3 rounded-lg animate-pulse">
+          <div className="mt-4 bg-orange-50 p-3 rounded-lg">
             <p className="text-sm text-orange-600 font-medium">
               Total Points: {userAchievement?.total_points || 0}
             </p>
