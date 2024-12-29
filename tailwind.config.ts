@@ -40,15 +40,17 @@ export default {
           to: { height: '0' }
         },
         "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-10px) rotate(5deg)" },
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(155, 135, 245, 0.3)",
+            boxShadow: "0 0 20px rgba(162, 217, 110, 0.3)",
+            borderColor: "rgba(162, 217, 110, 0.5)",
           },
           "50%": {
-            boxShadow: "0 0 30px rgba(155, 135, 245, 0.6)",
+            boxShadow: "0 0 30px rgba(162, 217, 110, 0.6)",
+            borderColor: "rgba(162, 217, 110, 0.8)",
           },
         },
         "processing": {
@@ -57,7 +59,7 @@ export default {
         },
         "scan": {
           "0%": { transform: "translateY(0)" },
-          "100%": { transform: "translateY(100vh)" }
+          "100%": { transform: "translateY(100%)" }
         }
       },
       animation: {

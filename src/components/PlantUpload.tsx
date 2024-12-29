@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { Upload, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
 import { LanguageSelector } from "./LanguageSelector";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ScannerOverlay } from "./scanner/ScannerOverlay";
+import { FloraLensScanner } from "./upload/FloraLensScanner";
+import { DesktopUpload } from "./upload/DesktopUpload";
+import { UploadProgress } from "./upload/UploadProgress";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -176,17 +175,15 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         <h2 className="text-2xl font-semibold">Get Started</h2>
         <LanguageSelector onLanguageChange={handleLanguageChange} />
       </div>
-      <p className="text-gray-600 mb-4">Upload a photo of your plant for instant identification</p>
       
-      <div className="mb-4">
-        <Progress 
-          value={(interactionCount / FREE_SCANS_LIMIT) * 100} 
-          className="h-2"
-        />
-        <p className="text-sm text-gray-500 mt-2">
-          {FREE_SCANS_LIMIT - interactionCount} free scans remaining
-        </p>
-      </div>
+      <p className="text-gray-600 mb-4">
+        Upload a photo of your plant for instant identification
+      </p>
+      
+      <UploadProgress 
+        current={interactionCount} 
+        max={FREE_SCANS_LIMIT} 
+      />
 
       <div className="relative">
         <Input
@@ -198,22 +195,17 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           id="plant-upload"
           disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         />
-        <Button
-          onClick={handleUploadClick}
-          className="w-full bg-green-500 hover:bg-green-600"
-          disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
-        >
-          {isUploading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Upload className="mr-2 h-4 w-4" />
-          )}
-          {isUploading ? "Processing..." : "Upload Plant Image"}
-        </Button>
+        
+        <DesktopUpload 
+          isUploading={isUploading}
+          onUploadClick={handleUploadClick}
+          remainingScans={FREE_SCANS_LIMIT - interactionCount}
+          maxScans={FREE_SCANS_LIMIT}
+        />
       </div>
 
       {showScanner && (
-        <ScannerOverlay
+        <FloraLensScanner
           onClose={() => setShowScanner(false)}
           onCapture={handleCapture}
         />
