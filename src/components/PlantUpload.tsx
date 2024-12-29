@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
 import { LanguageSelector } from "./LanguageSelector";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ScannerOverlay } from "./scanner/ScannerOverlay";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -15,9 +17,11 @@ interface PlantUploadProps {
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const FREE_SCANS_LIMIT = 3;
   const [currentLanguage, setCurrentLanguage] = useState("en");
+  const isMobile = useIsMobile();
 
   const translatePlantData = async (plantData: any, targetLanguage: string) => {
     try {
@@ -45,8 +49,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     setCurrentLanguage(language);
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileUpload = async (file: File) => {
     if (!file) return;
 
     if (interactionCount >= FREE_SCANS_LIMIT) {
@@ -151,7 +154,20 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       });
     } finally {
       setIsUploading(false);
+      setShowScanner(false);
     }
+  };
+
+  const handleUploadClick = () => {
+    if (isMobile) {
+      setShowScanner(true);
+    } else {
+      document.getElementById('plant-upload')?.click();
+    }
+  };
+
+  const handleCapture = () => {
+    document.getElementById('plant-upload')?.click();
   };
 
   return (
@@ -176,26 +192,32 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         <Input
           type="file"
           accept="image/*"
-          onChange={handleFileUpload}
+          capture={isMobile ? "environment" : undefined}
+          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
           className="hidden"
           id="plant-upload"
           disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         />
         <Button
-          asChild
+          onClick={handleUploadClick}
           className="w-full bg-green-500 hover:bg-green-600"
           disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         >
-          <label htmlFor="plant-upload" className="cursor-pointer flex items-center justify-center">
-            {isUploading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Upload className="mr-2 h-4 w-4" />
-            )}
-            {isUploading ? "Processing..." : "Upload Plant Image"}
-          </label>
+          {isUploading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="mr-2 h-4 w-4" />
+          )}
+          {isUploading ? "Processing..." : "Upload Plant Image"}
         </Button>
       </div>
+
+      {showScanner && (
+        <ScannerOverlay
+          onClose={() => setShowScanner(false)}
+          onCapture={handleCapture}
+        />
+      )}
     </div>
   );
 };

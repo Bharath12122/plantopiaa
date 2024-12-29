@@ -53,7 +53,11 @@ export default {
         },
         "processing": {
           "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" }
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "scan": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(100vh)" }
         }
       },
       animation: {
@@ -61,7 +65,8 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         "float": "float 3s ease-in-out infinite",
         "glow": "glow 3s ease-in-out infinite",
-        "processing": "processing 1.5s linear infinite"
+        "processing": "processing 1.5s linear infinite",
+        "scan": "scan 2s linear infinite"
       },
     },
   },
