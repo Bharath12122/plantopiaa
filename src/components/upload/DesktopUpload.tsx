@@ -24,12 +24,14 @@ export const DesktopUpload = ({
       <div className="text-center">
         {isUploading ? (
           <div className="flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-16 h-16 text-[#a2d96e] animate-spin" />
-            <p className="text-gray-600">Processing your image...</p>
+            <div className="relative">
+              <Loader2 className="w-16 h-16 text-[#a2d96e] animate-spin" />
+              <Leaf className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-[#a2d96e]/30 animate-pulse" />
+            </div>
+            <p className="text-gray-600">Analyzing your plant in high resolution...</p>
           </div>
         ) : (
           <>
-            {/* Floating Leaves Animation */}
             {[...Array(3)].map((_, i) => (
               <Leaf
                 key={i}
@@ -47,7 +49,7 @@ export const DesktopUpload = ({
             <Upload className="w-16 h-16 text-[#a2d96e] mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Upload Plant Image</h2>
             <p className="text-gray-600 mb-6">
-              Drag and drop your image here or click to browse
+              For best results, ensure your image is clear and well-lit
             </p>
             <button
               onClick={onUploadClick}

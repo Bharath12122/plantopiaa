@@ -67,6 +67,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         throw new Error("You must be logged in to upload files");
       }
 
+      // Use FileReader to get full resolution image
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
@@ -76,12 +77,13 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             throw new Error("Failed to process image");
           }
 
-          console.log('Calling identify-plant function...');
+          console.log('Calling identify-plant function with full resolution image...');
           
           const { data, error } = await supabase.functions.invoke('identify-plant', {
             body: { 
               image: base64Image,
-              language: currentLanguage
+              language: currentLanguage,
+              quality: 'high' // Request high-quality analysis
             }
           });
 
@@ -98,6 +100,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           const fileExt = file.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
+          // Upload full resolution image
           const { error: uploadError, data: uploadData } = await supabase.storage
             .from('plant-images')
             .upload(fileName, file);
@@ -125,24 +128,24 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             language: currentLanguage
           };
 
-          // Translate the plant data if needed
           const translatedData = await translatePlantData(plantData, currentLanguage);
           onUploadSuccess(translatedData);
 
           toast({
             title: "Plant identified successfully!",
-            description: "Scroll down to see the results.",
+            description: "Scroll down to see the detailed results.",
           });
         } catch (error: any) {
           console.error("Processing error:", error);
           toast({
             title: "Failed to identify plant",
-            description: error.message || "Please try again later.",
+            description: error.message || "Please try again with a clearer image.",
             variant: "destructive",
           });
         }
       };
 
+      // Read the full resolution image
       reader.readAsDataURL(file);
     } catch (error: any) {
       console.error("Upload error:", error);
@@ -177,7 +180,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       </div>
       
       <p className="text-gray-600 mb-4">
-        Upload a photo of your plant for instant identification
+        Upload a clear photo of your plant for detailed identification
       </p>
       
       <UploadProgress 
