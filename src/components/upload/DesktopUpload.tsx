@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Loader2, Leaf } from 'lucide-react';
+import { Upload, Leaf } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface DesktopUploadProps {
@@ -17,14 +17,18 @@ export const DesktopUpload = ({
 }: DesktopUploadProps) => {
   return (
     <div className={cn(
-      "relative w-full p-8 rounded-xl border-2 border-dashed",
-      "border-[#a2d96e]/50 hover:border-[#a2d96e]",
-      "bg-[#F2FCE2]/10 backdrop-blur-sm transition-colors"
+      "relative w-full p-8 rounded-xl",
+      "border-2 border-dashed border-[#a2d96e]/50 hover:border-[#a2d96e]",
+      "bg-gradient-to-b from-[#F2FCE2]/10 to-transparent backdrop-blur-sm",
+      "transition-all duration-300 transform hover:scale-[1.02]"
     )}>
       <div className="text-center">
         {isUploading ? (
           <div className="flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-16 h-16 text-[#a2d96e] animate-spin" />
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full border-4 border-[#a2d96e] border-t-transparent animate-processing" />
+              <Leaf className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-[#a2d96e]/30" />
+            </div>
             <p className="text-gray-600">Processing your image...</p>
           </div>
         ) : (
@@ -54,6 +58,7 @@ export const DesktopUpload = ({
               className={cn(
                 "bg-[#a2d96e] text-white px-6 py-3 rounded-lg",
                 "font-semibold hover:bg-[#8bc952] transition-all",
+                "shadow-lg hover:shadow-xl",
                 "inline-flex items-center gap-2"
               )}
             >
