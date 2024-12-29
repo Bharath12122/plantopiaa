@@ -15,6 +15,13 @@ export const DesktopUpload = ({
   remainingScans,
   maxScans 
 }: DesktopUploadProps) => {
+  const handleClick = () => {
+    const fileInput = document.getElementById('plant-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
   return (
     <div className={cn(
       "relative w-full p-8 rounded-xl",
@@ -54,7 +61,7 @@ export const DesktopUpload = ({
               Drag and drop your image here or click to browse
             </p>
             <button
-              onClick={onUploadClick}
+              onClick={handleClick}
               className={cn(
                 "bg-[#a2d96e] text-white px-6 py-3 rounded-lg",
                 "font-semibold hover:bg-[#8bc952] transition-all",
