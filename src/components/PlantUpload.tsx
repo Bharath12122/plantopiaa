@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
-import { LanguageSelector } from "./LanguageSelector";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { FloraLensScanner } from "./upload/FloraLensScanner";
+import { UploadHeader } from "./upload/UploadHeader";
+import { FileInput } from "./upload/FileInput";
 import { DesktopUpload } from "./upload/DesktopUpload";
 import { UploadProgress } from "./upload/UploadProgress";
 
@@ -16,11 +14,9 @@ interface PlantUploadProps {
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const FREE_SCANS_LIMIT = 3;
   const [currentLanguage, setCurrentLanguage] = useState("en");
-  const isMobile = useIsMobile();
 
   const translatePlantData = async (plantData: any, targetLanguage: string) => {
     try {
@@ -152,28 +148,16 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       });
     } finally {
       setIsUploading(false);
-      setShowScanner(false);
     }
   };
 
   const handleUploadClick = () => {
-    if (isMobile) {
-      setShowScanner(true);
-    } else {
-      document.getElementById('plant-upload')?.click();
-    }
-  };
-
-  const handleCapture = () => {
     document.getElementById('plant-upload')?.click();
   };
 
   return (
     <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Get Started</h2>
-        <LanguageSelector onLanguageChange={handleLanguageChange} />
-      </div>
+      <UploadHeader onLanguageChange={handleLanguageChange} />
       
       <p className="text-gray-600 mb-4">
         Upload a clear photo of your plant for detailed identification
@@ -185,13 +169,8 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       />
 
       <div className="relative">
-        <Input
-          type="file"
-          accept="image/*"
-          capture={isMobile ? "environment" : undefined}
-          onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-          className="hidden"
-          id="plant-upload"
+        <FileInput 
+          onFileSelect={handleFileUpload}
           disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
         />
         
@@ -202,13 +181,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           maxScans={FREE_SCANS_LIMIT}
         />
       </div>
-
-      {showScanner && (
-        <FloraLensScanner
-          onClose={() => setShowScanner(false)}
-          onCapture={handleCapture}
-        />
-      )}
     </div>
   );
 };
