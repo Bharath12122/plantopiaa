@@ -67,7 +67,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         throw new Error("You must be logged in to upload files");
       }
 
-      // Use FileReader to get full resolution image
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
@@ -77,13 +76,12 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             throw new Error("Failed to process image");
           }
 
-          console.log('Calling identify-plant function with full resolution image...');
+          console.log('Calling identify-plant function...');
           
           const { data, error } = await supabase.functions.invoke('identify-plant', {
             body: { 
               image: base64Image,
-              language: currentLanguage,
-              quality: 'high' // Request high-quality analysis
+              language: currentLanguage
             }
           });
 
@@ -100,7 +98,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           const fileExt = file.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-          // Upload full resolution image
           const { error: uploadError, data: uploadData } = await supabase.storage
             .from('plant-images')
             .upload(fileName, file);
@@ -145,7 +142,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         }
       };
 
-      // Read the full resolution image
       reader.readAsDataURL(file);
     } catch (error: any) {
       console.error("Upload error:", error);
