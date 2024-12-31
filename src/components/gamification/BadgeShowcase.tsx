@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, Lock } from "lucide-react";
+import { Sprout, Crown, Leaf, Flower, Heart, Sparkles, Globe, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 interface Badge {
   id: string;
@@ -16,7 +17,9 @@ interface Badge {
   icon: string;
   requirement_type: string;
   requirement_count: number;
+  points: number;
   is_unlocked?: boolean;
+  current_progress?: number;
 }
 
 export const BadgeShowcase = () => {
@@ -31,68 +34,68 @@ export const BadgeShowcase = () => {
       // First, ensure we have our basic badges
       const basicBadges = [
         {
-          name: "Plant Pioneer",
-          description: "Identify your first plant",
+          name: "Sprout Starter",
+          description: "Complete your first plant scan",
           icon: "🌱",
           requirement_type: "plant_scans",
           requirement_count: 1,
           points: 10
         },
         {
-          name: "Green Thumb",
-          description: "Maintain a 3-day streak",
+          name: "Garden Guru",
+          description: "Identify 50 different plants",
+          icon: "👑",
+          requirement_type: "plant_scans",
+          requirement_count: 50,
+          points: 100
+        },
+        {
+          name: "Disease Detective",
+          description: "Identify 5 plant diseases",
+          icon: "🔍",
+          requirement_type: "disease_scans",
+          requirement_count: 5,
+          points: 50
+        },
+        {
+          name: "Herbal Healer",
+          description: "Explore 10 medicinal plants",
           icon: "🌿",
-          requirement_type: "streak_days",
-          requirement_count: 3,
+          requirement_type: "medicinal_scans",
+          requirement_count: 10,
+          points: 75
+        },
+        {
+          name: "Companion Planter",
+          description: "Use companion planting guides",
+          icon: "💚",
+          requirement_type: "guide_reads",
+          requirement_count: 5,
           points: 30
         },
         {
-          name: "Botanical Expert",
-          description: "Identify 10 different plants",
-          icon: "🎓",
-          requirement_type: "plant_scans",
+          name: "Exotic Explorer",
+          description: "Identify rare or unique plants",
+          icon: "✨",
+          requirement_type: "rare_scans",
+          requirement_count: 3,
+          points: 150
+        },
+        {
+          name: "Sustainability Hero",
+          description: "Engage with eco-friendly tips",
+          icon: "🌍",
+          requirement_type: "eco_tips",
           requirement_count: 10,
           points: 50
         },
         {
-          name: "Nature's Guardian",
-          description: "Complete 5 daily challenges",
-          icon: "🛡️",
-          requirement_type: "daily_challenges",
-          requirement_count: 5,
-          points: 100
-        },
-        {
-          name: "Plant Whisperer",
-          description: "Maintain a 7-day streak",
-          icon: "🌺",
+          name: "Blossom Booster",
+          description: "Use the app daily for 30 days",
+          icon: "🌸",
           requirement_type: "streak_days",
-          requirement_count: 7,
-          points: 150
-        },
-        {
-          name: "Garden Master",
-          description: "Identify 25 different plants",
-          icon: "👑",
-          requirement_type: "plant_scans",
-          requirement_count: 25,
+          requirement_count: 30,
           points: 200
-        },
-        {
-          name: "Community Hero",
-          description: "Help 10 other users",
-          icon: "⭐",
-          requirement_type: "community_help",
-          requirement_count: 10,
-          points: 250
-        },
-        {
-          name: "Plant Scholar",
-          description: "Read 20 plant care guides",
-          icon: "📚",
-          requirement_type: "guide_reads",
-          requirement_count: 20,
-          points: 300
         }
       ];
 
@@ -109,17 +112,17 @@ export const BadgeShowcase = () => {
       const { data: allBadges, error: badgesError } = await supabase
         .from('badges')
         .select('*')
-        .limit(8); // Limit to 8 badges
+        .limit(8);
 
       if (badgesError) {
         console.error('Error fetching badges:', badgesError);
         return;
       }
 
-      // Then get user's unlocked badges
+      // Then get user's unlocked badges and progress
       const { data: userBadges, error: userBadgesError } = await supabase
         .from('user_badges')
-        .select('badge_id')
+        .select('badge_id, progress')
         .eq('user_id', session.user.id);
 
       if (userBadgesError) {
@@ -127,12 +130,15 @@ export const BadgeShowcase = () => {
         return;
       }
 
-      // Combine the data to show both locked and unlocked badges
-      const unlockedBadgeIds = userBadges?.map(ub => ub.badge_id) || [];
-      const combinedBadges = allBadges?.map(badge => ({
-        ...badge,
-        is_unlocked: unlockedBadgeIds.includes(badge.id)
-      })) || [];
+      // Combine the data to show both locked and unlocked badges with progress
+      const combinedBadges = allBadges?.map(badge => {
+        const userBadge = userBadges?.find(ub => ub.badge_id === badge.id);
+        return {
+          ...badge,
+          is_unlocked: !!userBadge,
+          current_progress: userBadge?.progress || 0
+        };
+      }) || [];
 
       setBadges(combinedBadges);
       setLoading(false);
@@ -141,35 +147,66 @@ export const BadgeShowcase = () => {
     fetchBadges();
   }, []);
 
+  const getIconComponent = (badgeName: string) => {
+    switch (badgeName) {
+      case "Sprout Starter":
+        return <Sprout className="h-6 w-6" />;
+      case "Garden Guru":
+        return <Crown className="h-6 w-6" />;
+      case "Disease Detective":
+        return <Leaf className="h-6 w-6" />;
+      case "Herbal Healer":
+        return <Leaf className="h-6 w-6" />;
+      case "Companion Planter":
+        return <Heart className="h-6 w-6" />;
+      case "Exotic Explorer":
+        return <Sparkles className="h-6 w-6" />;
+      case "Sustainability Hero":
+        return <Globe className="h-6 w-6" />;
+      case "Blossom Booster":
+        return <Timer className="h-6 w-6" />;
+      default:
+        return <Leaf className="h-6 w-6" />;
+    }
+  };
+
   if (loading) return null;
 
   return (
     <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Award className="h-5 w-5 text-purple-500 animate-bounce" />
+          <Crown className="h-5 w-5 text-purple-500 animate-bounce" />
           Your Badges
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 place-items-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {badges.map((badge, index) => (
             <TooltipProvider key={badge.id}>
               <Tooltip>
                 <TooltipTrigger>
-                  <div 
-                    className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl
-                      ${badge.is_unlocked 
-                        ? 'bg-purple-100 hover:bg-purple-200 transition-colors animate-float shadow-lg' 
-                        : 'bg-gray-100'}`}
-                    style={{
-                      animationDelay: `${index * 0.1}s`
-                    }}
-                  >
-                    {badge.is_unlocked ? (
-                      <span>{badge.icon}</span>
-                    ) : (
-                      <Lock className="h-6 w-6 text-gray-400" />
+                  <div className="space-y-4">
+                    <div 
+                      className={`w-16 h-16 rounded-full flex items-center justify-center
+                        ${badge.is_unlocked 
+                          ? 'bg-gradient-to-br from-green-100 to-purple-100 shadow-lg ring-2 ring-purple-300 animate-pulse' 
+                          : 'bg-gray-100'}`}
+                      style={{
+                        animationDelay: `${index * 0.1}s`
+                      }}
+                    >
+                      <div className={`text-2xl ${badge.is_unlocked ? 'text-purple-600' : 'text-gray-400'}`}>
+                        {getIconComponent(badge.name)}
+                      </div>
+                    </div>
+                    {!badge.is_unlocked && badge.current_progress > 0 && (
+                      <div className="w-full px-2">
+                        <Progress 
+                          value={(badge.current_progress / badge.requirement_count) * 100}
+                          className="h-1"
+                        />
+                      </div>
                     )}
                   </div>
                 </TooltipTrigger>
@@ -178,9 +215,14 @@ export const BadgeShowcase = () => {
                     <p className="font-semibold">{badge.name}</p>
                     <p className="text-sm">{badge.description}</p>
                     {!badge.is_unlocked && (
-                      <p className="text-sm text-gray-500">
-                        Complete {badge.requirement_count} {badge.requirement_type.replace('_', ' ')} to unlock
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-500">
+                          Progress: {badge.current_progress || 0} / {badge.requirement_count}
+                        </p>
+                        <p className="text-xs text-purple-600">
+                          {badge.requirement_count - (badge.current_progress || 0)} more to unlock!
+                        </p>
+                      </div>
                     )}
                   </div>
                 </TooltipContent>
@@ -190,7 +232,7 @@ export const BadgeShowcase = () => {
         </div>
         <div className="mt-8 text-center">
           <p className="text-sm text-purple-600 animate-pulse font-medium">
-            Complete daily challenges to unlock more badges!
+            Keep exploring to unlock more badges!
           </p>
         </div>
       </CardContent>
