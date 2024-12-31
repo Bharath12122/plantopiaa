@@ -27,6 +27,8 @@ export const StreakTracker = () => {
           .from('user_achievements')
           .select('streak_count, total_points, last_scan_date')
           .eq('user_id', session.user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (fetchError) {
@@ -42,6 +44,7 @@ export const StreakTracker = () => {
         }
 
         if (!existingAchievement && mounted) {
+          // Create a new achievement record if none exists
           const { data: newAchievement, error: insertError } = await supabase
             .from('user_achievements')
             .insert({
