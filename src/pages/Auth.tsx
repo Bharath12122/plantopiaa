@@ -32,6 +32,9 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Get the current URL without any trailing slashes or colons
+  const redirectUrl = window.location.origin.replace(/:\/*$/, '');
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-plant-free flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-xl p-8">
@@ -68,7 +71,7 @@ const Auth = () => {
           providers={[]}
           view="sign_in"
           showLinks={true}
-          redirectTo={window.location.origin}
+          redirectTo={redirectUrl}
           localization={{
             variables: {
               sign_in: {
