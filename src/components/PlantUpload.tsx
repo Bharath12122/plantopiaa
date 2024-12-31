@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
@@ -6,10 +6,16 @@ import { UploadHeader } from "./upload/UploadHeader";
 import { FileInput } from "./upload/FileInput";
 import { DesktopUpload } from "./upload/DesktopUpload";
 import { UploadProgress } from "./upload/UploadProgress";
+import { useQuery } from "@tanstack/react-query";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
 }
+
+// Cache key for rate limiting
+const RATE_LIMIT_KEY = 'plant_upload_rate_limit';
+const RATE_LIMIT_DURATION = 60000; // 1 minute
+const MAX_REQUESTS = 5; // 5 requests per minute
 
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
@@ -18,7 +24,94 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const FREE_SCANS_LIMIT = 3;
   const [currentLanguage, setCurrentLanguage] = useState("en");
 
+  // Cache translations using React Query
+  const { data: cachedTranslations } = useQuery({
+    queryKey: ['translations', currentLanguage],
+    queryFn: async () => {
+      const stored = localStorage.getItem(`translations_${currentLanguage}`);
+      if (stored) return JSON.parse(stored);
+      return null;
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
+
+  // Rate limiting check
+  const checkRateLimit = useCallback(() => {
+    const now = Date.now();
+    const stored = localStorage.getItem(RATE_LIMIT_KEY);
+    let requests = stored ? JSON.parse(stored) : [];
+    
+    // Remove old requests
+    requests = requests.filter((time: number) => now - time < RATE_LIMIT_DURATION);
+    
+    if (requests.length >= MAX_REQUESTS) {
+      return false;
+    }
+    
+    requests.push(now);
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(requests));
+    return true;
+  }, []);
+
+  // Image optimization
+  const optimizeImage = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      img.onload = () => {
+        // Max dimensions
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            }));
+          } else {
+            reject(new Error('Image optimization failed'));
+          }
+        }, 'image/jpeg', 0.8); // 80% quality
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const translatePlantData = async (plantData: any, targetLanguage: string) => {
+    // Check cache first
+    const cacheKey = `translation_${JSON.stringify(plantData)}_${targetLanguage}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (cached) {
+      console.log('Using cached translation');
+      return JSON.parse(cached);
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke('translate-plant-data', {
         body: { 
@@ -28,6 +121,9 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       });
 
       if (error) throw error;
+      
+      // Cache the result
+      localStorage.setItem(cacheKey, JSON.stringify(data.translatedData));
       return data.translatedData;
     } catch (error) {
       console.error('Translation error:', error);
@@ -47,6 +143,15 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
+    if (!checkRateLimit()) {
+      toast({
+        title: "Rate limit exceeded",
+        description: "Please wait a moment before trying again",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (interactionCount >= FREE_SCANS_LIMIT) {
       toast({
         title: "Free scan limit reached",
@@ -58,6 +163,9 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
     setIsUploading(true);
     try {
+      // Optimize image before upload
+      const optimizedFile = await optimizeImage(file);
+      
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         throw new Error("You must be logged in to upload files");
@@ -91,12 +199,12 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           const plantInfo = data.suggestions[0];
           
-          const fileExt = file.name.split('.').pop();
+          const fileExt = optimizedFile.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
           const { error: uploadError, data: uploadData } = await supabase.storage
             .from('plant-images')
-            .upload(fileName, file);
+            .upload(fileName, optimizedFile);
 
           if (uploadError) throw uploadError;
 
@@ -124,6 +232,10 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           const translatedData = await translatePlantData(plantData, currentLanguage);
           onUploadSuccess(translatedData);
 
+          // Performance monitoring
+          const endTime = performance.now();
+          console.log(`Upload and processing completed in ${endTime}ms`);
+
           toast({
             title: "Plant identified successfully!",
             description: "Scroll down to see the detailed results.",
@@ -138,7 +250,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         }
       };
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(optimizedFile);
     } catch (error: any) {
       console.error("Upload error:", error);
       toast({
