@@ -1,6 +1,6 @@
 import { 
   Sprout, Crown, Leaf, Heart, 
-  Sparkles, Globe, Timer, MortarPestle 
+  Sparkles, Globe, Timer, Flask 
 } from "lucide-react";
 
 interface BadgeIconProps {
@@ -17,7 +17,7 @@ export const BadgeIcon = ({ badgeName, className = "h-6 w-6" }: BadgeIconProps) 
     case "Disease Detective":
       return <Leaf className={className} />;
     case "Herbal Healer":
-      return <MortarPestle className={className} />;
+      return <Flask className={className} />;
     case "Companion Planter":
       return <Heart className={className} />;
     case "Exotic Explorer":
