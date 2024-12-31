@@ -37,8 +37,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           // Handle URL configuration errors
           if (error.message?.includes("failed to call url")) {
             console.error("URL configuration error:", error);
-            toast.error("Please check your Supabase URL configuration");
+            toast.error("Authentication service is temporarily unavailable. Please try again later.");
             setIsAuthenticated(false);
+            setIsLoading(false);
             return;
           }
           
@@ -58,7 +59,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       } catch (error: any) {
         console.error("Auth check failed:", error);
         setIsAuthenticated(false);
-        toast.error("Authentication error. Please try again.");
+        toast.error("Authentication service is temporarily unavailable. Please try again later.");
       } finally {
         setIsLoading(false);
       }

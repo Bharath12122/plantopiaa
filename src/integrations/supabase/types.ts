@@ -367,18 +367,21 @@ export type Database = {
           badge_id: string
           earned_at: string
           id: string
+          progress: number | null
           user_id: string
         }
         Insert: {
           badge_id: string
           earned_at?: string
           id?: string
+          progress?: number | null
           user_id: string
         }
         Update: {
           badge_id?: string
           earned_at?: string
           id?: string
+          progress?: number | null
           user_id?: string
         }
         Relationships: [
