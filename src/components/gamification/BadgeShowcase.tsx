@@ -25,7 +25,7 @@ export const BadgeShowcase = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // First, ensure we have our basic badges
+      // Define our core 8 badges
       const basicBadges = [
         {
           name: "Sprout Starter",
@@ -134,9 +134,6 @@ export const BadgeShowcase = () => {
 
   if (loading) return null;
 
-  const unlockedBadges = badges.filter(badge => badge.is_unlocked);
-  const lockedBadges = badges.filter(badge => !badge.is_unlocked);
-
   return (
     <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
@@ -146,35 +143,15 @@ export const BadgeShowcase = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {unlockedBadges.length > 0 && (
-          <>
-            <h3 className="font-semibold mb-4">Unlocked Badges</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
-              {unlockedBadges.map((badge, index) => (
-                <BadgeDisplay 
-                  key={badge.id} 
-                  badge={badge} 
-                  index={index} 
-                />
-              ))}
-            </div>
-          </>
-        )}
-        
-        {lockedBadges.length > 0 && (
-          <>
-            <h3 className="font-semibold mb-4">Badges to Unlock</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              {lockedBadges.map((badge, index) => (
-                <BadgeDisplay 
-                  key={badge.id} 
-                  badge={badge} 
-                  index={index} 
-                />
-              ))}
-            </div>
-          </>
-        )}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          {badges.map((badge, index) => (
+            <BadgeDisplay 
+              key={badge.id} 
+              badge={badge} 
+              index={index} 
+            />
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
