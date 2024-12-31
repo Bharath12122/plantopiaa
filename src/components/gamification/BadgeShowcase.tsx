@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { Crown } from "lucide-react";
+import { Sprout, Crown, Leaf, Flower, Heart, Sparkles, Globe, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BadgeDisplay } from "./BadgeDisplay";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 interface Badge {
   id: string;
@@ -25,7 +31,7 @@ export const BadgeShowcase = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Define our core 8 badges
+      // First, ensure we have our basic badges
       const basicBadges = [
         {
           name: "Sprout Starter",
@@ -102,28 +108,37 @@ export const BadgeShowcase = () => {
         if (insertError) console.error('Error inserting badge:', insertError);
       }
 
-      // Get all available badges and user progress
+      // Then get all available badges
       const { data: allBadges, error: badgesError } = await supabase
         .from('badges')
-        .select(`
-          *,
-          user_badges!left (
-            progress,
-            earned_at
-          )
-        `);
+        .select('*')
+        .limit(8);
 
       if (badgesError) {
         console.error('Error fetching badges:', badgesError);
         return;
       }
 
-      // Format badges with progress
-      const combinedBadges = allBadges?.map(badge => ({
-        ...badge,
-        is_unlocked: badge.user_badges?.[0]?.earned_at !== null,
-        current_progress: badge.user_badges?.[0]?.progress || 0
-      })) || [];
+      // Then get user's unlocked badges and progress
+      const { data: userBadges, error: userBadgesError } = await supabase
+        .from('user_badges')
+        .select('badge_id, progress')
+        .eq('user_id', session.user.id);
+
+      if (userBadgesError) {
+        console.error('Error fetching user badges:', userBadgesError);
+        return;
+      }
+
+      // Combine the data to show both locked and unlocked badges with progress
+      const combinedBadges = allBadges?.map(badge => {
+        const userBadge = userBadges?.find(ub => ub.badge_id === badge.id);
+        return {
+          ...badge,
+          is_unlocked: !!userBadge,
+          current_progress: userBadge?.progress || 0
+        };
+      }) || [];
 
       setBadges(combinedBadges);
       setLoading(false);
@@ -132,25 +147,93 @@ export const BadgeShowcase = () => {
     fetchBadges();
   }, []);
 
+  const getIconComponent = (badgeName: string) => {
+    switch (badgeName) {
+      case "Sprout Starter":
+        return <Sprout className="h-6 w-6" />;
+      case "Garden Guru":
+        return <Crown className="h-6 w-6" />;
+      case "Disease Detective":
+        return <Leaf className="h-6 w-6" />;
+      case "Herbal Healer":
+        return <Leaf className="h-6 w-6" />;
+      case "Companion Planter":
+        return <Heart className="h-6 w-6" />;
+      case "Exotic Explorer":
+        return <Sparkles className="h-6 w-6" />;
+      case "Sustainability Hero":
+        return <Globe className="h-6 w-6" />;
+      case "Blossom Booster":
+        return <Timer className="h-6 w-6" />;
+      default:
+        return <Leaf className="h-6 w-6" />;
+    }
+  };
+
   if (loading) return null;
 
   return (
     <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Crown className="h-5 w-5 text-purple-500" />
+          <Crown className="h-5 w-5 text-purple-500 animate-bounce" />
           Your Badges
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {badges.map((badge, index) => (
-            <BadgeDisplay 
-              key={badge.id} 
-              badge={badge} 
-              index={index} 
-            />
+            <TooltipProvider key={badge.id}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="space-y-4">
+                    <div 
+                      className={`w-16 h-16 rounded-full flex items-center justify-center
+                        ${badge.is_unlocked 
+                          ? 'bg-gradient-to-br from-green-100 to-purple-100 shadow-lg ring-2 ring-purple-300 animate-pulse' 
+                          : 'bg-gray-100'}`}
+                      style={{
+                        animationDelay: `${index * 0.1}s`
+                      }}
+                    >
+                      <div className={`text-2xl ${badge.is_unlocked ? 'text-purple-600' : 'text-gray-400'}`}>
+                        {getIconComponent(badge.name)}
+                      </div>
+                    </div>
+                    {!badge.is_unlocked && badge.current_progress > 0 && (
+                      <div className="w-full px-2">
+                        <Progress 
+                          value={(badge.current_progress / badge.requirement_count) * 100}
+                          className="h-1"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="space-y-1">
+                    <p className="font-semibold">{badge.name}</p>
+                    <p className="text-sm">{badge.description}</p>
+                    {!badge.is_unlocked && (
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-500">
+                          Progress: {badge.current_progress || 0} / {badge.requirement_count}
+                        </p>
+                        <p className="text-xs text-purple-600">
+                          {badge.requirement_count - (badge.current_progress || 0)} more to unlock!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
+        </div>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-purple-600 animate-pulse font-medium">
+            Keep exploring to unlock more badges!
+          </p>
         </div>
       </CardContent>
     </Card>
