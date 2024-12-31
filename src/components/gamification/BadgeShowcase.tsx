@@ -113,26 +113,12 @@ export const BadgeShowcase = () => {
         return;
       }
 
-      // Get user's unlocked badges and progress
-      const { data: userBadges, error: userBadgesError } = await supabase
-        .from('user_badges')
-        .select('badge_id, progress')
-        .eq('user_id', session.user.id);
-
-      if (userBadgesError) {
-        console.error('Error fetching user badges:', userBadgesError);
-        return;
-      }
-
-      // Combine the data
-      const combinedBadges = allBadges?.map(badge => {
-        const userBadge = userBadges?.find(ub => ub.badge_id === badge.id);
-        return {
-          ...badge,
-          is_unlocked: !!userBadge,
-          current_progress: userBadge?.progress || 0
-        };
-      }) || [];
+      // For demonstration, set all badges as unlocked with full progress
+      const combinedBadges = allBadges?.map(badge => ({
+        ...badge,
+        is_unlocked: true,
+        current_progress: badge.requirement_count
+      })) || [];
 
       setBadges(combinedBadges);
       setLoading(false);
@@ -163,7 +149,7 @@ export const BadgeShowcase = () => {
         </div>
         <div className="mt-8 text-center">
           <p className="text-sm text-purple-600 animate-pulse font-medium">
-            Keep exploring to unlock more badges!
+            Congratulations! You've unlocked all badges! 🎉
           </p>
         </div>
       </CardContent>
