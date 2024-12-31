@@ -56,6 +56,26 @@ export const ChallengeSystem = () => {
           created_at: now.toISOString(),
           start_date: now.toISOString(),
           end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
+        },
+        {
+          title: "Green Thumb",
+          description: "Water 5 of your registered plants",
+          points: 25,
+          requirement_count: 5,
+          challenge_type: "plant_care",
+          created_at: now.toISOString(),
+          start_date: now.toISOString(),
+          end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
+        },
+        {
+          title: "Plant Photographer",
+          description: "Take 3 high-quality plant photos",
+          points: 35,
+          requirement_count: 3,
+          challenge_type: "photo_uploads",
+          created_at: now.toISOString(),
+          start_date: now.toISOString(),
+          end_date: new Date(now.setHours(23, 59, 59, 999)).toISOString()
         }
       ];
 
@@ -82,7 +102,7 @@ export const ChallengeSystem = () => {
           )
         `)
         .eq('user_challenge_progress.user_id', session.user.id)
-        .limit(3);
+        .limit(5);
 
       if (error) {
         console.error('Error fetching challenges:', error);
@@ -174,7 +194,7 @@ export const ChallengeSystem = () => {
         </div>
         <div className="mt-8 text-center">
           <p className="text-sm text-green-600 animate-bounce font-medium">
-            New challenges refresh daily! Keep coming back for more rewards!
+            Complete challenges to earn points and unlock badges!
           </p>
         </div>
       </CardContent>

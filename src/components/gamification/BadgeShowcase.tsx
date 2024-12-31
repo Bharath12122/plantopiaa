@@ -102,22 +102,27 @@ export const BadgeShowcase = () => {
         if (insertError) console.error('Error inserting badge:', insertError);
       }
 
-      // Get all available badges
+      // Get all available badges and user progress
       const { data: allBadges, error: badgesError } = await supabase
         .from('badges')
-        .select('*')
-        .limit(8);
+        .select(`
+          *,
+          user_badges!left (
+            progress,
+            earned_at
+          )
+        `);
 
       if (badgesError) {
         console.error('Error fetching badges:', badgesError);
         return;
       }
 
-      // For demonstration, set all badges as unlocked with full progress
+      // Format badges with progress
       const combinedBadges = allBadges?.map(badge => ({
         ...badge,
-        is_unlocked: true,
-        current_progress: badge.requirement_count
+        is_unlocked: badge.user_badges?.[0]?.earned_at !== null,
+        current_progress: badge.user_badges?.[0]?.progress || 0
       })) || [];
 
       setBadges(combinedBadges);
@@ -129,29 +134,47 @@ export const BadgeShowcase = () => {
 
   if (loading) return null;
 
+  const unlockedBadges = badges.filter(badge => badge.is_unlocked);
+  const lockedBadges = badges.filter(badge => !badge.is_unlocked);
+
   return (
     <Card className="bg-white/80 backdrop-blur mb-4 animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Crown className="h-5 w-5 text-purple-500 animate-bounce" />
+          <Crown className="h-5 w-5 text-purple-500" />
           Your Badges
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-          {badges.map((badge, index) => (
-            <BadgeDisplay 
-              key={badge.id} 
-              badge={badge} 
-              index={index} 
-            />
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <p className="text-sm text-purple-600 animate-pulse font-medium">
-            Congratulations! You've unlocked all badges! 🎉
-          </p>
-        </div>
+        {unlockedBadges.length > 0 && (
+          <>
+            <h3 className="font-semibold mb-4">Unlocked Badges</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
+              {unlockedBadges.map((badge, index) => (
+                <BadgeDisplay 
+                  key={badge.id} 
+                  badge={badge} 
+                  index={index} 
+                />
+              ))}
+            </div>
+          </>
+        )}
+        
+        {lockedBadges.length > 0 && (
+          <>
+            <h3 className="font-semibold mb-4">Badges to Unlock</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {lockedBadges.map((badge, index) => (
+                <BadgeDisplay 
+                  key={badge.id} 
+                  badge={badge} 
+                  index={index} 
+                />
+              ))}
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
