@@ -1,15 +1,24 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.plantopiaa.app',
-  appName: 'Plantopiaa',
+  appId: 'com.plantapp.app',
+  appName: 'Plant App',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    iosScheme: 'https',
+    hostname: 'localhost'
   },
   plugins: {
-    // Add any required Capacitor plugins configuration here
-  }
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#F2FCE2",
+      showSpinner: true,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#2A3B1D",
+    },
+  },
 };
 
 export default config;

@@ -3,18 +3,23 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { Capacitor } from '@capacitor/core';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 // Platform detection
 const isPlatform = Capacitor.isNativePlatform();
 console.log('Running on:', isPlatform ? 'Native Platform' : 'Web Platform');
 
-// Initialize PWA elements - doing this asynchronously to avoid build issues
+// Initialize PWA elements asynchronously
 const initPWAElements = async () => {
-  try {
-    const { defineCustomElements } = await import('@ionic/pwa-elements/loader');
-    defineCustomElements(window);
-  } catch (error) {
-    console.error('Failed to load PWA elements:', error);
+  if (isPlatform) {
+    try {
+      const { defineCustomElements } = await import('@ionic/pwa-elements/loader');
+      await defineCustomElements(window);
+      // Hide splash screen after initialization
+      await SplashScreen.hide();
+    } catch (error) {
+      console.error('Failed to load PWA elements:', error);
+    }
   }
 };
 
@@ -22,7 +27,6 @@ const initPWAElements = async () => {
 initPWAElements();
 
 const root = document.getElementById('root');
-
 if (!root) {
   throw new Error('Root element not found');
 }
