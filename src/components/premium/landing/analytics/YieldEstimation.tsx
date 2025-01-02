@@ -5,18 +5,39 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 export const YieldEstimation = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    plantId: '',
     plantType: '',
     area: '',
     soilType: '',
     irrigationType: ''
   });
 
+  // Fetch user's plants
+  const { data: plants } = useQuery({
+    queryKey: ['plants'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('plants')
+        .select('id, name');
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.plantId) {
+      toast.error("Please select a plant");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -29,6 +50,7 @@ export const YieldEstimation = () => {
       // Store the estimation in the database
       const { error: dbError } = await supabase.from('yield_estimations').insert({
         user_id: (await supabase.auth.getUser()).data.user?.id,
+        plant_id: formData.plantId, // Include the plant_id
         growing_conditions: {
           area: parseFloat(formData.area),
           soil_type: formData.soilType,
@@ -63,6 +85,25 @@ export const YieldEstimation = () => {
 
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Plant
+            </label>
+            <select
+              className="w-full rounded-md border border-input bg-background px-3 py-2"
+              value={formData.plantId}
+              onChange={(e) => setFormData(prev => ({ ...prev, plantId: e.target.value }))}
+              required
+            >
+              <option value="">Select a plant</option>
+              {plants?.map((plant) => (
+                <option key={plant.id} value={plant.id}>
+                  {plant.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Plant Type
