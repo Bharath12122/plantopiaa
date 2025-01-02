@@ -26,6 +26,19 @@ export const YieldEstimation = () => {
 
       if (error) throw error;
 
+      // Store the estimation in the database
+      const { error: dbError } = await supabase.from('yield_estimations').insert({
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        growing_conditions: {
+          area: parseFloat(formData.area),
+          soil_type: formData.soilType,
+          irrigation_type: formData.irrigationType
+        },
+        recommendations: [data.analysis]
+      });
+
+      if (dbError) throw dbError;
+
       toast.success("Yield estimation complete!");
       // Handle the estimation data...
 

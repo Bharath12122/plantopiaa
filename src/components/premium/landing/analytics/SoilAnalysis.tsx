@@ -27,6 +27,19 @@ export const SoilAnalysis = () => {
 
       if (error) throw error;
 
+      // Store the analysis in the database
+      const { error: dbError } = await supabase.from('soil_analysis').insert({
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        ph_level: parseFloat(soilData.ph),
+        nitrogen_level: parseFloat(soilData.nitrogen),
+        phosphorus_level: parseFloat(soilData.phosphorus),
+        potassium_level: parseFloat(soilData.potassium),
+        organic_matter_percentage: parseFloat(soilData.organicMatter),
+        recommendations: data.recommendations
+      });
+
+      if (dbError) throw dbError;
+
       toast.success("Soil analysis complete!");
       // Handle the analysis data...
 

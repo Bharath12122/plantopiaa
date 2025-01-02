@@ -1,0 +1,10 @@
+project_id = "wdxxbsnienjuyyjrduwo"
+
+[analyze-soil]
+verify_jwt = true
+
+[estimate-yield]
+verify_jwt = true
+
+[identify-plant]
+verify_jwt = true
