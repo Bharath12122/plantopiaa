@@ -5,6 +5,9 @@ import { BusinessAnalytics } from "@/components/premium/landing/BusinessAnalytic
 import { AdvancedIdentification } from "@/components/premium/landing/AdvancedIdentification";
 import { PrioritySupport } from "@/components/premium/landing/PrioritySupport";
 import { EducationalLibrary } from "@/components/premium/landing/EducationalLibrary";
+import { PestPrediction } from "@/components/premium/landing/analytics/PestPrediction";
+import { YieldEstimation } from "@/components/premium/landing/analytics/YieldEstimation";
+import { SoilAnalysis } from "@/components/premium/landing/analytics/SoilAnalysis";
 import { ArrowLeft, Star } from "lucide-react";
 
 const PremiumLanding = () => {
@@ -40,6 +43,19 @@ const PremiumLanding = () => {
 
         {/* Features Grid */}
         <div className="grid gap-24">
+          {/* Advanced Analytics Section */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
+            <h2 className="text-3xl font-bold text-center text-[#2A3B1D] mb-12">
+              Advanced Analytics & Insights
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <PestPrediction />
+              <YieldEstimation />
+              <SoilAnalysis />
+            </div>
+          </div>
+
+          {/* Existing Sections */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
             <VideoConsultation />
           </div>
