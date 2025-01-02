@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 
 export const YieldEstimation = () => {
@@ -50,7 +50,7 @@ export const YieldEstimation = () => {
       // Store the estimation in the database
       const { error: dbError } = await supabase.from('yield_estimations').insert({
         user_id: (await supabase.auth.getUser()).data.user?.id,
-        plant_id: formData.plantId, // Include the plant_id
+        plant_id: formData.plantId,
         growing_conditions: {
           area: parseFloat(formData.area),
           soil_type: formData.soilType,
@@ -89,19 +89,21 @@ export const YieldEstimation = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Select Plant
             </label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
+            <Select
               value={formData.plantId}
-              onChange={(e) => setFormData(prev => ({ ...prev, plantId: e.target.value }))}
-              required
+              onValueChange={(value) => setFormData(prev => ({ ...prev, plantId: value }))}
             >
-              <option value="">Select a plant</option>
-              {plants?.map((plant) => (
-                <option key={plant.id} value={plant.id}>
-                  {plant.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a plant" />
+              </SelectTrigger>
+              <SelectContent>
+                {plants?.map((plant) => (
+                  <SelectItem key={plant.id} value={plant.id}>
+                    {plant.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
