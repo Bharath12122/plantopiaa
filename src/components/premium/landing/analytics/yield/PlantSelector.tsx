@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 interface PlantSelectorProps {
   value: string;
@@ -8,16 +9,31 @@ interface PlantSelectorProps {
 }
 
 export const PlantSelector = ({ value, onChange }: PlantSelectorProps) => {
-  const { data: plants } = useQuery({
+  const { data: plants, isLoading, error } = useQuery({
     queryKey: ['plants'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('plants')
-        .select('id, name');
+        .select('id, name')
+        .order('name');
+      
       if (error) throw error;
       return data;
     }
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-gray-500">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Loading plants...
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500">Error loading plants</div>;
+  }
 
   return (
     <div>
