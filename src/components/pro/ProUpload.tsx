@@ -2,7 +2,6 @@ import { Upload, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
 
 export const ProUpload = () => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -13,7 +12,7 @@ export const ProUpload = () => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) {
-      await handleFileUpload(file);
+      handleFileUpload(file);
     }
   };
 
@@ -31,47 +30,18 @@ export const ProUpload = () => {
     setPreviewImage(URL.createObjectURL(file));
     
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session) {
-        throw new Error("You must be logged in to upload files");
-      }
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-
-      // Upload to Supabase Storage
-      const { error: uploadError, data: uploadData } = await supabase.storage
-        .from('plant-images')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('plant-images')
-        .getPublicUrl(fileName);
-
-      // Save plant data to database
-      const { error: dbError } = await supabase
-        .from('plants')
-        .insert({
-          name: file.name.split('.')[0], // Basic name from filename
-          image_url: publicUrl,
-          user_id: sessionData.session.user.id
-        });
-
-      if (dbError) throw dbError;
-
       toast({
-        title: "Upload successful",
-        description: "Your plant image has been uploaded",
+        title: "Processing image",
+        description: "Your plant image is being analyzed...",
       });
-
-    } catch (error: any) {
-      console.error('Upload error:', error);
+      
+      // Simulate processing time (remove in production)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+    } catch (error) {
       toast({
-        title: "Upload failed",
-        description: error.message || "Please try again later",
+        title: "Error processing image",
+        description: "Please try again",
         variant: "destructive"
       });
     } finally {
