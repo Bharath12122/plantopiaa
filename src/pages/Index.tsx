@@ -41,7 +41,7 @@ const GamificationSection = ({ showGamification }: { showGamification: boolean }
 };
 
 const Index = () => {
-  const navigate = useNavigate(); // Properly declare navigate function
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
   const [showUpload, setShowUpload] = useState(false);
