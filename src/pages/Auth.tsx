@@ -85,7 +85,7 @@ const Auth = () => {
                   color: 'white',
                   fontWeight: '500',
                   transition: 'all 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
                   },
@@ -96,10 +96,10 @@ const Auth = () => {
                   backgroundColor: 'white',
                   border: '1px solid #d1d5db',
                   transition: 'all 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     borderColor: '#059669',
                   },
-                  ["&:focus"]: {
+                  '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
                   },
@@ -122,7 +122,7 @@ const Auth = () => {
                   fontSize: '0.875rem',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
                   },
