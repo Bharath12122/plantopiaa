@@ -47,7 +47,14 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-plant-free via-white to-plant-pro/10">
+    <div 
+      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-plant-free via-white to-plant-pro/10"
+      style={{
+        backgroundImage: `url('/lovable-uploads/bd6e0da7-ea3c-40c6-a3e8-b865ce8ecc65.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(162,217,110,0.1),rgba(255,255,255,0.1))]" />
       <div className="absolute inset-0 backdrop-blur-[2px]" />
@@ -102,6 +109,7 @@ const Auth = () => {
                     padding: '10px 15px',
                     transition: 'all 0.2s ease',
                     background: 'linear-gradient(to right, #a2d96e, #8bc952)',
+                    transform: 'translateY(0)',
                     '&:hover': {
                       opacity: 0.9,
                       transform: 'translateY(-1px)',
@@ -112,9 +120,15 @@ const Auth = () => {
                     border: '1px solid #e2e8f0',
                     padding: '10px 15px',
                     background: 'white',
+                    transition: 'all 0.2s ease',
+                    transform: 'translateY(0)',
+                    '&:hover': {
+                      transform: 'translateY(-1px)',
+                    },
                     '&:focus': {
                       borderColor: '#a2d96e',
                       boxShadow: '0 0 0 2px rgba(162, 217, 110, 0.2)',
+                      transform: 'translateY(-1px)',
                     }
                   },
                   message: {
@@ -125,6 +139,7 @@ const Auth = () => {
                   },
                   anchor: {
                     color: '#8bc952',
+                    transition: 'color 0.2s ease',
                     '&:hover': {
                       color: '#a2d96e',
                     }
