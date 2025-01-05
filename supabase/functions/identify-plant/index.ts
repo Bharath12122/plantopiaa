@@ -26,6 +26,7 @@ serve(async (req) => {
 
     console.log('Calling Plant.ID API...')
     
+    // Enhanced API call with more detailed plant information requests
     const response = await fetch('https://api.plant.id/v2/identify', {
       method: 'POST',
       headers: {
@@ -34,7 +35,37 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         images: [image],
-        plant_details: ["common_names", "url", "wiki_description", "taxonomy", "synonyms", "edible_parts", "propagation_methods"],
+        plant_details: [
+          "common_names",
+          "url", 
+          "wiki_description",
+          "taxonomy",
+          "synonyms",
+          "edible_parts",
+          "propagation_methods",
+          "watering",
+          "medicinal_properties", // Request medicinal properties
+          "health_benefits",      // Request health benefits
+          "nutritional_value",    // Request nutritional information
+          "toxicity",            // Request toxicity information
+          "treatment_method",    // Request treatment methods
+          "traditional_uses"     // Request traditional medicinal uses
+        ],
+        // Request detailed analysis
+        details: [
+          "common_names",
+          "url",
+          "description",
+          "taxonomy",
+          "rank",
+          "gbif_id",
+          "inaturalist_id",
+          "image",
+          "synonyms",
+          "edible_parts",
+          "watering",
+          "propagation_methods"
+        ]
       }),
     })
 
@@ -44,7 +75,7 @@ serve(async (req) => {
     }
 
     const data = await response.json()
-    console.log('Plant.ID API response received')
+    console.log('Plant.ID API response received with enhanced health data')
 
     return new Response(
       JSON.stringify(data),
