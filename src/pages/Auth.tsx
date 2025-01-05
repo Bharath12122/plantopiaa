@@ -110,7 +110,7 @@ const Auth = () => {
                     transition: 'all 0.2s ease',
                     background: 'linear-gradient(to right, #a2d96e, #8bc952)',
                     transform: 'translateY(0)',
-                    '&:hover': {
+                    ["&:hover"]: {
                       opacity: 0.9,
                       transform: 'translateY(-1px)',
                     }
@@ -122,10 +122,10 @@ const Auth = () => {
                     background: 'white',
                     transition: 'all 0.2s ease',
                     transform: 'translateY(0)',
-                    '&:hover': {
+                    ["&:hover"]: {
                       transform: 'translateY(-1px)',
                     },
-                    '&:focus': {
+                    ["&:focus"]: {
                       borderColor: '#a2d96e',
                       boxShadow: '0 0 0 2px rgba(162, 217, 110, 0.2)',
                       transform: 'translateY(-1px)',
@@ -140,7 +140,7 @@ const Auth = () => {
                   anchor: {
                     color: '#8bc952',
                     transition: 'color 0.2s ease',
-                    '&:hover': {
+                    ["&:hover"]: {
                       color: '#a2d96e',
                     }
                   }
