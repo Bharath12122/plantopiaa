@@ -17,7 +17,7 @@ serve(async (req) => {
   try {
     const { plantName, scientificName, basicInfo } = await req.json();
 
-    console.log('Received request for plant:', { plantName, scientificName });
+    console.log('Received request for plant:', { plantName, scientificName, basicInfo });
 
     const prompt = `Please provide detailed health benefits and special features for the plant "${plantName}" (${scientificName}). Include:
     1. Unique attributes and characteristics
