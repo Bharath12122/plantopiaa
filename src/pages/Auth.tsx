@@ -30,15 +30,13 @@ const Auth = () => {
 
   return (
     <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4"
+      className="min-h-screen w-full flex items-center justify-center p-3 sm:p-4"
       style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=2000&q=80')`,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        backgroundBlendMode: 'overlay'
+        background: 'linear-gradient(135deg, #E3F4E1 0%, #D1E9CB 25%, #A8E6CF 50%, #7FB069 100%)',
       }}
     >
       <div className="w-full max-w-[85%] sm:max-w-[380px] mx-auto">
-        <div className="backdrop-blur-md bg-white/80 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl border border-green-100 relative overflow-hidden">
+        <div className="backdrop-blur-md bg-white/90 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl border border-green-100 relative overflow-hidden">
           {/* Logo and Title */}
           <div className="text-center mb-4 sm:mb-6 relative z-10">
             <div className="flex justify-center items-center gap-1.5 mb-2">
