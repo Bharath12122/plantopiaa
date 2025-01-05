@@ -22,10 +22,6 @@ const Auth = () => {
       if (event === "SIGNED_IN") {
         toast.success("Successfully signed in!");
         navigate("/");
-      } else if (event === "SIGNED_OUT") {
-        toast.info("Signed out");
-      } else if (event === "USER_UPDATED") {
-        console.log("User updated:", session);
       }
     });
 
@@ -33,20 +29,33 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
-         style={{
-           backgroundImage: `url('/lovable-uploads/dd6588e4-f2ac-48f2-8efe-4cff47e8bb41.png')`,
-         }}>
+    <div 
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
+      style={{
+        backgroundImage: `url('/lovable-uploads/dd6588e4-f2ac-48f2-8efe-4cff47e8bb41.png')`,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundBlendMode: 'overlay'
+      }}
+    >
       <div className="w-full max-w-md">
-        <div className="backdrop-blur-md bg-white/80 p-8 rounded-3xl shadow-xl border border-green-100">
+        <div className="backdrop-blur-md bg-white/80 p-8 rounded-3xl shadow-2xl border border-green-100 relative overflow-hidden">
           {/* Logo and Title */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 relative z-10">
             <div className="flex justify-center items-center gap-2 mb-2">
-              <Leaf className="h-6 w-6 text-green-600" />
-              <h1 className="text-2xl font-semibold text-green-600">
+              <Leaf className="h-8 w-8 text-green-600 animate-float" />
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
                 Plantopiaa
               </h1>
             </div>
+            <p className="text-gray-600 text-sm">Your personal plant care assistant</p>
+          </div>
+
+          {/* Floating Leaves */}
+          <div className="absolute -top-4 -left-4 text-green-200/30">
+            <Leaf className="h-12 w-12 animate-float" style={{ animationDelay: '0.5s' }} />
+          </div>
+          <div className="absolute -bottom-4 -right-4 text-green-200/30">
+            <Leaf className="h-12 w-12 animate-float" style={{ animationDelay: '1s' }} />
           </div>
 
           {/* Auth Form */}
@@ -57,8 +66,8 @@ const Auth = () => {
               variables: {
                 default: {
                   colors: {
-                    brand: '#10b981',
-                    brandAccent: '#059669',
+                    brand: '#059669',
+                    brandAccent: '#047857',
                     inputBackground: 'white',
                     inputText: '#1f2937',
                     inputBorder: '#d1d5db',
@@ -71,34 +80,52 @@ const Auth = () => {
                 },
                 button: {
                   padding: '0.75rem 1rem',
-                  borderRadius: '0.5rem',
-                  backgroundColor: '#10b981',
+                  borderRadius: '0.75rem',
+                  backgroundColor: '#059669',
                   color: 'white',
                   fontWeight: '500',
                   transition: 'all 150ms ease',
+                  ["&:hover"]: {
+                    backgroundColor: '#047857',
+                    transform: 'translateY(-1px)',
+                  },
                 },
                 input: {
-                  borderRadius: '0.5rem',
+                  borderRadius: '0.75rem',
                   padding: '0.75rem 1rem',
                   backgroundColor: 'white',
                   border: '1px solid #d1d5db',
                   transition: 'all 150ms ease',
+                  ["&:hover"]: {
+                    borderColor: '#059669',
+                  },
+                  ["&:focus"]: {
+                    borderColor: '#059669',
+                    boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
+                  },
                 },
                 label: {
                   color: '#4b5563',
                   marginBottom: '0.25rem',
+                  fontSize: '0.875rem',
                 },
                 message: {
-                  borderRadius: '0.5rem',
+                  borderRadius: '0.75rem',
                   padding: '0.75rem 1rem',
                   marginBottom: '1rem',
                   fontSize: '0.875rem',
+                  backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                  color: '#059669',
                 },
                 anchor: {
-                  color: '#10b981',
+                  color: '#059669',
                   fontSize: '0.875rem',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
+                  ["&:hover"]: {
+                    color: '#047857',
+                    textDecoration: 'underline',
+                  },
                 }
               }
             }}
@@ -106,26 +133,6 @@ const Auth = () => {
             view="sign_in"
             showLinks={true}
             redirectTo={window.location.origin}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: "Email",
-                  password_label: "Password",
-                  email_input_placeholder: "Your email",
-                  password_input_placeholder: "Your password",
-                  button_label: "Sign in",
-                  loading_button_label: "Signing in ...",
-                },
-                sign_up: {
-                  email_label: "Email",
-                  password_label: "Password",
-                  email_input_placeholder: "Your email",
-                  password_input_placeholder: "Your password",
-                  button_label: "Sign up",
-                  loading_button_label: "Signing up ...",
-                },
-              },
-            }}
           />
         </div>
       </div>
