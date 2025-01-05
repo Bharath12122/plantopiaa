@@ -213,8 +213,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           await trackInteraction('plant_scan');
 
-          // Enhanced plant data processing
-
+          // Enhanced plant data processing with improved health benefits
           const plantData = {
             name: plantInfo.plant_name || plantInfo.common_names?.[0] || "Unknown Plant",
             scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name || "Species unknown",
@@ -240,8 +239,13 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
               ...(plantInfo.plant_details?.health_benefits || []),
               ...(plantInfo.plant_details?.nutritional_value || []),
               ...(plantInfo.plant_details?.medicinal_properties || []),
-              "May have additional health benefits not yet documented",
-            ].filter(Boolean),
+            ].filter(Boolean).length > 0 
+              ? [
+                  ...(plantInfo.plant_details?.health_benefits || []),
+                  ...(plantInfo.plant_details?.nutritional_value || []),
+                  ...(plantInfo.plant_details?.medicinal_properties || []),
+                ].filter(Boolean)
+              : ["No documented health benefits have been verified for this plant. Always consult healthcare professionals before using any plant for medicinal purposes."],
             language: currentLanguage
           };
 
@@ -311,4 +315,3 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     </div>
   );
 };
-
