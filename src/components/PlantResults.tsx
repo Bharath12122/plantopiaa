@@ -29,12 +29,16 @@ export const PlantResults = ({ plant }: PlantResultsProps) => {
           />
           <div className="flex-1 space-y-4">
             <div>
-              <h3 className="text-2xl font-semibold mb-1">{plant.name}</h3>
-              <p className="text-gray-500 italic">{plant.scientificName}</p>
+              <h3 className="text-2xl font-semibold mb-1">
+                {plant.name} 
+                <span className="text-gray-500 text-lg ml-2">
+                  ({plant.scientificName})
+                </span>
+              </h3>
             </div>
             
             <div>
-              <h4 className="text-lg font-medium mb-2">Description</h4>
+              <h4 className="text-lg font-medium mb-2">About this Plant</h4>
               <p className="text-gray-600">{plant.description}</p>
             </div>
           </div>
@@ -43,19 +47,31 @@ export const PlantResults = ({ plant }: PlantResultsProps) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h4 className="text-lg font-medium mb-4">Care Tips</h4>
-          <ul className="list-disc list-inside text-gray-600 space-y-2">
+          <h4 className="text-lg font-medium mb-4 flex items-center">
+            <span className="mr-2">🌱</span>
+            Detailed Care Guide
+          </h4>
+          <ul className="space-y-3">
             {plant.careTips.map((tip: string, index: number) => (
-              <li key={index}>{tip}</li>
+              <li key={index} className="flex items-start">
+                <span className="text-green-500 mr-2">•</span>
+                <span className="text-gray-700">{tip}</span>
+              </li>
             ))}
           </ul>
         </Card>
 
         <Card className="p-6">
-          <h4 className="text-lg font-medium mb-4">Uses</h4>
-          <ul className="list-disc list-inside text-gray-600 space-y-2">
+          <h4 className="text-lg font-medium mb-4 flex items-center">
+            <span className="mr-2">🎯</span>
+            Common Uses & Benefits
+          </h4>
+          <ul className="space-y-3">
             {plant.uses.map((use: string, index: number) => (
-              <li key={index}>{use}</li>
+              <li key={index} className="flex items-start">
+                <span className="text-green-500 mr-2">•</span>
+                <span className="text-gray-700">{use}</span>
+              </li>
             ))}
           </ul>
         </Card>

@@ -225,6 +225,47 @@ export type Database = {
         }
         Relationships: []
       }
+      pest_disease_predictions: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          id: string
+          image_url: string | null
+          plant_id: string
+          prediction_type: string
+          recommendations: string[] | null
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          plant_id: string
+          prediction_type: string
+          recommendations?: string[] | null
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          plant_id?: string
+          prediction_type?: string
+          recommendations?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pest_disease_predictions_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plant_performance: {
         Row: {
           cost: number | null
@@ -326,6 +367,45 @@ export type Database = {
           id?: string
           is_pro?: boolean | null
           preferred_language?: string | null
+        }
+        Relationships: []
+      }
+      soil_analysis: {
+        Row: {
+          created_at: string
+          id: string
+          nitrogen_level: number | null
+          organic_matter_percentage: number | null
+          ph_level: number | null
+          phosphorus_level: number | null
+          potassium_level: number | null
+          recommendations: string[] | null
+          test_date: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nitrogen_level?: number | null
+          organic_matter_percentage?: number | null
+          ph_level?: number | null
+          phosphorus_level?: number | null
+          potassium_level?: number | null
+          recommendations?: string[] | null
+          test_date?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nitrogen_level?: number | null
+          organic_matter_percentage?: number | null
+          ph_level?: number | null
+          phosphorus_level?: number | null
+          potassium_level?: number | null
+          recommendations?: string[] | null
+          test_date?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -473,6 +553,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      yield_estimations: {
+        Row: {
+          actual_yield: number | null
+          created_at: string
+          estimated_yield: number | null
+          estimation_date: string | null
+          growing_conditions: Json | null
+          id: string
+          plant_id: string
+          recommendations: string[] | null
+          user_id: string
+        }
+        Insert: {
+          actual_yield?: number | null
+          created_at?: string
+          estimated_yield?: number | null
+          estimation_date?: string | null
+          growing_conditions?: Json | null
+          id?: string
+          plant_id: string
+          recommendations?: string[] | null
+          user_id: string
+        }
+        Update: {
+          actual_yield?: number | null
+          created_at?: string
+          estimated_yield?: number | null
+          estimation_date?: string | null
+          growing_conditions?: Json | null
+          id?: string
+          plant_id?: string
+          recommendations?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yield_estimations_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
