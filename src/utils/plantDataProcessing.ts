@@ -1,9 +1,11 @@
 export const processPlantData = (plantInfo: any, publicUrl: string) => {
+  const description = plantInfo.plant_details?.wiki_description?.value || 
+    "This plant's detailed description is currently being researched.";
+
   return {
     name: plantInfo.plant_name || plantInfo.common_names?.[0] || "Unknown Plant",
     scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name || "Species unknown",
-    description: plantInfo.plant_details?.wiki_description?.value || 
-                "This plant's detailed description is currently being researched.",
+    description,
     careTips: [
       `Watering: ${plantInfo.plant_details?.watering || 'Water when top soil feels dry'}`,
       `Light: ${plantInfo.plant_details?.sunlight || 'Provide adequate light based on species'}`,

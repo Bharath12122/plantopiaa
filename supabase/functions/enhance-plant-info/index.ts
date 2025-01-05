@@ -19,17 +19,17 @@ serve(async (req) => {
 
     console.log('Received request for plant:', { plantName, scientificName, basicInfo });
 
-    const prompt = `Please provide detailed health benefits and special features for the plant "${plantName}" (${scientificName}). Include:
-    1. Unique attributes and characteristics
-    2. Traditional and modern medicinal uses
-    3. Health benefits with scientific backing where available
-    4. Environmental benefits (like air purification)
-    5. Nutritional value if edible
-    6. Potential skincare or cosmetic applications
-    
-    Base your response on this basic information: ${basicInfo}
-    
-    Format the response as a clear, concise list of benefits, being careful to mention if any claims are traditional but not scientifically verified.`;
+    const prompt = `As a botanical expert, provide detailed information about "${plantName}" (${scientificName}). Focus on:
+
+1. Evidence-based health benefits and medicinal properties
+2. Traditional medicinal uses with scientific backing where available
+3. Nutritional value if edible
+4. Environmental benefits (e.g., air purification)
+5. Potential applications in skincare or wellness
+
+Base your response on this basic information: ${basicInfo}
+
+Format the response as a clear, concise list of benefits. Include appropriate disclaimers for any traditional but unverified claims.`;
 
     console.log('Calling OpenAI API with prompt:', prompt);
 
@@ -48,15 +48,22 @@ serve(async (req) => {
           },
           { role: 'user', content: prompt }
         ],
+        temperature: 0.7,
+        max_tokens: 500,
       }),
     });
 
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
     const data = await response.json();
-    console.log('OpenAI API response received');
+    console.log('OpenAI API response:', data);
 
     // Process the response to extract benefits
     const generatedContent = data.choices[0].message.content;
-    const benefits = generatedContent.split('\n')
+    const benefits = generatedContent
+      .split('\n')
       .filter(line => line.trim().length > 0)
       .map(benefit => benefit.replace(/^\d+\.\s*|-\s*/, '').trim());
 
@@ -69,7 +76,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in enhance-plant-info function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        benefits: ["No documented health benefits have been verified for this plant. Always consult healthcare professionals before using any plant for medicinal purposes."]
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
