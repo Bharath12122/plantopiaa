@@ -86,7 +86,7 @@ const Auth = () => {
                   '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
-                  } as any,
+                  } as React.CSSProperties,
                 },
                 input: {
                   borderRadius: '0.625rem',
@@ -96,11 +96,11 @@ const Auth = () => {
                   transition: 'all 150ms ease',
                   '&:hover': {
                     borderColor: '#059669',
-                  } as any,
+                  } as React.CSSProperties,
                   '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
-                  } as any,
+                  } as React.CSSProperties,
                 },
                 label: {
                   color: '#4b5563',
@@ -123,7 +123,7 @@ const Auth = () => {
                   '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
-                  } as any,
+                  } as React.CSSProperties,
                 }
               }
             }}
