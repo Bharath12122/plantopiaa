@@ -32,8 +32,8 @@ const Auth = () => {
     <div 
       className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
       style={{
-        backgroundImage: `url('/lovable-uploads/dd6588e4-f2ac-48f2-8efe-4cff47e8bb41.png')`,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundImage: `url('https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=2000&q=80')`,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         backgroundBlendMode: 'overlay'
       }}
     >
@@ -85,7 +85,7 @@ const Auth = () => {
                   color: 'white',
                   fontWeight: '500',
                   transition: 'all 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
                   },
@@ -96,10 +96,10 @@ const Auth = () => {
                   backgroundColor: 'white',
                   border: '1px solid #d1d5db',
                   transition: 'all 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     borderColor: '#059669',
                   },
-                  ["&:focus"]: {
+                  '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
                   },
@@ -122,7 +122,7 @@ const Auth = () => {
                   fontSize: '0.875rem',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
-                  ["&:hover"]: {
+                  '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
                   },
