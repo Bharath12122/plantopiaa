@@ -270,6 +270,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             title: "Plant identified successfully!",
             description: "Scroll down to see the detailed results.",
           });
+
         } catch (error: any) {
           console.error("Processing error:", error);
           toast({
