@@ -7,6 +7,8 @@ import { FileInput } from "./upload/FileInput";
 import { DesktopUpload } from "./upload/DesktopUpload";
 import { UploadProgress } from "./upload/UploadProgress";
 import { useQuery } from "@tanstack/react-query";
+import { processPlantData } from "@/utils/plantDataProcessing";
+import { getEnhancedPlantInfo } from "@/utils/enhancePlantInfo";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -213,59 +215,27 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           await trackInteraction('plant_scan');
 
-          // Enhanced plant data processing
-          const basicPlantData = {
-            name: plantInfo.plant_name || plantInfo.common_names?.[0] || "Unknown Plant",
-            scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name || "Species unknown",
-            description: plantInfo.plant_details?.wiki_description?.value || 
-                        "This plant's detailed description is currently being researched.",
-            careTips: [
-              `Watering: ${plantInfo.plant_details?.watering || 'Water when top soil feels dry'}`,
-              `Light: ${plantInfo.plant_details?.sunlight || 'Provide adequate light based on species'}`,
-              `Soil: ${plantInfo.plant_details?.soil || 'Use well-draining potting mix'}`,
-              `Temperature: ${plantInfo.plant_details?.temperature || 'Maintain room temperature'}`,
-              `Humidity: ${plantInfo.plant_details?.humidity || 'Average household humidity'}`,
-              ...(plantInfo.plant_details?.propagation_methods || []),
-              ...(plantInfo.plant_details?.care_instructions || [])
-            ].filter(Boolean),
-            image: publicUrl,
-            uses: [
-              ...(plantInfo.plant_details?.edible_parts || []),
-              ...(plantInfo.plant_details?.medicinal_properties || []),
-              ...(plantInfo.plant_details?.economic_uses || []),
-              "Decorative plant for indoor or outdoor spaces",
-            ].filter(Boolean),
-          };
+          // Process basic plant data
+          const basicPlantData = processPlantData(plantInfo, publicUrl);
 
-          // Get enhanced health benefits from OpenAI
-          console.log('Calling enhance-plant-info function...');
-          const { data: enhancedData, error: enhanceError } = await supabase.functions.invoke('enhance-plant-info', {
-            body: { 
-              plantName: basicPlantData.name,
-              scientificName: basicPlantData.scientificName,
-              basicInfo: basicPlantData.description
-            }
-          });
-
-          if (enhanceError) {
-            console.error('Error getting enhanced plant info:', enhanceError);
-            toast({
-              title: "Note",
-              description: "Some plant information might be limited.",
-              variant: "default",
-            });
-          }
+          // Get enhanced health benefits
+          console.log('Getting enhanced plant info...');
+          const healthBenefits = await getEnhancedPlantInfo(
+            basicPlantData.name,
+            basicPlantData.scientificName,
+            basicPlantData.description
+          );
 
           const finalPlantData = {
             ...basicPlantData,
-            healthBenefits: enhancedData?.benefits || [
-              "No documented health benefits have been verified for this plant. Always consult healthcare professionals before using any plant for medicinal purposes."
-            ]
+            healthBenefits
           };
 
-          console.log('Enhanced plant data:', finalPlantData);
+          console.log('Final plant data with health benefits:', finalPlantData);
 
           const translatedData = await translatePlantData(finalPlantData, currentLanguage);
+          console.log('Translated data:', translatedData);
+          
           onUploadSuccess(translatedData);
 
           toast({

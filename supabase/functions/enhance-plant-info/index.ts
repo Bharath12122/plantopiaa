@@ -17,6 +17,8 @@ serve(async (req) => {
   try {
     const { plantName, scientificName, basicInfo } = await req.json();
 
+    console.log('Received request for plant:', { plantName, scientificName });
+
     const prompt = `Please provide detailed health benefits and special features for the plant "${plantName}" (${scientificName}). Include:
     1. Unique attributes and characteristics
     2. Traditional and modern medicinal uses
@@ -57,6 +59,8 @@ serve(async (req) => {
     const benefits = generatedContent.split('\n')
       .filter(line => line.trim().length > 0)
       .map(benefit => benefit.replace(/^\d+\.\s*|-\s*/, '').trim());
+
+    console.log('Processed benefits:', benefits);
 
     return new Response(
       JSON.stringify({ benefits }),
