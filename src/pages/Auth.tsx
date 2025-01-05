@@ -30,32 +30,32 @@ const Auth = () => {
 
   return (
     <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8"
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=2000&q=80')`,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         backgroundBlendMode: 'overlay'
       }}
     >
-      <div className="w-full max-w-md">
-        <div className="backdrop-blur-md bg-white/80 p-8 rounded-3xl shadow-2xl border border-green-100 relative overflow-hidden">
+      <div className="w-full max-w-[90%] sm:max-w-[440px] mx-auto">
+        <div className="backdrop-blur-md bg-white/80 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border border-green-100 relative overflow-hidden">
           {/* Logo and Title */}
-          <div className="text-center mb-8 relative z-10">
+          <div className="text-center mb-6 sm:mb-8 relative z-10">
             <div className="flex justify-center items-center gap-2 mb-2">
-              <Leaf className="h-8 w-8 text-green-600 animate-float" />
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+              <Leaf className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 animate-float" />
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
                 Plantopiaa
               </h1>
             </div>
-            <p className="text-gray-600 text-sm">Your personal plant care assistant</p>
+            <p className="text-sm sm:text-base text-gray-600">Your personal plant care assistant</p>
           </div>
 
           {/* Floating Leaves */}
           <div className="absolute -top-4 -left-4 text-green-200/30">
-            <Leaf className="h-12 w-12 animate-float" style={{ animationDelay: '0.5s' }} />
+            <Leaf className="h-10 w-10 sm:h-12 sm:w-12 animate-float" style={{ animationDelay: '0.5s' }} />
           </div>
           <div className="absolute -bottom-4 -right-4 text-green-200/30">
-            <Leaf className="h-12 w-12 animate-float" style={{ animationDelay: '1s' }} />
+            <Leaf className="h-10 w-10 sm:h-12 sm:w-12 animate-float" style={{ animationDelay: '1s' }} />
           </div>
 
           {/* Auth Form */}
@@ -85,7 +85,7 @@ const Auth = () => {
                   color: 'white',
                   fontWeight: '500',
                   transition: 'all 150ms ease',
-                  '&:hover': {
+                  ["&:hover"]: {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
                   },
@@ -96,10 +96,10 @@ const Auth = () => {
                   backgroundColor: 'white',
                   border: '1px solid #d1d5db',
                   transition: 'all 150ms ease',
-                  '&:hover': {
+                  ["&:hover"]: {
                     borderColor: '#059669',
                   },
-                  '&:focus': {
+                  ["&:focus"]: {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
                   },
@@ -122,7 +122,7 @@ const Auth = () => {
                   fontSize: '0.875rem',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
-                  '&:hover': {
+                  ["&:hover"]: {
                     color: '#047857',
                     textDecoration: 'underline',
                   },
