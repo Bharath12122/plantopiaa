@@ -30,32 +30,32 @@ const Auth = () => {
 
   return (
     <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4 sm:p-6 md:p-8"
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-3 sm:p-4"
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=2000&q=80')`,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         backgroundBlendMode: 'overlay'
       }}
     >
-      <div className="w-full max-w-[90%] sm:max-w-[440px] mx-auto">
-        <div className="backdrop-blur-md bg-white/80 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border border-green-100 relative overflow-hidden">
+      <div className="w-full max-w-[85%] sm:max-w-[380px] mx-auto">
+        <div className="backdrop-blur-md bg-white/80 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl border border-green-100 relative overflow-hidden">
           {/* Logo and Title */}
-          <div className="text-center mb-6 sm:mb-8 relative z-10">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Leaf className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 animate-float" />
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+          <div className="text-center mb-4 sm:mb-6 relative z-10">
+            <div className="flex justify-center items-center gap-1.5 mb-2">
+              <Leaf className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 animate-float" />
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
                 Plantopiaa
               </h1>
             </div>
-            <p className="text-sm sm:text-base text-gray-600">Your personal plant care assistant</p>
+            <p className="text-xs sm:text-sm text-gray-600">Your personal plant care assistant</p>
           </div>
 
           {/* Floating Leaves */}
-          <div className="absolute -top-4 -left-4 text-green-200/30">
-            <Leaf className="h-10 w-10 sm:h-12 sm:w-12 animate-float" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute -top-3 -left-3 text-green-200/30">
+            <Leaf className="h-8 w-8 sm:h-10 sm:w-10 animate-float" style={{ animationDelay: '0.5s' }} />
           </div>
-          <div className="absolute -bottom-4 -right-4 text-green-200/30">
-            <Leaf className="h-10 w-10 sm:h-12 sm:w-12 animate-float" style={{ animationDelay: '1s' }} />
+          <div className="absolute -bottom-3 -right-3 text-green-200/30">
+            <Leaf className="h-8 w-8 sm:h-10 sm:w-10 animate-float" style={{ animationDelay: '1s' }} />
           </div>
 
           {/* Auth Form */}
@@ -76,11 +76,11 @@ const Auth = () => {
               },
               style: {
                 container: {
-                  gap: '1rem',
+                  gap: '0.75rem',
                 },
                 button: {
-                  padding: '0.75rem 1rem',
-                  borderRadius: '0.75rem',
+                  padding: '0.625rem 1rem',
+                  borderRadius: '0.625rem',
                   backgroundColor: '#059669',
                   color: 'white',
                   fontWeight: '500',
@@ -88,44 +88,44 @@ const Auth = () => {
                   '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
-                  },
+                  } as any,
                 },
                 input: {
-                  borderRadius: '0.75rem',
-                  padding: '0.75rem 1rem',
+                  borderRadius: '0.625rem',
+                  padding: '0.625rem 1rem',
                   backgroundColor: 'white',
                   border: '1px solid #d1d5db',
                   transition: 'all 150ms ease',
                   '&:hover': {
                     borderColor: '#059669',
-                  },
+                  } as any,
                   '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
-                  },
+                  } as any,
                 },
                 label: {
                   color: '#4b5563',
                   marginBottom: '0.25rem',
-                  fontSize: '0.875rem',
+                  fontSize: '0.813rem',
                 },
                 message: {
-                  borderRadius: '0.75rem',
-                  padding: '0.75rem 1rem',
-                  marginBottom: '1rem',
-                  fontSize: '0.875rem',
+                  borderRadius: '0.625rem',
+                  padding: '0.625rem 1rem',
+                  marginBottom: '0.75rem',
+                  fontSize: '0.813rem',
                   backgroundColor: 'rgba(5, 150, 105, 0.1)',
                   color: '#059669',
                 },
                 anchor: {
                   color: '#059669',
-                  fontSize: '0.875rem',
+                  fontSize: '0.813rem',
                   textDecoration: 'none',
                   transition: 'color 150ms ease',
                   '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
-                  },
+                  } as any,
                 }
               }
             }}
