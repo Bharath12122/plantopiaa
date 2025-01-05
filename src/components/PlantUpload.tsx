@@ -263,6 +263,8 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             ]
           };
 
+          console.log('Enhanced plant data:', finalPlantData);
+
           const translatedData = await translatePlantData(finalPlantData, currentLanguage);
           onUploadSuccess(translatedData);
 
