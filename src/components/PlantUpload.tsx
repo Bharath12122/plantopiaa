@@ -214,6 +214,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           await trackInteraction('plant_scan');
 
           // Enhanced plant data processing
+
           const plantData = {
             name: plantInfo.plant_name || plantInfo.common_names?.[0] || "Unknown Plant",
             scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name || "Species unknown",
@@ -234,6 +235,12 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
               ...(plantInfo.plant_details?.medicinal_properties || []),
               ...(plantInfo.plant_details?.economic_uses || []),
               "Decorative plant for indoor or outdoor spaces",
+            ].filter(Boolean),
+            healthBenefits: [
+              ...(plantInfo.plant_details?.health_benefits || []),
+              ...(plantInfo.plant_details?.nutritional_value || []),
+              ...(plantInfo.plant_details?.medicinal_properties || []),
+              "May have additional health benefits not yet documented",
             ].filter(Boolean),
             language: currentLanguage
           };
@@ -304,3 +311,4 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     </div>
   );
 };
+

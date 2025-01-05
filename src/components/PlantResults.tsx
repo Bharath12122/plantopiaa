@@ -10,6 +10,7 @@ interface PlantResultsProps {
     careTips: string[];
     image: string;
     uses: string[];
+    healthBenefits: string[];
   };
 }
 
@@ -76,6 +77,21 @@ export const PlantResults = ({ plant }: PlantResultsProps) => {
           </ul>
         </Card>
       </div>
+
+      <Card className="p-6">
+        <h4 className="text-lg font-medium mb-4 flex items-center">
+          <span className="mr-2">💪</span>
+          Health Benefits
+        </h4>
+        <ul className="space-y-3">
+          {plant.healthBenefits.map((benefit: string, index: number) => (
+            <li key={index} className="flex items-start">
+              <span className="text-green-500 mr-2">•</span>
+              <span className="text-gray-700">{benefit}</span>
+            </li>
+          ))}
+        </ul>
+      </Card>
 
       <div className="flex justify-center">
         <Button
