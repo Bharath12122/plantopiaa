@@ -181,7 +181,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           console.log('Calling identify-plant function...');
           
-          const { data, error } = await supabase.functions.invoke('identify-plant', {
+          const { data: plantData, error } = await supabase.functions.invoke('identify-plant', {
             body: { 
               image: base64Image,
               language: currentLanguage
@@ -190,13 +190,13 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           if (error) throw error;
 
-          if (!data || !data.suggestions || data.suggestions.length === 0) {
+          if (!plantData || !plantData.suggestions || plantData.suggestions.length === 0) {
             throw new Error("No plant matches found");
           }
 
-          console.log('Plant identification successful:', data);
+          console.log('Plant identification successful:', plantData);
 
-          const plantInfo = data.suggestions[0];
+          const plantInfo = plantData.suggestions[0];
           
           const fileExt = optimizedFile.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
@@ -213,8 +213,8 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
           await trackInteraction('plant_scan');
 
-          // Enhanced plant data processing with improved health benefits
-          const plantData = {
+          // Enhanced plant data processing
+          const basicPlantData = {
             name: plantInfo.plant_name || plantInfo.common_names?.[0] || "Unknown Plant",
             scientificName: plantInfo.scientific_name || plantInfo.plant_details?.scientific_name || "Species unknown",
             description: plantInfo.plant_details?.wiki_description?.value || 
@@ -235,25 +235,36 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
               ...(plantInfo.plant_details?.economic_uses || []),
               "Decorative plant for indoor or outdoor spaces",
             ].filter(Boolean),
-            healthBenefits: [
-              ...(plantInfo.plant_details?.health_benefits || []),
-              ...(plantInfo.plant_details?.nutritional_value || []),
-              ...(plantInfo.plant_details?.medicinal_properties || []),
-            ].filter(Boolean).length > 0 
-              ? [
-                  ...(plantInfo.plant_details?.health_benefits || []),
-                  ...(plantInfo.plant_details?.nutritional_value || []),
-                  ...(plantInfo.plant_details?.medicinal_properties || []),
-                ].filter(Boolean)
-              : ["No documented health benefits have been verified for this plant. Always consult healthcare professionals before using any plant for medicinal purposes."],
-            language: currentLanguage
           };
 
-          const translatedData = await translatePlantData(plantData, currentLanguage);
-          onUploadSuccess(translatedData);
+          // Get enhanced health benefits from OpenAI
+          console.log('Calling enhance-plant-info function...');
+          const { data: enhancedData, error: enhanceError } = await supabase.functions.invoke('enhance-plant-info', {
+            body: { 
+              plantName: basicPlantData.name,
+              scientificName: basicPlantData.scientificName,
+              basicInfo: basicPlantData.description
+            }
+          });
 
-          const endTime = performance.now();
-          console.log(`Upload and processing completed in ${endTime}ms`);
+          if (enhanceError) {
+            console.error('Error getting enhanced plant info:', enhanceError);
+            toast({
+              title: "Note",
+              description: "Some plant information might be limited.",
+              variant: "default",
+            });
+          }
+
+          const finalPlantData = {
+            ...basicPlantData,
+            healthBenefits: enhancedData?.benefits || [
+              "No documented health benefits have been verified for this plant. Always consult healthcare professionals before using any plant for medicinal purposes."
+            ]
+          };
+
+          const translatedData = await translatePlantData(finalPlantData, currentLanguage);
+          onUploadSuccess(translatedData);
 
           toast({
             title: "Plant identified successfully!",
