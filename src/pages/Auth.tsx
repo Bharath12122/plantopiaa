@@ -61,29 +61,29 @@ const Auth = () => {
                 ...authStyles,
                 button: {
                   ...authStyles.button,
-                  ':hover': {
+                  '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
-                  } as React.CSSProperties,
+                  },
                 },
                 input: {
                   ...authStyles.input,
-                  ':hover': {
+                  '&:hover': {
                     borderColor: '#059669',
-                  } as React.CSSProperties,
-                  ':focus': {
+                  },
+                  '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
-                  } as React.CSSProperties,
+                  },
                 },
                 anchor: {
                   ...authStyles.anchor,
-                  ':hover': {
+                  '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
-                  } as React.CSSProperties,
+                  },
                 },
-              },
+              } as const,
             }}
             providers={[]}
             view="sign_in"
