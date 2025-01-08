@@ -14,6 +14,7 @@ import { BadgeShowcase } from "@/components/gamification/BadgeShowcase";
 import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PlantCareTips } from "@/components/PlantCareTips";
 
 const GamificationSection = ({ showGamification }: { showGamification: boolean }) => {
   if (!showGamification) return null;
@@ -127,6 +128,8 @@ const Index = () => {
           Our AI-powered plant identification app helps you discover and learn about
           the flora around you. Simply snap a photo and get instant, accurate results.
         </p>
+
+        <PlantCareTips />
 
         <div className="flex gap-4 justify-center mb-16">
           <Button 
