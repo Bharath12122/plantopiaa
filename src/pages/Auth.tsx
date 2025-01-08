@@ -75,7 +75,7 @@ const Auth = () => {
               style: {
                 container: {
                   gap: '0.75rem',
-                },
+                } satisfies React.CSSProperties,
                 button: {
                   padding: '0.625rem 1rem',
                   borderRadius: '0.625rem',
@@ -86,8 +86,8 @@ const Auth = () => {
                   '&:hover': {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
-                  } satisfies React.CSSProperties,
-                },
+                  },
+                } satisfies React.CSSProperties,
                 input: {
                   borderRadius: '0.625rem',
                   padding: '0.625rem 1rem',
@@ -96,17 +96,17 @@ const Auth = () => {
                   transition: 'all 150ms ease',
                   '&:hover': {
                     borderColor: '#059669',
-                  } satisfies React.CSSProperties,
+                  },
                   '&:focus': {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
-                  } satisfies React.CSSProperties,
-                },
+                  },
+                } satisfies React.CSSProperties,
                 label: {
                   color: '#4b5563',
                   marginBottom: '0.25rem',
                   fontSize: '0.813rem',
-                },
+                } satisfies React.CSSProperties,
                 message: {
                   borderRadius: '0.625rem',
                   padding: '0.625rem 1rem',
@@ -114,7 +114,7 @@ const Auth = () => {
                   fontSize: '0.813rem',
                   backgroundColor: 'rgba(5, 150, 105, 0.1)',
                   color: '#059669',
-                },
+                } satisfies React.CSSProperties,
                 anchor: {
                   color: '#059669',
                   fontSize: '0.813rem',
@@ -123,8 +123,8 @@ const Auth = () => {
                   '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
-                  } satisfies React.CSSProperties,
-                }
+                  },
+                } satisfies React.CSSProperties,
               }
             }}
             providers={[]}
