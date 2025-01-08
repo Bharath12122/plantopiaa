@@ -16,33 +16,8 @@ import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlantCareTips } from "@/components/PlantCareTips";
 
-const GamificationSection = ({ showGamification }: { showGamification: boolean }) => {
-  if (!showGamification) return null;
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-fade-in">
-      <div className="space-y-4">
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <StreakTracker />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <BadgeShowcase />
-        </Suspense>
-      </div>
-      <div className="space-y-4">
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <Leaderboard />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-[200px] w-full" />}>
-          <ChallengeSystem />
-        </Suspense>
-      </div>
-    </div>
-  );
-};
-
 const Index = () => {
-  const navigate = useNavigate(); // Properly declare navigate function
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
   const [showUpload, setShowUpload] = useState(false);
@@ -129,8 +104,6 @@ const Index = () => {
           the flora around you. Simply snap a photo and get instant, accurate results.
         </p>
 
-        <PlantCareTips />
-
         <div className="flex gap-4 justify-center mb-16">
           <Button 
             onClick={handleTryFreeClick}
@@ -138,6 +111,13 @@ const Index = () => {
           >
             Try For Free
           </Button>
+        </div>
+
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
+            Daily Plant Care Tips
+          </h2>
+          <PlantCareTips />
         </div>
 
         {showUpload && (
