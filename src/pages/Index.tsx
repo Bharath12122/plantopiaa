@@ -92,14 +92,14 @@ const Index = () => {
     <div className="min-h-screen bg-[#F2FCE2]">
       <LogoutButton />
       
-      <div className="container mx-auto px-4 py-16 md:py-20">
+      <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
           <Leaf className="h-16 w-16 text-[#00B388] animate-float" />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#2A3B1D]">
+        <h1 className="text-5xl font-bold mb-6 text-[#2A3B1D]">
           Identify Any Plant in Seconds
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           Our AI-powered plant identification app helps you discover and learn about
           the flora around you. Simply snap a photo and get instant, accurate results.
         </p>
@@ -114,7 +114,7 @@ const Index = () => {
         </div>
 
         <div className="mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#2A3B1D]">
+          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
             Daily Plant Care Tips
           </h2>
           <PlantCareTips />
@@ -130,7 +130,7 @@ const Index = () => {
 
         {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#2A3B1D]">
+        <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
           Choose Your Plan
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
