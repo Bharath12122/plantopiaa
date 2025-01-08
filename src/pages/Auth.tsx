@@ -65,7 +65,7 @@ const Auth = () => {
                     backgroundColor: '#047857',
                     transform: 'translateY(-1px)',
                   },
-                },
+                } as const,
                 input: {
                   ...authStyles.input,
                   '&:hover': {
@@ -75,14 +75,14 @@ const Auth = () => {
                     borderColor: '#059669',
                     boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
                   },
-                },
+                } as const,
                 anchor: {
                   ...authStyles.anchor,
                   '&:hover': {
                     color: '#047857',
                     textDecoration: 'underline',
                   },
-                },
+                } as const,
               } as const,
             }}
             providers={[]}
