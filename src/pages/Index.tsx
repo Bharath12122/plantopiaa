@@ -15,12 +15,15 @@ import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlantCareTips } from "@/components/PlantCareTips";
+import { Footer } from "@/components/Footer";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+// ... keep existing code (imports and component setup)
 
 const Index = () => {
   const navigate = useNavigate();
@@ -117,6 +120,7 @@ const Index = () => {
     <div className="min-h-screen bg-[#F2FCE2]">
       <LogoutButton />
       
+      {/* Main Content */}
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
           <Leaf className="h-16 w-16 text-[#00B388] animate-float" />
@@ -201,6 +205,9 @@ const Index = () => {
 
         <ChatbotTrigger />
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
