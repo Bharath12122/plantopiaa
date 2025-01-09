@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
+import { useProStatus } from "@/hooks/useProStatus";
 import { UploadHeader } from "./upload/UploadHeader";
 import { FileInput } from "./upload/FileInput";
 import { DesktopUpload } from "./upload/DesktopUpload";
@@ -23,6 +24,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
+  const { isPro } = useProStatus();
   const FREE_SCANS_LIMIT = 3;
   const [currentLanguage, setCurrentLanguage] = useState("en");
 
@@ -37,13 +39,14 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
 
-  // Rate limiting check
+  // Rate limiting check - skip for Pro users
   const checkRateLimit = useCallback(() => {
+    if (isPro) return true; // Pro users bypass rate limiting
+    
     const now = Date.now();
     const stored = localStorage.getItem(RATE_LIMIT_KEY);
     let requests = stored ? JSON.parse(stored) : [];
     
-    // Remove old requests
     requests = requests.filter((time: number) => now - time < RATE_LIMIT_DURATION);
     
     if (requests.length >= MAX_REQUESTS) {
@@ -53,7 +56,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     requests.push(now);
     localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(requests));
     return true;
-  }, []);
+  }, [isPro]);
 
   // Image optimization
   const optimizeImage = async (file: File): Promise<File> => {
@@ -148,13 +151,15 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     if (!checkRateLimit()) {
       toast({
         title: "Rate limit exceeded",
-        description: "Please wait a moment before trying again",
+        description: isPro ? 
+          "Please try again in a moment" : 
+          "Upgrade to Pro for unlimited scans!",
         variant: "destructive",
       });
       return;
     }
 
-    if (interactionCount >= FREE_SCANS_LIMIT) {
+    if (!isPro && interactionCount >= FREE_SCANS_LIMIT) {
       toast({
         title: "Free scan limit reached",
         description: "Upgrade to Pro for unlimited plant scans!",
@@ -242,6 +247,25 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             title: "Plant identified successfully!",
             description: "Scroll down to see the detailed results.",
           });
+
+          // Store in collection if Pro user
+          if (isPro) {
+            const { data: collections } = await supabase
+              .from('plant_collections')
+              .select('id')
+              .limit(1);
+
+            if (collections && collections.length > 0) {
+              await supabase
+                .from('collection_entries')
+                .insert([{
+                  collection_id: collections[0].id,
+                  plant_id: plantInfo.id,
+                  category: 'Identified Plants',
+                  growth_stage: 'Unknown'
+                }]);
+            }
+          }
 
         } catch (error: any) {
           console.error("Processing error:", error);

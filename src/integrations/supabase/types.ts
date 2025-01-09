@@ -159,6 +159,51 @@ export type Database = {
         }
         Relationships: []
       }
+      collection_entries: {
+        Row: {
+          category: string | null
+          collection_id: string | null
+          created_at: string
+          growth_stage: string | null
+          id: string
+          notes: string | null
+          plant_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          collection_id?: string | null
+          created_at?: string
+          growth_stage?: string | null
+          id?: string
+          notes?: string | null
+          plant_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          collection_id?: string | null
+          created_at?: string
+          growth_stage?: string | null
+          id?: string
+          notes?: string | null
+          plant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_entries_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "plant_collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_entries_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_bookings: {
         Row: {
           booking_date: string
@@ -265,6 +310,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      plant_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       plant_performance: {
         Row: {
