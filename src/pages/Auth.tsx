@@ -6,7 +6,45 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AuthLogo from "@/components/auth/AuthLogo";
 import AuthBackground from "@/components/auth/AuthBackground";
-import { authStyles, authStylesHover } from "@/components/auth/AuthStyles";
+
+const authStyles = {
+  button: {
+    background: '#059669',
+    color: 'white',
+    borderRadius: '0.5rem',
+    padding: '0.75rem 1rem',
+    fontSize: '1rem',
+    fontWeight: '500',
+  },
+  input: {
+    background: 'white',
+    borderColor: '#d1d5db',
+    borderRadius: '0.5rem',
+    padding: '0.75rem 1rem',
+    fontSize: '1rem',
+  },
+  anchor: {
+    color: '#059669',
+    textDecoration: 'none',
+  },
+};
+
+const authStylesHover = {
+  button: {
+    backgroundColor: '#047857',
+  },
+  input: {
+    borderColor: '#059669',
+  },
+  inputFocus: {
+    borderColor: '#059669',
+    outline: 'none',
+    boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.2)',
+  },
+  anchor: {
+    textDecoration: 'underline',
+  },
+};
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -61,16 +99,12 @@ const Auth = () => {
                 ...authStyles,
                 button: {
                   ...authStyles.button,
-                  '&:hover': authStylesHover.button,
                 },
                 input: {
                   ...authStyles.input,
-                  '&:hover': authStylesHover.input,
-                  '&:focus': authStylesHover.inputFocus,
                 },
                 anchor: {
                   ...authStyles.anchor,
-                  '&:hover': authStylesHover.anchor,
                 },
               },
             }}

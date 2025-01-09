@@ -13,6 +13,13 @@ import { DailyRewards } from "@/components/DailyRewards";
 import { GamificationSection } from "@/components/gamification/GamificationSection";
 import { PlantCareTips } from "@/components/PlantCareTips";
 import { Footer } from "@/components/Footer";
+import { Leaf, Camera } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const subscriptions = [
   {
