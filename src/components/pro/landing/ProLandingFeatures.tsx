@@ -1,4 +1,4 @@
-import { Infinity, Book, Wifi, Shield, Plant, MessageSquare } from "lucide-react";
+import { Infinity, Book, Wifi, Shield, Flower2, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const features = [
@@ -23,7 +23,7 @@ const features = [
     description: "Enjoy an uninterrupted, clean interface.",
   },
   {
-    icon: <Plant className="w-12 h-12 text-[#9b87f5]" />,
+    icon: <Flower2 className="w-12 h-12 text-[#9b87f5]" />,
     title: "Plant Collection",
     description: "Build and manage your personal plant database.",
   },
