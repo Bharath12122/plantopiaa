@@ -37,3 +37,21 @@ export const authStyles = {
     gap: '0.75rem',
   },
 } as const;
+
+export const authStylesHover = {
+  button: {
+    backgroundColor: '#047857',
+    transform: 'translateY(-1px)',
+  },
+  input: {
+    borderColor: '#059669',
+  },
+  inputFocus: {
+    borderColor: '#059669',
+    boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
+  },
+  anchor: {
+    color: '#047857',
+    textDecoration: 'underline',
+  },
+} as const;

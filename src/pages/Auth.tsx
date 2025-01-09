@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AuthLogo from "@/components/auth/AuthLogo";
 import AuthBackground from "@/components/auth/AuthBackground";
-import { authStyles } from "@/components/auth/AuthStyles";
+import { authStyles, authStylesHover } from "@/components/auth/AuthStyles";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -61,29 +61,18 @@ const Auth = () => {
                 ...authStyles,
                 button: {
                   ...authStyles.button,
-                  '&:hover': {
-                    backgroundColor: '#047857',
-                    transform: 'translateY(-1px)',
-                  },
-                } as const,
+                  '&:hover': authStylesHover.button,
+                },
                 input: {
                   ...authStyles.input,
-                  '&:hover': {
-                    borderColor: '#059669',
-                  },
-                  '&:focus': {
-                    borderColor: '#059669',
-                    boxShadow: '0 0 0 2px rgba(5, 150, 105, 0.1)',
-                  },
-                } as const,
+                  '&:hover': authStylesHover.input,
+                  '&:focus': authStylesHover.inputFocus,
+                },
                 anchor: {
                   ...authStyles.anchor,
-                  '&:hover': {
-                    color: '#047857',
-                    textDecoration: 'underline',
-                  },
-                } as const,
-              } as const,
+                  '&:hover': authStylesHover.anchor,
+                },
+              },
             }}
             providers={[]}
             view="sign_in"

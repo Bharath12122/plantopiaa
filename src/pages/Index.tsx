@@ -1,18 +1,15 @@
+import React, { useState } from "react";
 import { Leaf, Camera } from "lucide-react";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
 import { useNavigate } from "react-router-dom";
-import { useState, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
 import { Button } from "@/components/ui/button";
 import { DailyRewards } from "@/components/DailyRewards";
-import { StreakTracker } from "@/components/gamification/StreakTracker";
-import { BadgeShowcase } from "@/components/gamification/BadgeShowcase";
-import { Leaderboard } from "@/components/gamification/Leaderboard";
-import { ChallengeSystem } from "@/components/gamification/ChallengeSystem";
+import { GamificationSection } from "@/components/gamification/GamificationSection";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlantCareTips } from "@/components/PlantCareTips";
 import { Footer } from "@/components/Footer";
@@ -22,8 +19,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-// ... keep existing code (imports and component setup)
 
 const Index = () => {
   const navigate = useNavigate();
@@ -213,3 +208,4 @@ const Index = () => {
 };
 
 export default Index;
+
