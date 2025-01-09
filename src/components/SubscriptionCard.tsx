@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 interface Feature {
   text: string;
@@ -14,7 +15,6 @@ interface SubscriptionCardProps {
   features: Feature[];
   variant: "free" | "pro" | "premium";
   popular?: boolean;
-  onSelect?: () => void;
 }
 
 export const SubscriptionCard = ({
@@ -24,8 +24,9 @@ export const SubscriptionCard = ({
   features,
   variant,
   popular,
-  onSelect,
 }: SubscriptionCardProps) => {
+  const navigate = useNavigate();
+
   const bgColors = {
     free: "bg-plant-free hover:bg-plant-free/90",
     pro: "bg-gradient-to-br from-plant-pro to-plant-pro-dark hover:opacity-90",
@@ -36,6 +37,19 @@ export const SubscriptionCard = ({
     free: "text-gray-900",
     pro: "text-white",
     premium: "text-white",
+  };
+
+  const handleClick = () => {
+    switch (variant) {
+      case "pro":
+        navigate("/pro/landing");
+        break;
+      case "premium":
+        navigate("/premium/landing");
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -63,7 +77,7 @@ export const SubscriptionCard = ({
       <CardFooter>
         <Button 
           className={`w-full ${bgColors[variant]} ${textColors[variant]}`}
-          onClick={onSelect}
+          onClick={handleClick}
         >
           Get Started
         </Button>

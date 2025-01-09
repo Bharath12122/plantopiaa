@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Pro from "./pages/Pro";
+import ProLanding from "./pages/ProLanding";
 import Premium from "./pages/Premium";
 import PremiumLanding from "./pages/PremiumLanding";
 import Support from "./pages/Support";
@@ -119,6 +120,7 @@ const App = () => (
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/pro" element={<ProtectedRoute><Pro /></ProtectedRoute>} />
+          <Route path="/pro/landing" element={<ProLanding />} />
           <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
           <Route path="/premium/landing" element={<PremiumLanding />} />
           <Route path="/support" element={<Support />} />
