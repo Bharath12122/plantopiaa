@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
@@ -10,6 +10,8 @@ import { UploadProgress } from "./upload/UploadProgress";
 import { useQuery } from "@tanstack/react-query";
 import { processPlantData } from "@/utils/plantDataProcessing";
 import { getEnhancedPlantInfo } from "@/utils/enhancePlantInfo";
+import { savePlantOffline, syncOfflinePlants } from "@/utils/offlineStorage";
+import { toast } from "sonner";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
@@ -23,10 +25,38 @@ const MAX_REQUESTS = 5; // 5 requests per minute
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const { isPro } = useProStatus();
   const FREE_SCANS_LIMIT = 3;
   const [currentLanguage, setCurrentLanguage] = useState("en");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      if (isPro) {
+        syncOfflinePlants().then(success => {
+          if (success) {
+            toast({
+              title: "Plants synced successfully",
+              description: "Your offline plants have been synced to your account.",
+            });
+          }
+        });
+      }
+    };
+    
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [isPro]);
 
   // Cache translations using React Query
   const { data: cachedTranslations } = useQuery({
@@ -39,7 +69,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
 
-  // Rate limiting check - skip for Pro users
   const checkRateLimit = useCallback(() => {
     if (isPro) return true; // Pro users bypass rate limiting
     
@@ -58,7 +87,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     return true;
   }, [isPro]);
 
-  // Image optimization
   const optimizeImage = async (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -66,7 +94,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       const ctx = canvas.getContext('2d');
       
       img.onload = () => {
-        // Max dimensions
         const MAX_WIDTH = 1200;
         const MAX_HEIGHT = 1200;
         
@@ -108,7 +135,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   };
 
   const translatePlantData = async (plantData: any, targetLanguage: string) => {
-    // Check cache first
     const cacheKey = `translation_${JSON.stringify(plantData)}_${targetLanguage}`;
     const cached = localStorage.getItem(cacheKey);
     
@@ -127,7 +153,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
       if (error) throw error;
       
-      // Cache the result
       localStorage.setItem(cacheKey, JSON.stringify(data.translatedData));
       return data.translatedData;
     } catch (error) {
@@ -148,17 +173,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
-    if (!checkRateLimit()) {
-      toast({
-        title: "Rate limit exceeded",
-        description: isPro ? 
-          "Please try again in a moment" : 
-          "Upgrade to Pro for unlimited scans!",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!isPro && interactionCount >= FREE_SCANS_LIMIT) {
       toast({
         title: "Free scan limit reached",
@@ -173,7 +187,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       const optimizedFile = await optimizeImage(file);
       
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!session && !isPro) {
         throw new Error("You must be logged in to upload files");
       }
 
@@ -186,45 +200,65 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             throw new Error("Failed to process image");
           }
 
-          console.log('Calling identify-plant function...');
+          let plantData;
           
-          const { data: plantData, error } = await supabase.functions.invoke('identify-plant', {
-            body: { 
-              image: base64Image,
-              language: currentLanguage
+          if (!isOnline && isPro) {
+            const cachedResponse = localStorage.getItem('last_plant_response');
+            if (cachedResponse) {
+              plantData = JSON.parse(cachedResponse);
+              toast({
+                title: "Offline mode",
+                description: "Using cached plant data. Will sync when online.",
+              });
+            } else {
+              throw new Error("No cached data available offline");
             }
-          });
+          } else {
+            const { data, error } = await supabase.functions.invoke('identify-plant', {
+              body: { 
+                image: base64Image,
+                language: currentLanguage
+              }
+            });
 
-          if (error) throw error;
+            if (error) throw error;
+            plantData = data;
+            
+            if (isPro) {
+              localStorage.setItem('last_plant_response', JSON.stringify(data));
+            }
+          }
 
           if (!plantData || !plantData.suggestions || plantData.suggestions.length === 0) {
             throw new Error("No plant matches found");
           }
-
-          console.log('Plant identification successful:', plantData);
 
           const plantInfo = plantData.suggestions[0];
           
           const fileExt = optimizedFile.name.split('.').pop();
           const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-          const { error: uploadError, data: uploadData } = await supabase.storage
-            .from('plant-images')
-            .upload(fileName, optimizedFile);
+          let publicUrl = '';
+          
+          if (isOnline) {
+            const { error: uploadError, data: uploadData } = await supabase.storage
+              .from('plant-images')
+              .upload(fileName, optimizedFile);
 
-          if (uploadError) throw uploadError;
+            if (uploadError) throw uploadError;
 
-          const { data: { publicUrl } } = supabase.storage
-            .from('plant-images')
-            .getPublicUrl(fileName);
+            const { data: { publicUrl: url } } = supabase.storage
+              .from('plant-images')
+              .getPublicUrl(fileName);
+              
+            publicUrl = url;
+          } else {
+            publicUrl = URL.createObjectURL(optimizedFile);
+          }
 
           await trackInteraction('plant_scan');
 
-          // Process basic plant data
           const basicPlantData = processPlantData(plantInfo, publicUrl);
-
-          // Get enhanced health benefits
-          console.log('Getting enhanced plant info...');
           const healthBenefits = await getEnhancedPlantInfo(
             basicPlantData.name,
             basicPlantData.scientificName,
@@ -236,20 +270,24 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             healthBenefits
           };
 
-          console.log('Final plant data with health benefits:', finalPlantData);
+          if (!isOnline && isPro) {
+            await savePlantOffline(finalPlantData);
+            toast({
+              title: "Plant saved offline",
+              description: "Will sync when internet connection is restored.",
+            });
+          }
 
           const translatedData = await translatePlantData(finalPlantData, currentLanguage);
-          console.log('Translated data:', translatedData);
           
           onUploadSuccess(translatedData);
 
           toast({
             title: "Plant identified successfully!",
-            description: "Scroll down to see the detailed results.",
+            description: isOnline ? "Scroll down to see the detailed results." : "Results saved offline.",
           });
 
-          // Store in collection if Pro user
-          if (isPro) {
+          if (isOnline && isPro) {
             const { data: collections } = await supabase
               .from('plant_collections')
               .select('id')

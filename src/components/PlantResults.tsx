@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { Wifi, WifiOff } from "lucide-react";
+import { useProStatus } from "@/hooks/useProStatus";
 
 interface PlantResultsProps {
   plant: {
@@ -16,11 +18,20 @@ interface PlantResultsProps {
 
 export const PlantResults = ({ plant }: PlantResultsProps) => {
   const navigate = useNavigate();
+  const { isPro } = useProStatus();
+  const isOnline = navigator.onLine;
   
   if (!plant) return null;
 
   return (
     <div className="max-w-2xl mx-auto mb-16 space-y-6 animate-fade-in">
+      {isPro && !isOnline && (
+        <div className="flex items-center justify-center gap-2 text-yellow-600 bg-yellow-50 p-2 rounded-lg">
+          <WifiOff className="w-4 h-4" />
+          <span>Offline Mode - Changes will sync when online</span>
+        </div>
+      )}
+      
       <Card className="p-6 bg-white rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row gap-6">
           <img
