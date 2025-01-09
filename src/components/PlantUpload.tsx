@@ -266,7 +266,13 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           );
 
           const finalPlantData = {
-            ...basicPlantData,
+            id: crypto.randomUUID(), // Add unique ID for offline storage
+            name: basicPlantData.name,
+            scientificName: basicPlantData.scientificName,
+            description: basicPlantData.description,
+            careTips: [],
+            image: publicUrl,
+            uses: [],
             healthBenefits
           };
 

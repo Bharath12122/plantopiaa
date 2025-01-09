@@ -47,19 +47,23 @@ export const getOfflinePlants = (): StoredPlant[] => {
 
 export const syncOfflinePlants = async () => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No authenticated user');
+
     const plants = getOfflinePlants();
     const pendingPlants = plants.filter(p => p.syncStatus === 'pending');
     
     for (const plant of pendingPlants) {
       const { error } = await supabase
         .from('plants')
-        .insert([{
+        .insert({
           name: plant.name,
           scientific_name: plant.scientificName,
           description: plant.description,
           image_url: plant.image,
           medicinal_uses: plant.healthBenefits,
-        }]);
+          user_id: user.id
+        });
       
       if (!error) {
         plant.syncStatus = 'synced';
