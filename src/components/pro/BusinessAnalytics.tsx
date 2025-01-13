@@ -55,59 +55,61 @@ export const BusinessAnalytics = () => {
   };
 
   if (isLoading) {
-    return <div>Loading analytics...</div>;
+    return <div className="text-white">Loading analytics...</div>;
   }
 
   return (
-    <section className="py-8">
+    <section className="py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">Business Analytics</h2>
+        <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
+          Business Analytics
+        </h2>
         
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6">
-            <BarChart className="w-12 h-12 text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Revenue Overview</h3>
-            <p className="text-2xl font-bold text-primary">
+          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
+            <BarChart className="w-12 h-12 text-[#9b87f5] mb-4" />
+            <h3 className="text-xl font-semibold mb-2 text-white">Revenue Overview</h3>
+            <p className="text-2xl font-bold text-[#9b87f5]">
               ${metrics.reduce((sum, m) => sum + (m.revenue || 0), 0).toFixed(2)}
             </p>
           </Card>
           
-          <Card className="p-6">
-            <LineChart className="w-12 h-12 text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Total Sales</h3>
-            <p className="text-2xl font-bold text-primary">
+          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
+            <LineChart className="w-12 h-12 text-[#9b87f5] mb-4" />
+            <h3 className="text-xl font-semibold mb-2 text-white">Total Sales</h3>
+            <p className="text-2xl font-bold text-[#9b87f5]">
               {metrics.reduce((sum, m) => sum + (m.sales_count || 0), 0)}
             </p>
           </Card>
           
-          <Card className="p-6">
-            <TrendingUp className="w-12 h-12 text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Current Inventory</h3>
-            <p className="text-2xl font-bold text-primary">
+          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
+            <TrendingUp className="w-12 h-12 text-[#9b87f5] mb-4" />
+            <h3 className="text-xl font-semibold mb-2 text-white">Current Inventory</h3>
+            <p className="text-2xl font-bold text-[#9b87f5]">
               {metrics[metrics.length - 1]?.inventory_count || 0}
             </p>
           </Card>
         </div>
 
-        <Card className="p-6">
-          <h3 className="text-xl font-semibold mb-4">Revenue Trend</h3>
+        <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
+          <h3 className="text-xl font-semibold mb-4 text-white">Revenue Trend</h3>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <RechartsLineChart data={metrics}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="metric_date" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#2A3B1D" />
+                <XAxis dataKey="metric_date" stroke="#9b87f5" />
+                <YAxis stroke="#9b87f5" />
+                <Tooltip contentStyle={{ backgroundColor: '#1A1F2C', border: 'none' }} />
                 <Line 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#8884d8" 
+                  stroke="#9b87f5" 
                   name="Revenue"
                 />
                 <Line 
                   type="monotone" 
                   dataKey="expenses" 
-                  stroke="#82ca9d" 
+                  stroke="#7E69AB" 
                   name="Expenses"
                 />
               </RechartsLineChart>
