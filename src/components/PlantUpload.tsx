@@ -7,6 +7,8 @@ import { UploadHeader } from "./upload/UploadHeader";
 import { FileInput } from "./upload/FileInput";
 import { DesktopUpload } from "./upload/DesktopUpload";
 import { UploadProgress } from "./upload/UploadProgress";
+import { Badge } from "@/components/ui/badge";
+import { Infinity } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { processPlantData } from "@/utils/plantDataProcessing";
 import { getEnhancedPlantInfo } from "@/utils/enhancePlantInfo";
@@ -26,7 +28,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const { isPro } = useProStatus();
-  const FREE_SCANS_LIMIT = 3;
+  const FREE_SCANS_LIMIT = 10; // Updated from 3 to 10
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -73,6 +75,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
+    // Check scan limit only for non-pro users
     if (!isPro && interactionCount >= FREE_SCANS_LIMIT) {
       toast({
         title: "Free scan limit reached",
@@ -159,20 +162,27 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           await trackInteraction('plant_scan');
 
           const basicPlantData = processPlantData(plantInfo, publicUrl);
-          const healthBenefits = await getEnhancedPlantInfo(
-            basicPlantData.name,
-            basicPlantData.scientificName,
-            basicPlantData.description
-          );
+          
+          // Enhanced info for Pro users
+          let healthBenefits = [];
+          if (isPro) {
+            healthBenefits = await getEnhancedPlantInfo(
+              basicPlantData.name,
+              basicPlantData.scientificName,
+              basicPlantData.description
+            );
+          } else {
+            healthBenefits = ["Upgrade to Pro to access detailed health benefits"];
+          }
 
           const finalPlantData = {
             id: crypto.randomUUID(),
             name: basicPlantData.name,
             scientificName: basicPlantData.scientificName,
             description: basicPlantData.description,
-            careTips: [],
+            careTips: isPro ? basicPlantData.careTips : ["Upgrade to Pro for detailed care tips"],
             image: publicUrl,
-            uses: [],
+            uses: isPro ? basicPlantData.uses : ["Upgrade to Pro for detailed uses"],
             healthBenefits
           };
 
@@ -240,27 +250,37 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
   return (
     <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg">
-      <UploadHeader onLanguageChange={handleLanguageChange} />
+      <div className="flex justify-between items-center mb-4">
+        <UploadHeader onLanguageChange={handleLanguageChange} />
+        {isPro && (
+          <Badge variant="premium" className="bg-plant-pro text-white">
+            <Infinity className="w-4 h-4 mr-1" />
+            Pro
+          </Badge>
+        )}
+      </div>
       
       <p className="text-gray-600 mb-4">
         Upload a clear photo of your plant for detailed identification
       </p>
       
-      <UploadProgress 
-        current={interactionCount} 
-        max={FREE_SCANS_LIMIT} 
-      />
+      {!isPro && (
+        <UploadProgress 
+          current={interactionCount} 
+          max={FREE_SCANS_LIMIT} 
+        />
+      )}
 
       <div className="relative">
         <FileInput 
           onFileSelect={handleFileUpload}
-          disabled={isUploading || interactionCount >= FREE_SCANS_LIMIT}
+          disabled={isUploading || (!isPro && interactionCount >= FREE_SCANS_LIMIT)}
         />
         
         <DesktopUpload 
           isUploading={isUploading}
           onUploadClick={handleUploadClick}
-          remainingScans={FREE_SCANS_LIMIT - interactionCount}
+          remainingScans={isPro ? null : FREE_SCANS_LIMIT - interactionCount}
           maxScans={FREE_SCANS_LIMIT}
         />
       </div>

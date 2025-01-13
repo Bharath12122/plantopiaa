@@ -412,6 +412,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_educational_content: {
+        Row: {
+          content_type: string
+          content_url: string
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          content_type: string
+          content_url: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          content_type?: string
+          content_url?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -474,6 +501,39 @@ export type Database = {
           potassium_level?: number | null
           recommendations?: string[] | null
           test_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -692,6 +752,18 @@ export type Database = {
           user_uuid: string
         }
         Returns: number
+      }
+      get_scan_limit: {
+        Args: {
+          user_id: string
+        }
+        Returns: number
+      }
+      is_pro_user: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
