@@ -7,10 +7,6 @@ import { ProLandingComparison } from "@/components/pro/landing/ProLandingCompari
 import { ProLandingTestimonials } from "@/components/pro/landing/ProLandingTestimonials";
 import { ProLandingPricing } from "@/components/pro/landing/ProLandingPricing";
 import { ProLandingFAQ } from "@/components/pro/landing/ProLandingFAQ";
-import { PlantCollectionManager } from "@/components/pro/PlantCollectionManager";
-import { PrioritySupport } from "@/components/pro/PrioritySupport";
-import { EducationalResources } from "@/components/pro/EducationalResources";
-import { BusinessAnalytics } from "@/components/pro/BusinessAnalytics";
 import { Footer } from "@/components/Footer";
 
 const ProLanding = () => {
@@ -21,15 +17,6 @@ const ProLanding = () => {
       <div className="container mx-auto px-4 py-12">
         <ProLandingHeader />
         <ProLandingFeatures />
-        
-        {/* New Pro Features */}
-        <div className="space-y-24 my-24">
-          <PlantCollectionManager />
-          <PrioritySupport />
-          <EducationalResources />
-          <BusinessAnalytics />
-        </div>
-
         <ProLandingComparison />
         <ProLandingTestimonials />
         <ProLandingPricing />

@@ -40,50 +40,41 @@ export const PrioritySupport = () => {
   };
 
   return (
-    <section className="py-16">
+    <section className="py-8">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] bg-clip-text text-transparent">
-          Priority Support
-        </h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">Priority Support</h2>
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
-            <Clock className="w-12 h-12 text-[#9b87f5] mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">Fast Response Time</h3>
-            <p className="text-gray-400">Get answers to your questions within hours, not days.</p>
+          <Card className="p-6">
+            <Clock className="w-12 h-12 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Fast Response Time</h3>
+            <p className="text-gray-600">Get answers to your questions within hours, not days.</p>
           </Card>
-          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
-            <MessageCircle className="w-12 h-12 text-[#9b87f5] mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">Direct Communication</h3>
-            <p className="text-gray-400">Chat directly with our plant experts.</p>
+          <Card className="p-6">
+            <MessageCircle className="w-12 h-12 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Direct Communication</h3>
+            <p className="text-gray-600">Chat directly with our plant experts.</p>
           </Card>
-          <Card className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20">
-            <HeadphonesIcon className="w-12 h-12 text-[#9b87f5] mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">24/7 Availability</h3>
-            <p className="text-gray-400">Support available around the clock.</p>
+          <Card className="p-6">
+            <HeadphonesIcon className="w-12 h-12 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">24/7 Availability</h3>
+            <p className="text-gray-600">Support available around the clock.</p>
           </Card>
         </div>
         <div className="text-center mt-8">
-          <Button 
-            onClick={() => setIsDialogOpen(true)}
-            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white"
-            size="lg"
-          >
+          <Button onClick={() => setIsDialogOpen(true)} size="lg">
             Contact Support
           </Button>
         </div>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-[#1A1F2C] text-white">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Priority Support</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 p-4">
-            <p className="text-gray-400">Our support team will contact you shortly through your registered email.</p>
-            <Button 
-              onClick={createSupportTicket}
-              className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]"
-            >
+            <p>Our support team will contact you shortly through your registered email.</p>
+            <Button onClick={createSupportTicket} className="w-full">
               Create Support Ticket
             </Button>
           </div>
