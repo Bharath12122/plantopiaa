@@ -29,7 +29,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
   const { isPro } = useProStatus();
-  const FREE_SCANS_LIMIT = 10; // Updated from 3 to 10
+  const FREE_SCANS_LIMIT = 10;
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -245,10 +245,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     }
   };
 
-  const handleUploadClick = () => {
-    document.getElementById('plant-upload')?.click();
-  };
-
   return (
     <div className="max-w-md mx-auto mb-16 p-6 bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-4">
@@ -280,7 +276,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
         
         <DesktopUpload 
           isUploading={isUploading}
-          onUploadClick={handleUploadClick}
+          onUploadClick={() => document.getElementById('plant-upload')?.click()}
           remainingScans={isPro ? null : FREE_SCANS_LIMIT - interactionCount}
           maxScans={FREE_SCANS_LIMIT}
         />

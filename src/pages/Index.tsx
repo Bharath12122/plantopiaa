@@ -120,11 +120,12 @@ const Index = () => {
           <Leaf className="h-16 w-16 text-[#00B388] animate-float" />
         </div>
         <h1 className="text-5xl font-bold mb-6 text-[#2A3B1D]">
-          Identify Any Plant in Seconds
+          {isPro ? "Pro Plant Identification" : "Identify Any Plant in Seconds"}
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Our AI-powered plant identification app helps you discover and learn about
-          the flora around you. Simply snap a photo and get instant, accurate results.
+          {isPro 
+            ? "Access unlimited plant identifications, detailed care guides, and exclusive Pro features."
+            : "Our AI-powered plant identification app helps you discover and learn about the flora around you."}
         </p>
 
         <div className="flex gap-4 justify-center mb-16">
@@ -132,8 +133,17 @@ const Index = () => {
             onClick={handleTryFreeClick}
             className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6"
           >
-            Try For Free
+            {isPro ? "Start Scanning" : "Try For Free"}
           </Button>
+          {!isPro && (
+            <Button
+              onClick={() => navigate("/pro/landing")}
+              variant="outline"
+              className="border-[#00B388] text-[#00B388] hover:bg-[#00B388]/10 px-8 py-6"
+            >
+              Upgrade to Pro
+            </Button>
+          )}
         </div>
 
         <div className="mb-16">
