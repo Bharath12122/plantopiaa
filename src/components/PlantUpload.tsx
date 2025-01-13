@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
@@ -253,7 +253,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       <div className="flex justify-between items-center mb-4">
         <UploadHeader onLanguageChange={handleLanguageChange} />
         {isPro && (
-          <Badge variant="premium" className="bg-plant-pro text-white">
+          <Badge variant="secondary" className="bg-plant-pro text-white">
             <Infinity className="w-4 h-4 mr-1" />
             Pro
           </Badge>
