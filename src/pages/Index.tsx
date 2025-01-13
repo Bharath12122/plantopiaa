@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useProStatus } from "@/hooks/useProStatus";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
-import { PlantCollection } from "@/components/pro/PlantCollection";
+import { PlantCollectionManager } from "@/components/pro/PlantCollectionManager";
+import { PrioritySupport } from "@/components/pro/PrioritySupport";
+import { EducationalResources } from "@/components/pro/EducationalResources";
+import { BusinessAnalytics } from "@/components/pro/BusinessAnalytics";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { ChatbotTrigger } from "@/components/ChatbotTrigger";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -156,13 +159,21 @@ const Index = () => {
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
             <GamificationSection showGamification={showGamification} />
-            {isPro && <PlantCollection />}
-            <DailyRewards />
             <PlantUpload onUploadSuccess={handleUploadSuccess} />
+            {identifiedPlant && <PlantResults plant={identifiedPlant} />}
+            
+            {isPro && (
+              <>
+                <PlantCollectionManager />
+                <BusinessAnalytics />
+                <EducationalResources />
+                <PrioritySupport />
+              </>
+            )}
+            
+            <DailyRewards />
           </div>
         )}
-
-        {identifiedPlant && <PlantResults plant={identifiedPlant} />}
 
         {!isPro && (
           <>
