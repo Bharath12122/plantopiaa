@@ -11,16 +11,14 @@ import { useQuery } from "@tanstack/react-query";
 import { processPlantData } from "@/utils/plantDataProcessing";
 import { getEnhancedPlantInfo } from "@/utils/enhancePlantInfo";
 import { savePlantOffline, syncOfflinePlants } from "@/utils/offlineStorage";
+import { optimizeImage } from "./upload/ImageOptimizer";
+import { translatePlantData } from "./upload/PlantTranslator";
+import { checkRateLimit } from "./upload/RateLimit";
 import { toast } from "sonner";
 
 interface PlantUploadProps {
   onUploadSuccess: (plantData: any) => void;
 }
-
-// Cache key for rate limiting
-const RATE_LIMIT_KEY = 'plant_upload_rate_limit';
-const RATE_LIMIT_DURATION = 60000; // 1 minute
-const MAX_REQUESTS = 5; // 5 requests per minute
 
 export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const { toast } = useToast();
@@ -58,7 +56,6 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
     };
   }, [isPro]);
 
-  // Cache translations using React Query
   const { data: cachedTranslations } = useQuery({
     queryKey: ['translations', currentLanguage],
     queryFn: async () => {
@@ -66,105 +63,8 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       if (stored) return JSON.parse(stored);
       return null;
     },
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60,
   });
-
-  const checkRateLimit = useCallback(() => {
-    if (isPro) return true; // Pro users bypass rate limiting
-    
-    const now = Date.now();
-    const stored = localStorage.getItem(RATE_LIMIT_KEY);
-    let requests = stored ? JSON.parse(stored) : [];
-    
-    requests = requests.filter((time: number) => now - time < RATE_LIMIT_DURATION);
-    
-    if (requests.length >= MAX_REQUESTS) {
-      return false;
-    }
-    
-    requests.push(now);
-    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(requests));
-    return true;
-  }, [isPro]);
-
-  const optimizeImage = async (file: File): Promise<File> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      img.onload = () => {
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 1200;
-        
-        let width = img.width;
-        let height = img.height;
-        
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        ctx?.drawImage(img, 0, 0, width, height);
-        
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(new File([blob], file.name, {
-              type: 'image/jpeg',
-              lastModified: Date.now(),
-            }));
-          } else {
-            reject(new Error('Image optimization failed'));
-          }
-        }, 'image/jpeg', 0.8); // 80% quality
-      };
-      
-      img.onerror = () => reject(new Error('Failed to load image'));
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
-  const translatePlantData = async (plantData: any, targetLanguage: string) => {
-    const cacheKey = `translation_${JSON.stringify(plantData)}_${targetLanguage}`;
-    const cached = localStorage.getItem(cacheKey);
-    
-    if (cached) {
-      console.log('Using cached translation');
-      return JSON.parse(cached);
-    }
-
-    try {
-      const { data, error } = await supabase.functions.invoke('translate-plant-data', {
-        body: { 
-          plantData,
-          targetLanguage
-        }
-      });
-
-      if (error) throw error;
-      
-      localStorage.setItem(cacheKey, JSON.stringify(data.translatedData));
-      return data.translatedData;
-    } catch (error) {
-      console.error('Translation error:', error);
-      toast({
-        title: "Translation failed",
-        description: "Showing results in English",
-        variant: "destructive",
-      });
-      return plantData;
-    }
-  };
 
   const handleLanguageChange = async (language: string) => {
     setCurrentLanguage(language);
