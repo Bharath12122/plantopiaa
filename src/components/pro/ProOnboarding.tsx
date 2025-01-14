@@ -1,100 +1,140 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Leaf, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ProOnboarding = () => {
-  const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const totalSteps = 3;
+  const { toast } = useToast();
+  const [step, setStep] = useState(1);
+  const totalSteps = 4;
 
-  const handleNextStep = async () => {
-    if (step < totalSteps) {
-      setStep(step + 1);
-    } else {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user?.id) {
-          toast.success("Pro setup completed! Enjoy your enhanced features.");
-          navigate("/pro/dashboard");
-        }
-      } catch (error) {
-        console.error("Error completing pro setup:", error);
-        toast.error("Failed to complete setup. Please try again.");
+  const handleActivatePro = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to activate Pro features.",
+          variant: "destructive",
+        });
+        return;
       }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_pro: true })
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Welcome to Pro!",
+        description: "Your Pro features have been activated.",
+      });
+      
+      navigate("/pro");
+    } catch (error) {
+      console.error('Error activating Pro:', error);
+      toast({
+        title: "Activation Failed",
+        description: "Please try again or contact support.",
+        variant: "destructive",
+      });
     }
   };
+
+  const steps = [
+    {
+      title: "Welcome to Pro",
+      content: (
+        <div className="text-center space-y-4">
+          <h3 className="text-2xl font-bold text-white">Welcome to Pro!</h3>
+          <p className="text-gray-400">
+            Let's get you set up with all the advanced features.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "Plant Collection",
+      content: (
+        <div className="text-center space-y-4">
+          <h3 className="text-2xl font-bold text-white">Create Your Collection</h3>
+          <p className="text-gray-400">
+            Start by creating your first plant collection to organize your plants.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "Scanning Setup",
+      content: (
+        <div className="text-center space-y-4">
+          <h3 className="text-2xl font-bold text-white">Advanced Scanning</h3>
+          <p className="text-gray-400">
+            Get ready to use unlimited plant scanning with detailed analysis.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "Complete",
+      content: (
+        <div className="text-center space-y-4">
+          <h3 className="text-2xl font-bold text-white">You're All Set!</h3>
+          <p className="text-gray-400">
+            Start exploring all the Pro features and grow your plant knowledge.
+          </p>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#1A1F2C] py-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-center mb-8">
-            <Leaf className="w-12 h-12 text-[#9b87f5] mr-4" />
-            <h1 className="text-4xl font-bold text-white">Welcome to Pro</h1>
+        <Card className="max-w-2xl mx-auto p-8 bg-[#1A1F2C] border-[#9b87f5]/20">
+          <Progress
+            value={(step / totalSteps) * 100}
+            className="mb-8"
+          />
+          
+          <div className="mb-8">
+            {steps[step - 1].content}
           </div>
 
-          <div className="flex justify-center mb-12">
-            {Array.from({ length: totalSteps }).map((_, index) => (
-              <div
-                key={index}
-                className={`h-2 w-16 mx-1 rounded ${
-                  index + 1 <= step ? "bg-[#9b87f5]" : "bg-gray-600"
-                }`}
-              />
-            ))}
-          </div>
-
-          <Card className="p-8 bg-[#1A1F2C] border-[#9b87f5]/20">
-            {step === 1 && (
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Unlimited Plant Identification
-                </h2>
-                <p className="text-gray-400 mb-8">
-                  Get started with unlimited plant scans and detailed identification
-                </p>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Personalized Care Calendar
-                </h2>
-                <p className="text-gray-400 mb-8">
-                  Set up your plant care schedule and receive smart reminders
-                </p>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Advanced Features Access
-                </h2>
-                <p className="text-gray-400 mb-8">
-                  Get full access to all Pro features including disease identification
-                  and detailed reports
-                </p>
-              </div>
-            )}
-
-            <div className="flex justify-center">
+          <div className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={() => setStep(Math.max(1, step - 1))}
+              disabled={step === 1}
+              className="text-white border-[#9b87f5]"
+            >
+              Previous
+            </Button>
+            
+            {step < totalSteps ? (
               <Button
-                onClick={handleNextStep}
-                className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all flex items-center"
+                onClick={() => setStep(Math.min(totalSteps, step + 1))}
+                className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white"
               >
-                {step === totalSteps ? "Complete Setup" : "Next Step"}
-                <ArrowRight className="ml-2 w-6 h-6" />
+                Next
               </Button>
-            </div>
-          </Card>
-        </div>
+            ) : (
+              <Button
+                onClick={handleActivatePro}
+                className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white"
+              >
+                Complete Setup
+              </Button>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );
