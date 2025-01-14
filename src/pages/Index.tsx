@@ -67,6 +67,25 @@ const subscriptions = [
   },
 ];
 
+const faqItems = [
+  {
+    question: "What features are included in the free version?",
+    answer: "The free version includes 10 plant identifications per month, basic care guides, community access, and ad-supported features. You can track your plants, get basic care recommendations, and participate in our plant-loving community.",
+  },
+  {
+    question: "How accurate is the plant identification?",
+    answer: "Our AI-powered plant identification system has an accuracy rate of over 95% for common plants. The system is continuously learning and improving. For best results, we recommend taking clear, well-lit photos of the plant's leaves, flowers, or overall structure.",
+  },
+  {
+    question: "What additional features do I get with premium upgrades?",
+    answer: "Premium upgrades (Pro and Premium plans) offer unlimited plant identifications, detailed care guides, offline mode, ad-free experience, expert consultations, disease identification, and family sharing options. Pro users also get access to a plant collection library and priority support.",
+  },
+  {
+    question: "Are there daily limits on plant scans?",
+    answer: "Free users can perform up to 10 plant identifications per month. Pro and Premium users have unlimited scans. The daily limit resets at midnight in your local time zone.",
+  },
+];
+
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -94,25 +113,6 @@ const Index = () => {
       description: "You've earned your first Plant Explorer badge!",
     });
   };
-
-  const faqItems = [
-    {
-      question: "What features are included in the free version?",
-      answer: "The free version includes 10 plant identifications per month, basic care guides, community access, and ad-supported features. You can track your plants, get basic care recommendations, and participate in our plant-loving community.",
-    },
-    {
-      question: "How accurate is the plant identification?",
-      answer: "Our AI-powered plant identification system has an accuracy rate of over 95% for common plants. The system is continuously learning and improving. For best results, we recommend taking clear, well-lit photos of the plant's leaves, flowers, or overall structure.",
-    },
-    {
-      question: "What additional features do I get with premium upgrades?",
-      answer: "Premium upgrades (Pro and Premium plans) offer unlimited plant identifications, detailed care guides, offline mode, ad-free experience, expert consultations, disease identification, and family sharing options. Pro users also get access to a plant collection library and priority support.",
-    },
-    {
-      question: "Are there daily limits on plant scans?",
-      answer: "Free users can perform up to 10 plant identifications per month. Pro and Premium users have unlimited scans. The daily limit resets at midnight in your local time zone.",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-[#F2FCE2]">
