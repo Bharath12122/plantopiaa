@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ProHeader } from "@/components/pro/ProHeader";
-import { ProFeatureShowcase } from "@/components/pro/ProFeatureShowcase";
 import { ProUpload } from "@/components/pro/ProUpload";
 import { ProFeatures } from "@/components/pro/ProFeatures";
+import { ProFeatureShowcase } from "@/components/pro/ProFeatureShowcase";
 import { useProStatus } from "@/hooks/useProStatus";
 import { LoginPrompt } from "@/components/LoginPrompt";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
@@ -60,14 +60,23 @@ const ProPage = () => {
 
   return (
     <div className="min-h-screen bg-[#1A1F2C]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <ProHeader onUpgrade={handleUpgradeToPro} isPro={isPro} />
-        <ProFeatureShowcase />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        {/* Upload Section */}
+        <div className="mb-16">
           <ProUpload />
-          <ProFeatures />
+        </div>
+
+        {/* Features Grid */}
+        <div className="space-y-16">
+          <ProFeatureShowcase />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <ProFeatures />
+          </div>
         </div>
       </div>
+      
       <LoginPrompt 
         open={showLoginPrompt} 
         onOpenChange={setShowLoginPrompt}
