@@ -2,65 +2,42 @@ import { Leaf, Droplet, FileText, Bug, Beaker, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-
-interface ProFeature {
-  icon: JSX.Element;
-  title: string;
-  description: string;
-  comingSoon?: boolean;
-}
 
 export const ProFeatureShowcase = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const features: ProFeature[] = [
+  const features = [
     {
       icon: <Leaf className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Advanced Plant Scanning",
-      description: "Unlimited scans with detailed species identification and care instructions",
+      title: "Advanced Plant Identification",
+      description: "Detailed medicinal plant analysis with comprehensive insights",
     },
     {
       icon: <Beaker className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Medicinal Properties",
-      description: "Access comprehensive database of medicinal plants and their uses",
-    },
-    {
-      icon: <Droplet className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Smart Watering Schedule",
-      description: "AI-powered watering recommendations based on plant species and conditions",
-    },
-    {
-      icon: <Bug className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Disease Identification",
-      description: "Early detection of plant diseases with treatment recommendations",
-      comingSoon: true,
-    },
-    {
-      icon: <FileText className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Detailed Plant Reports",
-      description: "Generate comprehensive reports on plant health and growth",
+      title: "Treatment Applications",
+      description: "Explore medicinal properties and practical applications",
     },
     {
       icon: <Calendar className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Care Calendar",
-      description: "Personalized maintenance schedules for your entire plant collection",
+      title: "Growth Tips",
+      description: "Tailored advice on optimal temperature and care schedules",
+    },
+    {
+      icon: <Bug className="w-12 h-12 text-[#9b87f5]" />,
+      title: "Disease Detection",
+      description: "Early identification of plant diseases and pests",
+    },
+    {
+      icon: <FileText className="w-12 h-12 text-[#9b87f5]" />,
+      title: "Detailed Reports",
+      description: "Comprehensive analysis of plant health and growth",
+    },
+    {
+      icon: <Droplet className="w-12 h-12 text-[#9b87f5]" />,
+      title: "Watering Schedule",
+      description: "Smart reminders for optimal plant care",
     },
   ];
-
-  const handleFeatureClick = (feature: ProFeature) => {
-    if (feature.comingSoon) {
-      toast({
-        title: "Coming Soon!",
-        description: `${feature.title} will be available shortly.`,
-      });
-      return;
-    }
-
-    // Navigate to the specific feature section
-    navigate(`/pro/${feature.title.toLowerCase().replace(/\s+/g, '-')}`);
-  };
 
   return (
     <section className="py-16 bg-[#1A1F2C]">
@@ -73,15 +50,11 @@ export const ProFeatureShowcase = () => {
             <Card
               key={index}
               className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-[#1A1F2C] border-[#9b87f5]/20 cursor-pointer"
-              onClick={() => handleFeatureClick(feature)}
             >
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
                   {feature.title}
-                  {feature.comingSoon && (
-                    <span className="ml-2 text-sm text-[#9b87f5]">(Coming Soon)</span>
-                  )}
                 </h3>
                 <p className="text-gray-400">{feature.description}</p>
               </div>

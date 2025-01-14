@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProHeader } from "@/components/pro/header/ProHeader";
 import { ProFeatureShowcase } from "@/components/pro/features/ProFeatureShowcase";
 import { ProUpload } from "@/components/pro/upload/ProUpload";
-import { ProFeatures } from "@/components/pro/ProFeatures";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
 import { LoginPrompt } from "@/components/LoginPrompt";
 
@@ -28,7 +27,6 @@ const ProPage = () => {
         <ProHeader />
         <ProFeatureShowcase />
         <ProUpload />
-        <ProFeatures />
       </div>
       <LoginPrompt 
         open={showLoginPrompt} 
