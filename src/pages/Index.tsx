@@ -2,115 +2,49 @@ import React, { useState } from "react";
 import { useProStatus } from "@/hooks/useProStatus";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
-import { PlantCollectionManager } from "@/components/pro/PlantCollectionManager";
-import { PrioritySupport } from "@/components/pro/PrioritySupport";
-import { EducationalResources } from "@/components/pro/EducationalResources";
-import { BusinessAnalytics } from "@/components/pro/BusinessAnalytics";
-import { SubscriptionCard } from "@/components/SubscriptionCard";
-import { ChatbotTrigger } from "@/components/ChatbotTrigger";
-import { LogoutButton } from "@/components/LogoutButton";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { DailyRewards } from "@/components/DailyRewards";
-import { GamificationSection } from "@/components/gamification/GamificationSection";
-import { PlantCareTips } from "@/components/PlantCareTips";
+import { ChatbotTrigger } from "@/components/ChatbotTrigger";
+import { LogoutButton } from "@/components/LogoutButton";
+import { Leaf, Camera, Book, Shield, Droplet } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { Leaf, Camera } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-const subscriptions = [
-  {
-    title: "Free",
-    price: "$0/month",
-    description: "Perfect for beginners",
-    features: [
-      { text: "10 plant identifications/month", included: true },
-      { text: "Basic care guides", included: true },
-      { text: "Community access", included: true },
-      { text: "Ad-supported", included: true },
-      { text: "Offline mode", included: false },
-    ],
-    variant: "free" as const,
-  },
-  {
-    title: "Pro",
-    price: "$9.99/month",
-    description: "For plant enthusiasts",
-    features: [
-      { text: "Unlimited identifications", included: true },
-      { text: "Detailed care guides", included: true },
-      { text: "Plant collection library", included: true },
-      { text: "Offline mode", included: true },
-      { text: "Ad-free experience", included: true },
-    ],
-    variant: "pro" as const,
-    popular: true,
-  },
-  {
-    title: "Premium",
-    price: "$19.99/month",
-    description: "For professionals",
-    features: [
-      { text: "Everything in Pro", included: true },
-      { text: "Expert consultation", included: true },
-      { text: "Disease identification", included: true },
-      { text: "Priority support", included: true },
-      { text: "Family sharing (up to 5)", included: true },
-    ],
-    variant: "premium" as const,
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isPro, isLoading: isProLoading } = useProStatus();
+  const { isPro } = useProStatus();
   const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
-  const [showUpload, setShowUpload] = useState(false);
-  const [showGamification, setShowGamification] = useState(false);
-
-  const handleTryFreeClick = () => {
-    setShowUpload(true);
-    setShowGamification(true);
-    setTimeout(() => {
-      const uploadSection = document.getElementById('upload-section');
-      if (uploadSection) {
-        uploadSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
 
   const handleUploadSuccess = (plantData: any) => {
     setIdentifiedPlant(plantData);
-    setShowGamification(true);
     toast({
-      title: "Achievement Unlocked! 🌟",
-      description: "You've earned your first Plant Explorer badge!",
+      title: "Plant identified successfully!",
+      description: "Scroll down to see detailed results.",
     });
   };
 
-  const faqItems = [
+  const premiumFeatures = [
     {
-      question: "What features are included in the free version?",
-      answer: "The free version includes 10 plant identifications per month, basic care guides, community access, and ad-supported features. You can track your plants, get basic care recommendations, and participate in our plant-loving community.",
+      icon: <Leaf className="w-12 h-12 text-[#00B388]" />,
+      title: "Advanced Plant Identification",
+      description: "Get detailed analysis of medicinal plants with comprehensive insights",
     },
     {
-      question: "How accurate is the plant identification?",
-      answer: "Our AI-powered plant identification system has an accuracy rate of over 95% for common plants. The system is continuously learning and improving. For best results, we recommend taking clear, well-lit photos of the plant's leaves, flowers, or overall structure.",
+      icon: <Book className="w-12 h-12 text-[#00B388]" />,
+      title: "Treatment Applications",
+      description: "Explore medicinal properties and practical applications",
     },
     {
-      question: "What additional features do I get with premium upgrades?",
-      answer: "Premium upgrades (Pro and Premium plans) offer unlimited plant identifications, detailed care guides, offline mode, ad-free experience, expert consultations, disease identification, and family sharing options. Pro users also get access to a plant collection library and priority support.",
+      icon: <Droplet className="w-12 h-12 text-[#00B388]" />,
+      title: "Growth Tips",
+      description: "Receive tailored advice on optimal temperature and care schedules",
     },
     {
-      question: "Are there daily limits on plant scans?",
-      answer: "Free users can perform up to 10 plant identifications per month. Pro and Premium users have unlimited scans. The daily limit resets at midnight in your local time zone.",
+      icon: <Shield className="w-12 h-12 text-[#00B388]" />,
+      title: "Personalized Care",
+      description: "Get custom recommendations based on your environment",
     },
   ];
 
@@ -118,99 +52,58 @@ const Index = () => {
     <div className="min-h-screen bg-[#F2FCE2]">
       <LogoutButton />
       
-      <div className="container pt-20 pb-16 text-center">
-        <div className="flex justify-center mb-8">
-          <Leaf className="h-16 w-16 text-[#00B388] animate-float" />
-        </div>
-        <h1 className="text-5xl font-bold mb-6 text-[#2A3B1D]">
-          {isPro ? "Pro Plant Identification" : "Identify Any Plant in Seconds"}
-        </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          {isPro 
-            ? "Access unlimited plant identifications, detailed care guides, and exclusive Pro features."
-            : "Our AI-powered plant identification app helps you discover and learn about the flora around you."}
-        </p>
-
-        <div className="flex gap-4 justify-center mb-16">
-          <Button 
-            onClick={handleTryFreeClick}
-            className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6"
-          >
-            {isPro ? "Start Scanning" : "Try For Free"}
-          </Button>
-          {!isPro && (
-            <Button
-              onClick={() => navigate("/pro/landing")}
-              variant="outline"
-              className="border-[#00B388] text-[#00B388] hover:bg-[#00B388]/10 px-8 py-6"
-            >
-              Upgrade to Pro
-            </Button>
-          )}
-        </div>
-
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
-            Daily Plant Care Tips
-          </h2>
-          <PlantCareTips />
-        </div>
-
-        {showUpload && (
-          <div id="upload-section" className="scroll-mt-8">
-            <GamificationSection showGamification={showGamification} />
-            <PlantUpload onUploadSuccess={handleUploadSuccess} />
-            {identifiedPlant && <PlantResults plant={identifiedPlant} />}
-            
-            {isPro && (
-              <>
-                <PlantCollectionManager />
-                <BusinessAnalytics />
-                <EducationalResources />
-                <PrioritySupport />
-              </>
-            )}
-            
-            <DailyRewards />
+      <div className="container mx-auto px-4 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="flex justify-center mb-8">
+            <Leaf className="h-16 w-16 text-[#00B388] animate-float" />
           </div>
-        )}
+          <h1 className="text-5xl font-bold mb-6 text-[#2A3B1D]">
+            {isPro ? "Pro Plant Identification" : "Identify Any Plant in Seconds"}
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            {isPro 
+              ? "Access unlimited plant identifications, detailed care guides, and exclusive Pro features."
+              : "Our AI-powered plant identification app helps you discover and learn about the flora around you."}
+          </p>
+        </div>
 
-        {!isPro && (
-          <>
-            <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
-              Choose Your Plan
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {subscriptions.map((sub) => (
-                <SubscriptionCard key={sub.title} {...sub} />
-              ))}
-            </div>
-          </>
-        )}
+        {/* Upload Section */}
+        <div className="mb-20">
+          <PlantUpload onUploadSuccess={handleUploadSuccess} />
+          {identifiedPlant && <PlantResults plant={identifiedPlant} />}
+        </div>
 
-        <section className="mt-20 mb-16 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
-            Frequently Asked Questions
+        {/* Premium Features Section */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold text-center mb-12 text-[#2A3B1D]">
+            Premium Features
           </h2>
-          <Accordion type="single" collapsible className="w-full">
-            {faqItems.map((item, index) => (
-              <AccordionItem
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {premiumFeatures.map((feature, index) => (
+              <Card
                 key={index}
-                value={`faq-${index}`}
-                className="bg-white/80 backdrop-blur-sm rounded-lg mb-4 px-6 data-[state=open]:shadow-md transition-shadow duration-200"
+                className="p-8 hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-[#00B388]/20"
               >
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <span className="text-lg font-medium text-[#2A3B1D]">
-                    {item.question}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600">
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-semibold text-[#2A3B1D]">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                  {!isPro && (
+                    <Button
+                      onClick={() => navigate("/pro")}
+                      className="mt-4 bg-[#00B388] hover:bg-[#00B388]/90"
+                    >
+                      Upgrade to Pro
+                    </Button>
+                  )}
+                </div>
+              </Card>
             ))}
-          </Accordion>
-        </section>
+          </div>
+        </div>
 
         <button
           className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
