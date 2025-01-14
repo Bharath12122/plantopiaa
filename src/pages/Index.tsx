@@ -17,6 +17,7 @@ import { GamificationSection } from "@/components/gamification/GamificationSecti
 import { PlantCareTips } from "@/components/PlantCareTips";
 import { Footer } from "@/components/Footer";
 import { Leaf, Camera } from "lucide-react";
+import { ProStatusTest } from "@/components/ProStatusTest";
 import {
   Accordion,
   AccordionContent,
@@ -117,6 +118,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#F2FCE2]">
       <LogoutButton />
+      
+      {/* Add the test component at the top */}
+      <ProStatusTest />
       
       <div className="container pt-20 pb-16 text-center">
         <div className="flex justify-center mb-8">
