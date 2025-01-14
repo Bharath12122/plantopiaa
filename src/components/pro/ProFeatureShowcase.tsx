@@ -1,27 +1,27 @@
-import { Shield, Leaf, Book, Wifi, MessageSquare, Award } from "lucide-react";
+import { Shield, Leaf, Book, Calendar, MessageSquare, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useProStatus } from "@/hooks/useProStatus";
 
 const features = [
   {
     icon: <Shield className="w-12 h-12 text-[#9b87f5]" />,
-    title: "Premium Protection",
-    description: "Advanced plant disease detection and prevention strategies",
-  },
-  {
-    icon: <Leaf className="w-12 h-12 text-[#9b87f5]" />,
-    title: "Expert Plant Care",
-    description: "Personalized care schedules and growth tracking",
+    title: "Advanced Plant Identification",
+    description: "Detailed medicinal plant analysis with comprehensive insights",
   },
   {
     icon: <Book className="w-12 h-12 text-[#9b87f5]" />,
-    title: "Extensive Library",
-    description: "Access to our complete medicinal plant database",
+    title: "Treatment Applications",
+    description: "Explore medicinal properties and practical applications",
   },
   {
-    icon: <Wifi className="w-12 h-12 text-[#9b87f5]" />,
-    title: "Offline Access",
-    description: "Full functionality even without internet connection",
+    icon: <Calendar className="w-12 h-12 text-[#9b87f5]" />,
+    title: "Growth Tips",
+    description: "Tailored advice on optimal temperature and care schedules",
+  },
+  {
+    icon: <Shield className="w-12 h-12 text-[#9b87f5]" />,
+    title: "Personalized Care",
+    description: "Custom recommendations based on your environment",
   },
   {
     icon: <MessageSquare className="w-12 h-12 text-[#9b87f5]" />,
@@ -32,7 +32,7 @@ const features = [
     icon: <Award className="w-12 h-12 text-[#9b87f5]" />,
     title: "Exclusive Content",
     description: "Early access to new features and premium content",
-  },
+  }
 ];
 
 export const ProFeatureShowcase = () => {
@@ -43,7 +43,7 @@ export const ProFeatureShowcase = () => {
       <h2 className="text-4xl font-bold text-center text-white">
         {isPro ? "Your Pro Features" : "Premium Features"}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature, index) => (
           <Card
             key={index}

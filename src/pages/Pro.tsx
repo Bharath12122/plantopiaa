@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ProHeader } from "@/components/pro/ProHeader";
 import { ProUpload } from "@/components/pro/ProUpload";
-import { ProFeatures } from "@/components/pro/ProFeatures";
 import { ProFeatureShowcase } from "@/components/pro/ProFeatureShowcase";
 import { useProStatus } from "@/hooks/useProStatus";
 import { LoginPrompt } from "@/components/LoginPrompt";
@@ -68,12 +67,9 @@ const ProPage = () => {
           <ProUpload />
         </div>
 
-        {/* Features Grid */}
-        <div className="space-y-16">
+        {/* Premium Features */}
+        <div className="mb-16">
           <ProFeatureShowcase />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <ProFeatures />
-          </div>
         </div>
       </div>
       
