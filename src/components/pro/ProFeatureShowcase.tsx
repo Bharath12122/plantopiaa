@@ -1,4 +1,4 @@
-import { Leaf, Droplet, FileText, Bug, Flask, Calendar } from "lucide-react";
+import { Leaf, Droplet, FileText, Bug, Beaker, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ export const ProFeatureShowcase = () => {
       description: "Unlimited scans with detailed species identification and care instructions",
     },
     {
-      icon: <Flask className="w-12 h-12 text-[#9b87f5]" />,
+      icon: <Beaker className="w-12 h-12 text-[#9b87f5]" />,
       title: "Medicinal Properties",
       description: "Access comprehensive database of medicinal plants and their uses",
     },
