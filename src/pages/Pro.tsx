@@ -25,8 +25,8 @@ const ProPage = () => {
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-12">
         <ProHeader />
-        <ProFeatureShowcase />
         <ProUpload />
+        <ProFeatureShowcase />
       </div>
       <LoginPrompt 
         open={showLoginPrompt} 
