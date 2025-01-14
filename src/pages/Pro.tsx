@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ProHeader } from "@/components/pro/ProHeader";
+import { ProFeatureShowcase } from "@/components/pro/ProFeatureShowcase";
 import { ProUpload } from "@/components/pro/ProUpload";
 import { ProFeatures } from "@/components/pro/ProFeatures";
 import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
@@ -15,7 +16,6 @@ const ProPage = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        // Track page view for anonymous users
         await trackInteraction("pro_page_view");
       }
     };
@@ -26,6 +26,7 @@ const ProPage = () => {
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-12">
         <ProHeader />
+        <ProFeatureShowcase />
         <ProUpload />
         <ProFeatures />
       </div>
