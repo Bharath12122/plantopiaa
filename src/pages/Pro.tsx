@@ -5,11 +5,14 @@ import { ProHeader } from "@/components/pro/ProHeader";
 import { ProFeatureShowcase } from "@/components/pro/ProFeatureShowcase";
 import { ProUpload } from "@/components/pro/ProUpload";
 import { ProFeatures } from "@/components/pro/ProFeatures";
-import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
+import { useProStatus } from "@/hooks/useProStatus";
 import { LoginPrompt } from "@/components/LoginPrompt";
+import { useAnonymousInteractions } from "@/hooks/useAnonymousInteractions";
+import { toast } from "sonner";
 
 const ProPage = () => {
   const navigate = useNavigate();
+  const { isPro, isLoading } = useProStatus();
   const { showLoginPrompt, setShowLoginPrompt, trackInteraction } = useAnonymousInteractions();
 
   useEffect(() => {
@@ -17,15 +20,48 @@ const ProPage = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         await trackInteraction("pro_page_view");
+        setShowLoginPrompt(true);
       }
     };
     checkSession();
-  }, [trackInteraction]);
+  }, [trackInteraction, setShowLoginPrompt]);
+
+  const handleUpgradeToPro = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        setShowLoginPrompt(true);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_pro: true })
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+
+      toast.success("Successfully upgraded to Pro!");
+      navigate("/pro/onboarding");
+    } catch (error) {
+      console.error("Error upgrading to pro:", error);
+      toast.error("Failed to upgrade to Pro. Please try again.");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#1A1F2C] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#9b87f5]"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#1A1F2C]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-        <ProHeader />
+        <ProHeader onUpgrade={handleUpgradeToPro} isPro={isPro} />
         <ProFeatureShowcase />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <ProUpload />

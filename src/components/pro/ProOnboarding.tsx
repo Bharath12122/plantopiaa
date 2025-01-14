@@ -3,13 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Leaf, ArrowRight } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ProOnboarding = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { toast } = useToast();
   const totalSteps = 3;
 
   const handleNextStep = async () => {
@@ -20,27 +19,12 @@ export const ProOnboarding = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user?.id) {
-          const { error } = await supabase
-            .from('profiles')
-            .update({ is_pro: true })
-            .eq('id', session.user.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Welcome to Pro!",
-            description: "Your account has been upgraded successfully.",
-          });
-          
+          toast.success("Pro setup completed! Enjoy your enhanced features.");
           navigate("/pro/dashboard");
         }
       } catch (error) {
-        console.error("Error upgrading to pro:", error);
-        toast({
-          title: "Error",
-          description: "Failed to upgrade your account. Please try again.",
-          variant: "destructive",
-        });
+        console.error("Error completing pro setup:", error);
+        toast.error("Failed to complete setup. Please try again.");
       }
     }
   };
@@ -103,7 +87,7 @@ export const ProOnboarding = () => {
             <div className="flex justify-center">
               <Button
                 onClick={handleNextStep}
-                className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all duration-300 flex items-center"
+                className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all flex items-center"
               >
                 {step === totalSteps ? "Complete Setup" : "Next Step"}
                 <ArrowRight className="ml-2 w-6 h-6" />
