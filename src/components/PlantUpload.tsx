@@ -272,8 +272,8 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       </div>
       
       {!isOnline && (
-        <Alert variant="warning" className="mb-4">
-          <AlertTriangle className="h-4 w-4" />
+        <Alert className="mb-4">
+          <WifiOff className="h-4 w-4" />
           <AlertDescription>
             You are currently offline. Some features may be limited.
           </AlertDescription>
