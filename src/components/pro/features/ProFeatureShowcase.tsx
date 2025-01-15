@@ -8,67 +8,76 @@ export const ProFeatureShowcase = () => {
 
   const features = [
     {
-      icon: <Leaf className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Advanced Plant Identification",
-      description: "Detailed medicinal plant analysis with comprehensive insights",
+      icon: <Leaf className="h-8 w-8 text-[#9b87f5]" />,
+      title: "Advanced Plant Recognition",
+      description: "Get detailed insights about any plant with our enhanced AI recognition system"
     },
     {
-      icon: <Beaker className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Treatment Applications",
-      description: "Explore medicinal properties and practical applications",
+      icon: <Droplet className="h-8 w-8 text-[#9b87f5]" />,
+      title: "Care Instructions",
+      description: "Receive personalized care instructions for optimal plant growth"
     },
     {
-      icon: <Calendar className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Growth Tips",
-      description: "Tailored advice on optimal temperature and care schedules",
-    },
-    {
-      icon: <Bug className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Disease Detection",
-      description: "Early identification of plant diseases and pests",
-    },
-    {
-      icon: <FileText className="w-12 h-12 text-[#9b87f5]" />,
+      icon: <FileText className="h-8 w-8 text-[#9b87f5]" />,
       title: "Detailed Reports",
-      description: "Comprehensive analysis of plant health and growth",
+      description: "Access comprehensive reports about plant health and growth patterns"
     },
     {
-      icon: <Droplet className="w-12 h-12 text-[#9b87f5]" />,
-      title: "Watering Schedule",
-      description: "Smart reminders for optimal plant care",
+      icon: <Bug className="h-8 w-8 text-[#9b87f5]" />,
+      title: "Disease Detection",
+      description: "Early detection of plant diseases and treatment recommendations"
     },
+    {
+      icon: <Beaker className="h-8 w-8 text-[#9b87f5]" />,
+      title: "Scientific Analysis",
+      description: "In-depth scientific analysis of plant properties and characteristics"
+    },
+    {
+      icon: <Calendar className="h-8 w-8 text-[#9b87f5]" />,
+      title: "Growth Tracking",
+      description: "Monitor and track your plants' growth progress over time"
+    }
   ];
 
   return (
-    <section className="py-16 bg-[#1A1F2C]">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-12 text-white">
+    <section className="py-16">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-white mb-4">
           Pro Features
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <Card
-              key={index}
-              className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-[#1A1F2C] border-[#9b87f5]/20 cursor-pointer"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-        <div className="text-center mt-12">
-          <Button
-            onClick={() => navigate("/pro/onboarding")}
-            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all duration-300"
+        <p className="text-gray-400 max-w-2xl mx-auto">
+          Unlock the full potential of plant identification and care with our professional tools
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {features.map((feature, index) => (
+          <Card 
+            key={index}
+            className="p-6 bg-[#1A1F2C] border-[#9b87f5]/20 hover:border-[#9b87f5]/40 transition-all duration-300"
           >
-            Join Pro Today
-          </Button>
-        </div>
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="p-3 bg-[#9b87f5]/10 rounded-full">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-white">
+                {feature.title}
+              </h3>
+              <p className="text-gray-400">
+                {feature.description}
+              </p>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="text-center mt-12">
+        <Button
+          onClick={() => navigate("/pro/landing")}
+          className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 rounded-lg text-lg"
+        >
+          Explore All Pro Features
+        </Button>
       </div>
     </section>
   );
