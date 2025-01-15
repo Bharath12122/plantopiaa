@@ -12,6 +12,7 @@ export const useProStatus = () => {
       try {
         setIsLoading(true);
         setError(null);
+        console.log('Checking pro status...');
 
         // First check if we have a session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -28,6 +29,8 @@ export const useProStatus = () => {
           setIsPro(false);
           return;
         }
+
+        console.log('Session found, checking profile...');
 
         // Fetch the profile with pro status
         const { data: profile, error: profileError } = await supabase
