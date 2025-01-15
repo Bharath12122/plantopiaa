@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useProStatus } from "@/hooks/useProStatus";
 import { ProFeatures } from "@/components/pro/ProFeatures";
 import { ProOnboarding } from "@/components/pro/onboarding/ProOnboarding";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 const Pro = () => {
   const { isPro, isLoading, error } = useProStatus();
+  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
 
   if (error) {
     toast.error("Failed to verify Pro status. Please try again.");
@@ -36,6 +37,11 @@ const Pro = () => {
     return <ProOnboarding />;
   }
 
+  const handleUploadSuccess = (plantData: any) => {
+    setIdentifiedPlant(plantData);
+    toast.success("Plant identified successfully!");
+  };
+
   return (
     <div className="min-h-screen bg-[#1A1F2C] py-16">
       <div className="container mx-auto px-4">
@@ -45,7 +51,7 @@ const Pro = () => {
         
         {/* Plant Upload Section */}
         <div className="mb-16">
-          <PlantUpload />
+          <PlantUpload onUploadSuccess={handleUploadSuccess} />
         </div>
 
         {/* Pro Features Section */}
