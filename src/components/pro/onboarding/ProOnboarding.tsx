@@ -5,15 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export const ProOnboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [error, setError] = useState<string | null>(null);
   const totalSteps = 4;
 
   const handleActivatePro = async () => {
     try {
+      setError(null);
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
@@ -25,12 +29,21 @@ export const ProOnboarding = () => {
         return;
       }
 
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ is_pro: true })
         .eq('id', session.user.id);
 
-      if (error) throw error;
+      if (updateError) {
+        console.error('Error activating Pro:', updateError);
+        setError('Failed to activate Pro features. Please try again.');
+        toast({
+          title: "Activation Failed",
+          description: "Please try again or contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       toast({
         title: "Welcome to Pro!",
@@ -40,6 +53,7 @@ export const ProOnboarding = () => {
       navigate("/pro");
     } catch (error) {
       console.error('Error activating Pro:', error);
+      setError('An unexpected error occurred. Please try again.');
       toast({
         title: "Activation Failed",
         description: "Please try again or contact support.",
@@ -99,6 +113,13 @@ export const ProOnboarding = () => {
     <div className="min-h-screen bg-[#1A1F2C] py-16">
       <div className="container mx-auto px-4">
         <Card className="max-w-2xl mx-auto p-8 bg-[#1A1F2C] border-[#9b87f5]/20">
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
           <Progress
             value={(step / totalSteps) * 100}
             className="mb-8"
