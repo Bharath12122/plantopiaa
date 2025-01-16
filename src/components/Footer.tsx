@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram, Twitter, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
@@ -18,6 +18,15 @@ export const Footer = () => {
       description: "You'll receive our latest updates and tips soon.",
     });
     setEmail("");
+  };
+
+  const handleDonate = () => {
+    // You can replace this URL with your actual donation link
+    window.open("https://example.com/donate", "_blank", "noopener,noreferrer");
+    toast({
+      title: "Thank you for your support! 💚",
+      description: "Your contribution helps us grow and maintain our plant community.",
+    });
   };
 
   return (
@@ -109,8 +118,16 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Section */}
+        {/* Bottom Section with Donate Button */}
         <div className="pt-8 border-t border-[#00B388]/20 text-center">
+          <div className="flex flex-col items-center gap-4 mb-4">
+            <Button
+              onClick={handleDonate}
+              className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-6 py-2 rounded-full shadow-md hover:shadow-lg"
+            >
+              <Heart className="w-4 h-4" /> Support Our Project
+            </Button>
+          </div>
           <p className="text-sm text-gray-600">
             © 2025 Plantopiaa. All Rights Reserved.
           </p>
