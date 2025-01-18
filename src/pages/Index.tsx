@@ -100,14 +100,10 @@ const Index = () => {
   const [showGamification, setShowGamification] = useState(false);
 
   useEffect(() => {
-    const initializeState = () => {
-      console.log("Initializing state");
-      setShowUpload(false);
-      setShowGamification(false);
-      setIdentifiedPlant(null);
-    };
-
-    initializeState();
+    console.log("Initial mount effect running");
+    setShowUpload(false);
+    setShowGamification(false);
+    setIdentifiedPlant(null);
   }, []);
 
   if (isProLoading) {
@@ -122,18 +118,17 @@ const Index = () => {
   }
 
   const handleTryFreeClick = () => {
-    console.log("Try Free clicked, setting states...");
+    console.log("Try Free clicked");
     setShowUpload(true);
     setShowGamification(true);
     
-    // Use requestAnimationFrame to ensure state is updated before scrolling
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       console.log("Scrolling to upload section");
       const uploadSection = document.getElementById('upload-section');
       if (uploadSection) {
         uploadSection.scrollIntoView({ behavior: 'smooth' });
       }
-    });
+    }, 100);
   };
 
   const handleUploadSuccess = (plantData: any) => {
