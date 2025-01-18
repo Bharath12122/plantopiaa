@@ -27,7 +27,8 @@ import {
 const subscriptions = [
   {
     title: "Free",
-    price: "$0/month",
+    monthlyPrice: "0",
+    yearlyPrice: "0",
     description: "Perfect for beginners",
     features: [
       { text: "10 plant identifications/month", included: true },
@@ -40,13 +41,14 @@ const subscriptions = [
   },
   {
     title: "Pro",
-    price: "$9.99/month",
+    monthlyPrice: "299",
+    yearlyPrice: "2,999",
     description: "For plant enthusiasts",
     features: [
-      { text: "Unlimited identifications", included: true },
-      { text: "Detailed care guides", included: true },
-      { text: "Plant collection library", included: true },
-      { text: "Offline mode", included: true },
+      { text: "Unlimited plant identifications", included: true },
+      { text: "Detailed medicinal plant information", included: true },
+      { text: "Watering schedules", included: true },
+      { text: "Plant pros & cons analysis", included: true },
       { text: "Ad-free experience", included: true },
     ],
     variant: "pro" as const,
@@ -54,14 +56,15 @@ const subscriptions = [
   },
   {
     title: "Premium",
-    price: "$19.99/month",
+    monthlyPrice: "699",
+    yearlyPrice: "6,999",
     description: "For professionals",
     features: [
       { text: "Everything in Pro", included: true },
-      { text: "Expert consultation", included: true },
+      { text: "Personalized growth tips", included: true },
+      { text: "Companion planting advice", included: true },
       { text: "Disease identification", included: true },
-      { text: "Priority support", included: true },
-      { text: "Family sharing (up to 5)", included: true },
+      { text: "Advanced gamification features", included: true },
     ],
     variant: "premium" as const,
   },
