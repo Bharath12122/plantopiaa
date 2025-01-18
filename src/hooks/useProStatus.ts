@@ -14,7 +14,6 @@ export const useProStatus = () => {
         setError(null);
         console.log('Starting pro status check...');
 
-        // First check if we have a session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         console.log('Session check result:', { 
@@ -37,12 +36,12 @@ export const useProStatus = () => {
 
         console.log('Session found, checking profile for user ID:', session.user.id);
 
-        // Fetch the profile with pro status
+        // Use maybeSingle() instead of single() to handle cases where profile doesn't exist
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('is_pro')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
         console.log('Profile query result:', { 
           profile, 
@@ -56,15 +55,25 @@ export const useProStatus = () => {
           return;
         }
 
+        // Handle case where profile doesn't exist
         if (!profile) {
-          console.error('No profile found for user:', session.user.id);
-          setError('Profile not found');
-          toast.error('User profile not found. Please try signing in again.');
-          return;
-        }
+          console.log('No profile found, creating one...');
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([{ id: session.user.id, is_pro: false }]);
 
-        console.log('Pro status found:', profile.is_pro);
-        setIsPro(profile.is_pro || false);
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            setError('Failed to create user profile');
+            toast.error('Failed to create user profile. Please try again later.');
+            return;
+          }
+
+          setIsPro(false);
+        } else {
+          console.log('Pro status found:', profile.is_pro);
+          setIsPro(profile.is_pro || false);
+        }
 
       } catch (error) {
         console.error('Unexpected error checking pro status:', error);
