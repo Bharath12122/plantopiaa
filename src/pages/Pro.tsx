@@ -24,11 +24,7 @@ const Pro = () => {
   }
 
   if (error) {
-    toast({
-      title: "Error",
-      description: "Failed to verify Pro status. Please try again later.",
-      duration: 3000,
-    });
+    toast.error("Failed to verify Pro status. Please try again later.");
     return (
       <div className="min-h-screen bg-[#1A1F2C] p-8">
         <Alert variant="destructive">
@@ -62,11 +58,7 @@ const Pro = () => {
 
   const handleUploadSuccess = (plantData: any) => {
     setIdentifiedPlant(plantData);
-    toast({
-      title: "Success!",
-      description: "Plant identified successfully.",
-      duration: 3000,
-    });
+    toast.success("Plant identified successfully!");
   };
 
   return (
