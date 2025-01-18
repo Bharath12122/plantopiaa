@@ -29,7 +29,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const { interactionCount, trackInteraction } = useAnonymousInteractions();
-  const { isPro } = useProStatus();
+  const { isPro, isLoading: isProLoading } = useProStatus();
   const FREE_SCANS_LIMIT = 10;
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -86,11 +86,20 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
   };
 
   const handleFileUpload = async (file: File) => {
-    if (!file) return;
+    console.log("Starting file upload process");
+    console.log("Current interaction count:", interactionCount);
+    console.log("Is Pro:", isPro);
+    
+    if (!file) {
+      console.error("No file provided");
+      return;
+    }
 
     setError(null);
 
+    // Check for free user limits
     if (!isPro && interactionCount >= FREE_SCANS_LIMIT) {
+      console.log("Free scan limit reached");
       toast({
         title: "Free scan limit reached",
         description: "Upgrade to Pro for unlimited plant scans!",
@@ -101,12 +110,12 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
 
     setIsUploading(true);
     try {
+      console.log("Optimizing image...");
       const optimizedFile = await optimizeImage(file);
       
+      // Allow anonymous users for free version
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session && !isPro) {
-        throw new Error("You must be logged in to upload files");
-      }
+      console.log("Session status:", session ? "Logged in" : "Anonymous");
 
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -131,6 +140,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
               throw new Error("No cached data available offline");
             }
           } else {
+            console.log("Calling plant identification API...");
             const { data, error } = await supabase.functions.invoke('identify-plant', {
               body: { 
                 image: base64Image,
@@ -138,7 +148,10 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
               }
             });
 
-            if (error) throw error;
+            if (error) {
+              console.error("API Error:", error);
+              throw error;
+            }
             plantData = data;
             
             if (isPro) {
@@ -158,11 +171,15 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
           let publicUrl = '';
           
           if (isOnline) {
+            console.log("Uploading image to storage...");
             const { error: uploadError, data: uploadData } = await supabase.storage
               .from('plant-images')
               .upload(fileName, optimizedFile);
 
-            if (uploadError) throw uploadError;
+            if (uploadError) {
+              console.error("Storage Error:", uploadError);
+              throw uploadError;
+            }
 
             const { data: { publicUrl: url } } = supabase.storage
               .from('plant-images')
@@ -173,7 +190,9 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
             publicUrl = URL.createObjectURL(optimizedFile);
           }
 
+          // Track interaction for both anonymous and logged-in users
           await trackInteraction('plant_scan');
+          console.log("Interaction tracked successfully");
 
           const basicPlantData = processPlantData(plantInfo, publicUrl);
           
@@ -289,6 +308,7 @@ export const PlantUpload = ({ onUploadSuccess }: PlantUploadProps) => {
       
       <p className="text-gray-600 mb-4">
         Upload a clear photo of your plant for detailed identification
+        {!isPro && ` (${FREE_SCANS_LIMIT - interactionCount} scans remaining)`}
       </p>
       
       {!isPro && (
