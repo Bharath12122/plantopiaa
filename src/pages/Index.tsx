@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useProStatus } from "@/hooks/useProStatus";
 import { PlantUpload } from "@/components/PlantUpload";
 import { PlantResults } from "@/components/PlantResults";
@@ -99,6 +99,13 @@ const Index = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [showGamification, setShowGamification] = useState(false);
 
+  useEffect(() => {
+    // Reset states when component mounts
+    setShowUpload(false);
+    setShowGamification(false);
+    setIdentifiedPlant(null);
+  }, []);
+
   if (isProLoading) {
     return (
       <div className="min-h-screen bg-[#F2FCE2] flex items-center justify-center">
@@ -111,12 +118,14 @@ const Index = () => {
     console.log("Try Free clicked");
     setShowUpload(true);
     setShowGamification(true);
-    setTimeout(() => {
+    
+    // Use requestAnimationFrame to ensure state is updated before scrolling
+    requestAnimationFrame(() => {
       const uploadSection = document.getElementById('upload-section');
       if (uploadSection) {
         uploadSection.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 100);
+    });
   };
 
   const handleUploadSuccess = (plantData: any) => {
