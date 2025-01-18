@@ -46,7 +46,7 @@ const subscriptions = [
     description: "For plant enthusiasts",
     features: [
       { text: "Unlimited plant identifications", included: true },
-      { text: "Detailed Medicinal Plant\nInformation", included: true },
+      { text: "Detailed Medicinal Plant Information", included: true },
       { text: "Watering schedules", included: true },
       { text: "Plant pros & cons analysis", included: true },
       { text: "Ad-free experience", included: true },
