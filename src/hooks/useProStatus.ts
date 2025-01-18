@@ -26,17 +26,16 @@ export const useProStatus = () => {
           console.error('Session error:', sessionError);
           setError('Failed to verify authentication status');
           setIsPro(false);
-          toast.error('Authentication error. Please try signing in again.');
           return;
         }
 
         if (!session) {
-          console.log('No active session found');
+          console.log('No active session found - user not logged in');
           setIsPro(false);
           return;
         }
 
-        console.log('Session found, user ID:', session.user.id);
+        console.log('Session found, checking profile for user ID:', session.user.id);
 
         // Fetch the profile with pro status
         const { data: profile, error: profileError } = await supabase
@@ -60,7 +59,7 @@ export const useProStatus = () => {
         if (!profile) {
           console.error('No profile found for user:', session.user.id);
           setError('Profile not found');
-          toast.error('User profile not found. Please contact support.');
+          toast.error('User profile not found. Please try signing in again.');
           return;
         }
 
