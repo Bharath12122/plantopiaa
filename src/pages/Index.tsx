@@ -17,6 +17,7 @@ import { GamificationSection } from "@/components/gamification/GamificationSecti
 import { PlantCareTips } from "@/components/PlantCareTips";
 import { Footer } from "@/components/Footer";
 import { Leaf, Camera } from "lucide-react";
+import { Features } from "@/components/Features";
 import {
   Accordion,
   AccordionContent,
@@ -90,6 +91,7 @@ const faqItems = [
 ];
 
 const Index = () => {
+  console.log("Rendering Index page"); // Debug log
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isPro, isLoading: isProLoading } = useProStatus();
@@ -97,7 +99,17 @@ const Index = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [showGamification, setShowGamification] = useState(false);
 
+  // Add error handling for Pro status loading
+  if (isProLoading) {
+    return (
+      <div className="min-h-screen bg-[#F2FCE2] flex items-center justify-center">
+        <p className="text-lg text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
   const handleTryFreeClick = () => {
+    console.log("Try Free clicked"); // Debug log
     setShowUpload(true);
     setShowGamification(true);
     setTimeout(() => {
@@ -109,6 +121,7 @@ const Index = () => {
   };
 
   const handleUploadSuccess = (plantData: any) => {
+    console.log("Upload success, plant data:", plantData); // Debug log
     setIdentifiedPlant(plantData);
     setShowGamification(true);
     toast({
@@ -152,12 +165,7 @@ const Index = () => {
           )}
         </div>
 
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
-            Daily Plant Care Tips
-          </h2>
-          <PlantCareTips />
-        </div>
+        <Features />
 
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
