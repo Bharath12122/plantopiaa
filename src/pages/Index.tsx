@@ -91,7 +91,7 @@ const faqItems = [
 ];
 
 const Index = () => {
-  console.log("Rendering Index page"); // Debug log
+  console.log("Rendering Index page");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isPro, isLoading: isProLoading } = useProStatus();
@@ -99,7 +99,6 @@ const Index = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [showGamification, setShowGamification] = useState(false);
 
-  // Add error handling for Pro status loading
   if (isProLoading) {
     return (
       <div className="min-h-screen bg-[#F2FCE2] flex items-center justify-center">
@@ -109,7 +108,7 @@ const Index = () => {
   }
 
   const handleTryFreeClick = () => {
-    console.log("Try Free clicked"); // Debug log
+    console.log("Try Free clicked");
     setShowUpload(true);
     setShowGamification(true);
     setTimeout(() => {
@@ -121,7 +120,7 @@ const Index = () => {
   };
 
   const handleUploadSuccess = (plantData: any) => {
-    console.log("Upload success, plant data:", plantData); // Debug log
+    console.log("Upload success, plant data:", plantData);
     setIdentifiedPlant(plantData);
     setShowGamification(true);
     toast({
@@ -166,6 +165,13 @@ const Index = () => {
         </div>
 
         <Features />
+
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold mb-8 text-[#2A3B1D]">
+            Daily Plant Care Tips
+          </h2>
+          <PlantCareTips />
+        </div>
 
         {showUpload && (
           <div id="upload-section" className="scroll-mt-8">
