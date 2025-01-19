@@ -100,7 +100,7 @@ const Index = () => {
   const [showGamification, setShowGamification] = useState(false);
 
   useEffect(() => {
-    console.log("Initial mount effect running");
+    // Reset states when component mounts
     setShowUpload(false);
     setShowGamification(false);
     setIdentifiedPlant(null);
@@ -109,10 +109,7 @@ const Index = () => {
   if (isProLoading) {
     return (
       <div className="min-h-screen bg-[#F2FCE2] flex items-center justify-center">
-        <div className="animate-pulse">
-          <Leaf className="h-12 w-12 text-[#00B388] animate-spin" />
-          <p className="text-lg text-gray-600 mt-4">Loading your garden...</p>
-        </div>
+        <p className="text-lg text-gray-600">Loading...</p>
       </div>
     );
   }
@@ -122,13 +119,13 @@ const Index = () => {
     setShowUpload(true);
     setShowGamification(true);
     
-    setTimeout(() => {
-      console.log("Scrolling to upload section");
+    // Use requestAnimationFrame to ensure state is updated before scrolling
+    requestAnimationFrame(() => {
       const uploadSection = document.getElementById('upload-section');
       if (uploadSection) {
         uploadSection.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 100);
+    });
   };
 
   const handleUploadSuccess = (plantData: any) => {
@@ -161,7 +158,7 @@ const Index = () => {
         <div className="flex gap-4 justify-center mb-16">
           <Button 
             onClick={handleTryFreeClick}
-            className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6 transform transition-all duration-300 hover:scale-105"
+            className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6"
           >
             {isPro ? "Start Scanning" : "Try For Free"}
           </Button>
@@ -169,7 +166,7 @@ const Index = () => {
             <Button
               onClick={() => navigate("/pro/landing")}
               variant="outline"
-              className="border-[#00B388] text-[#00B388] hover:bg-[#00B388]/10 px-8 py-6 transform transition-all duration-300 hover:scale-105"
+              className="border-[#00B388] text-[#00B388] hover:bg-[#00B388]/10 px-8 py-6"
             >
               Upgrade to Pro
             </Button>
@@ -186,22 +183,18 @@ const Index = () => {
         </div>
 
         {showUpload && (
-          <div id="upload-section" className="scroll-mt-8 animate-fade-in">
+          <div id="upload-section" className="scroll-mt-8">
             <GamificationSection showGamification={showGamification} />
             <PlantUpload onUploadSuccess={handleUploadSuccess} />
-            {identifiedPlant && (
-              <div className="animate-fade-in">
-                <PlantResults plant={identifiedPlant} />
-              </div>
-            )}
+            {identifiedPlant && <PlantResults plant={identifiedPlant} />}
             
             {isPro && (
-              <div className="space-y-8 animate-fade-in">
+              <>
                 <PlantCollectionManager />
                 <BusinessAnalytics />
                 <EducationalResources />
                 <PrioritySupport />
-              </div>
+              </>
             )}
             
             <DailyRewards />

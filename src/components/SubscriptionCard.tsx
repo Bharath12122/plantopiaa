@@ -53,7 +53,6 @@ export const SubscriptionCard = ({
         navigate("/premium/landing");
         break;
       default:
-        // For free tier, stay on current page
         break;
     }
   };
