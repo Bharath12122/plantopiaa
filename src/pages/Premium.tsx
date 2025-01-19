@@ -65,7 +65,7 @@ const Premium = () => {
         <div className="mt-20 text-center">
           <Button 
             className="bg-[#2A3B1D] hover:bg-[#2A3B1D]/90 text-white px-16 py-8 text-xl font-semibold rounded-2xl transition-all duration-300 hover:scale-105 group"
-            onClick={() => navigate('/premium/landing')}
+            onClick={() => navigate('/pro/landing')}
           >
             Get Premium Access Now
             <Star className="ml-3 w-5 h-5 inline-block group-hover:rotate-45 transition-transform duration-300" />
