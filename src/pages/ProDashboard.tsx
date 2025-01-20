@@ -17,7 +17,6 @@ import {
   MessageSquare, 
   Wifi, 
   Book, 
-  Plant2, 
   Bug, 
   LineChart, 
   TestTube 
