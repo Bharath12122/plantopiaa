@@ -7,7 +7,7 @@ import { ProUpload } from "@/components/pro/upload/ProUpload";
 import { PlantCollection } from "@/components/pro/PlantCollection";
 import { EducationalResources } from "@/components/pro/EducationalResources";
 import { PrioritySupport } from "@/components/pro/PrioritySupport";
-import { Plant, Leaf, Bell, Shield, MessageSquare, Wifi, Book, Flower2, Bug, LineChart, Flask } from "lucide-react";
+import { Sprout, Leaf, Bell, Shield, MessageSquare, Wifi, Book, Flower2, Bug, LineChart, TestTube } from "lucide-react";
 import { toast } from "sonner";
 
 export const ProDashboard = () => {
@@ -27,7 +27,7 @@ export const ProDashboard = () => {
   const features = [
     {
       title: "Unlimited Plant Identifications",
-      icon: <Plant className="w-6 h-6 text-green-500" />,
+      icon: <Sprout className="w-6 h-6 text-green-500" />,
       component: <ProUpload />,
     },
     {
@@ -75,7 +75,7 @@ export const ProDashboard = () => {
     },
     {
       title: "Scientific Analysis",
-      icon: <Flask className="w-6 h-6 text-green-500" />,
+      icon: <TestTube className="w-6 h-6 text-green-500" />,
       description: "Access detailed scientific information about your plants",
       onClick: () => toast.info("Scientific analysis feature coming soon!"),
     },

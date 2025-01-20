@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Index } from "@/pages/Index";
-import { Auth } from "@/pages/Auth";
-import { FAQ } from "@/pages/FAQ";
-import { Legal } from "@/pages/Legal";
-import { Premium } from "@/pages/Premium";
-import { Support } from "@/pages/Support";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import FAQ from "@/pages/FAQ";
+import Legal from "@/pages/Legal";
+import Premium from "@/pages/Premium";
+import Support from "@/pages/Support";
 import { ProLanding } from "@/pages/ProLanding";
 import { ProDashboard } from "@/pages/ProDashboard";
 
