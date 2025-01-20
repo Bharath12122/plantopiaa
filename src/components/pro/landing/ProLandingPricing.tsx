@@ -13,7 +13,7 @@ export const ProLandingPricing = () => {
       
       <div className="max-w-md mx-auto bg-[#1A1F2C] border border-[#9b87f5]/20 rounded-xl p-8 text-center">
         <div className="mb-4">
-          <span className="text-6xl font-bold text-white">$9.99</span>
+          <span className="text-6xl font-bold text-white">₹299</span>
           <span className="text-gray-400">/month</span>
         </div>
         
