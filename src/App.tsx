@@ -6,7 +6,7 @@ import Legal from "@/pages/Legal";
 import Premium from "@/pages/Premium";
 import Support from "@/pages/Support";
 import { ProLanding } from "@/pages/ProLanding";
-import { ProDashboard } from "@/pages/ProDashboard";
+import ProDashboard from "@/pages/ProDashboard";
 
 function App() {
   return (

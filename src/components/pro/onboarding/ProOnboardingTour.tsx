@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   Book, 
-  Plant2, 
+  Sprout, 
   Bell, 
   Shield, 
   MessageSquare, 
   Wifi, 
-  Sprout,
   Bug, 
   LineChart, 
   TestTube 
@@ -27,7 +26,7 @@ export const ProOnboardingTour = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showTour, setShowTour] = useState(true);
 
-  const steps: OnboardingStep[] = [
+  const steps = [
     {
       title: "Welcome to Plantopiaa Pro!",
       description: "Let's take a quick tour of your new features.",
@@ -36,7 +35,7 @@ export const ProOnboardingTour = () => {
     {
       title: "Unlimited Plant Identification",
       description: "Upload any plant photo for instant identification.",
-      icon: <Plant2 className="w-8 h-8 text-primary" />,
+      icon: <Sprout className="w-8 h-8 text-primary" />,
       action: () => toast.info("Try uploading a plant photo now!")
     },
     {

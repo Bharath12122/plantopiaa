@@ -18,16 +18,22 @@ export const ProFeedback = () => {
 
     setIsSubmitting(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Please sign in to submit feedback");
+        return;
+      }
+
       const { error } = await supabase
         .from('support_tickets')
-        .insert([
-          {
-            title: 'Pro Feature Feedback',
-            description: feedback,
-            priority: 'normal',
-            status: 'open'
-          }
-        ]);
+        .insert({
+          title: 'Pro Feature Feedback',
+          description: feedback,
+          priority: 'normal',
+          status: 'open',
+          user_id: session.user.id
+        });
 
       if (error) throw error;
 
