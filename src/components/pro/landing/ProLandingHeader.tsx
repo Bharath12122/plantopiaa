@@ -22,10 +22,10 @@ export const ProLandingHeader = () => {
       </p>
       
       <Button
-        onClick={() => navigate("/pro/features")}
+        onClick={() => navigate("/pro")}
         className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all duration-300 inline-flex items-center gap-2"
       >
-        Explore Pro Features <ArrowRight className="w-6 h-6" />
+        Learn More About Pro <ArrowRight className="w-6 h-6" />
       </Button>
       
       <p className="text-gray-400 mt-4">
