@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import ProLanding from "./pages/ProLanding";
-import PremiumLanding from "./pages/PremiumLanding";
-import Premium from "./pages/Premium";
-import Support from "./pages/Support";
-import FAQ from "./pages/FAQ";
-import Legal from "./pages/Legal";
+import { Index } from "@/pages/Index";
+import { Auth } from "@/pages/Auth";
+import { FAQ } from "@/pages/FAQ";
+import { Legal } from "@/pages/Legal";
+import { Premium } from "@/pages/Premium";
+import { Support } from "@/pages/Support";
+import { ProLanding } from "@/pages/ProLanding";
+import { ProDashboard } from "@/pages/ProDashboard";
 
 function App() {
   return (
@@ -14,12 +14,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/pro/landing" element={<ProLanding />} />
-        <Route path="/premium/landing" element={<PremiumLanding />} />
-        <Route path="/premium" element={<Premium />} />
-        <Route path="/support" element={<Support />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/legal" element={<Legal />} />
+        <Route path="/premium" element={<Premium />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/pro" element={<ProLanding />} />
+        <Route path="/pro/dashboard" element={<ProDashboard />} />
       </Routes>
     </Router>
   );
