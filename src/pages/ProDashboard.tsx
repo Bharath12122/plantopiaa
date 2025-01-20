@@ -7,10 +7,24 @@ import { ProUpload } from "@/components/pro/upload/ProUpload";
 import { PlantCollection } from "@/components/pro/PlantCollection";
 import { EducationalResources } from "@/components/pro/EducationalResources";
 import { PrioritySupport } from "@/components/pro/PrioritySupport";
-import { Sprout, Leaf, Bell, Shield, MessageSquare, Wifi, Book, Flower2, Bug, LineChart, TestTube } from "lucide-react";
+import { ProOnboardingTour } from "@/components/pro/onboarding/ProOnboardingTour";
+import { ProFeedback } from "@/components/pro/feedback/ProFeedback";
+import { 
+  Sprout, 
+  Leaf, 
+  Bell, 
+  Shield, 
+  MessageSquare, 
+  Wifi, 
+  Book, 
+  Plant2, 
+  Bug, 
+  LineChart, 
+  TestTube 
+} from "lucide-react";
 import { toast } from "sonner";
 
-export const ProDashboard = () => {
+export default function ProDashboard() {
   const navigate = useNavigate();
   const { isPro, isLoading } = useProStatus();
 
@@ -27,55 +41,55 @@ export const ProDashboard = () => {
   const features = [
     {
       title: "Unlimited Plant Identifications",
-      icon: <Sprout className="w-6 h-6 text-green-500" />,
+      icon: <Sprout className="w-6 h-6 text-primary" />,
       component: <ProUpload />,
     },
     {
       title: "Plant Collection Library",
-      icon: <Leaf className="w-6 h-6 text-green-500" />,
+      icon: <Leaf className="w-6 h-6 text-primary" />,
       component: <PlantCollection />,
     },
     {
       title: "Watering Schedules",
-      icon: <Bell className="w-6 h-6 text-green-500" />,
+      icon: <Bell className="w-6 h-6 text-primary" />,
       description: "Set up personalized watering reminders",
       onClick: () => toast.info("Watering schedule feature coming soon!"),
     },
     {
       title: "Ad-Free Experience",
-      icon: <Shield className="w-6 h-6 text-green-500" />,
+      icon: <Shield className="w-6 h-6 text-primary" />,
       description: "Enjoy an uninterrupted experience",
     },
     {
       title: "Priority Support",
-      icon: <MessageSquare className="w-6 h-6 text-green-500" />,
+      icon: <MessageSquare className="w-6 h-6 text-primary" />,
       component: <PrioritySupport />,
     },
     {
       title: "Offline Mode",
-      icon: <Wifi className="w-6 h-6 text-green-500" />,
+      icon: <Wifi className="w-6 h-6 text-primary" />,
       description: "Access your plant data offline",
     },
     {
       title: "Advanced Care Guides",
-      icon: <Book className="w-6 h-6 text-green-500" />,
+      icon: <Book className="w-6 h-6 text-primary" />,
       component: <EducationalResources />,
     },
     {
       title: "Disease Detection",
-      icon: <Bug className="w-6 h-6 text-green-500" />,
+      icon: <Bug className="w-6 h-6 text-primary" />,
       description: "Identify plant diseases and get treatment recommendations",
       onClick: () => toast.info("Disease detection feature coming soon!"),
     },
     {
       title: "Growth Tracking",
-      icon: <LineChart className="w-6 h-6 text-green-500" />,
+      icon: <LineChart className="w-6 h-6 text-primary" />,
       description: "Monitor your plants' progress over time",
       onClick: () => toast.info("Growth tracking feature coming soon!"),
     },
     {
       title: "Scientific Analysis",
-      icon: <TestTube className="w-6 h-6 text-green-500" />,
+      icon: <TestTube className="w-6 h-6 text-primary" />,
       description: "Access detailed scientific information about your plants",
       onClick: () => toast.info("Scientific analysis feature coming soon!"),
     },
@@ -83,6 +97,8 @@ export const ProDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ProOnboardingTour />
+      
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Welcome to Plantopiaa Pro! 🌿</h1>
         <p className="text-xl text-gray-600">
@@ -111,14 +127,18 @@ export const ProDashboard = () => {
         ))}
       </div>
 
+      <div className="mt-12">
+        <ProFeedback />
+      </div>
+
       <div className="mt-12 text-center">
         <Button
           onClick={() => navigate("/support")}
-          className="bg-green-500 hover:bg-green-600"
+          className="bg-primary hover:bg-primary/90"
         >
           Need Help? Contact Support
         </Button>
       </div>
     </div>
   );
-};
+}
