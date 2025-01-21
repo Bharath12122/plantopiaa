@@ -66,7 +66,8 @@ export default function Donate() {
         return;
       }
 
-      if (typeof Razorpay === 'undefined') {
+      // Check if Razorpay is loaded
+      if (typeof window.Razorpay === 'undefined') {
         toast.error("Payment system is loading. Please try again in a moment.");
         setIsProcessing(false);
         return;
@@ -97,7 +98,7 @@ export default function Donate() {
         }
       };
 
-      const razorpay = new Razorpay(options);
+      const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
       console.error('Error processing donation:', error);
@@ -243,6 +244,17 @@ export default function Donate() {
           </div>
         </div>
       </section>
+
+      {/* Support Our Project Button - Moved above footer */}
+      <div className="flex justify-center pb-16">
+        <Button
+          onClick={() => handleDonate(customAmount[0])}
+          disabled={isProcessing}
+          className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-4 rounded-full shadow-md hover:shadow-lg text-lg"
+        >
+          <Heart className="w-5 h-5" /> Support Our Project
+        </Button>
+      </div>
 
       <Footer />
     </div>
