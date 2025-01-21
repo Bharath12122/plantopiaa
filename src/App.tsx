@@ -7,6 +7,7 @@ import Premium from "@/pages/Premium";
 import Support from "@/pages/Support";
 import { ProLanding } from "@/pages/ProLanding";
 import ProDashboard from "@/pages/ProDashboard";
+import Donate from "@/pages/Donate";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/support" element={<Support />} />
         <Route path="/pro/landing" element={<ProLanding />} />
         <Route path="/pro/dashboard" element={<ProDashboard />} />
+        <Route path="/donate" element={<Donate />} />
       </Routes>
     </Router>
   );

@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Facebook, Instagram, Twitter, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Footer = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [email, setEmail] = React.useState("");
 
   const handleSubscribe = (e: React.FormEvent) => {
@@ -21,8 +22,7 @@ export const Footer = () => {
   };
 
   const handleDonate = () => {
-    // You can replace this URL with your actual donation link
-    window.open("https://example.com/donate", "_blank", "noopener,noreferrer");
+    navigate("/donate");
     toast({
       title: "Thank you for your support! 💚",
       description: "Your contribution helps us grow and maintain our plant community.",
