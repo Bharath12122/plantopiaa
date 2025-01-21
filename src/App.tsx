@@ -18,7 +18,7 @@ function App() {
         <Route path="/legal" element={<Legal />} />
         <Route path="/premium" element={<Premium />} />
         <Route path="/support" element={<Support />} />
-        <Route path="/pro" element={<ProLanding />} />
+        <Route path="/pro/landing" element={<ProLanding />} />
         <Route path="/pro/dashboard" element={<ProDashboard />} />
       </Routes>
     </Router>
