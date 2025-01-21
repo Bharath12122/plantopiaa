@@ -12,6 +12,9 @@ import {
   Star
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+declare const Razorpay: any;
 
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
@@ -22,7 +25,7 @@ const DonationTier = ({ amount, description, onClick }: {
     onClick={onClick}
     className="p-6 border border-[#00B388]/20 rounded-xl hover:border-[#00B388] transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group"
   >
-    <div className="text-2xl font-bold text-[#00B388] mb-2">${amount}</div>
+    <div className="text-2xl font-bold text-[#00B388] mb-2">₹{amount}</div>
     <p className="text-gray-600 text-sm">{description}</p>
     <ChevronRight className="w-5 h-5 text-[#00B388] opacity-0 group-hover:opacity-100 transition-all duration-300 ml-auto mt-2" />
   </button>
@@ -37,11 +40,40 @@ const Testimonial = ({ quote, author }: { quote: string; author: string }) => (
 );
 
 export default function Donate() {
-  const [customAmount, setCustomAmount] = useState([50]);
+  const [customAmount, setCustomAmount] = useState([500]);
+  const [isProcessing, setIsProcessing] = useState(false);
   
-  const handleDonate = (amount: number) => {
-    toast.success(`Thank you for your $${amount} donation!`);
-    // Here you would typically integrate with a payment processor
+  const handleDonate = async (amount: number) => {
+    try {
+      setIsProcessing(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const options = {
+        key: process.env.RAZORPAY_KEY_ID,
+        amount: amount * 100, // Razorpay expects amount in paise
+        currency: "INR",
+        name: "Plantopiaa",
+        description: "Donation to support plant care",
+        handler: function(response: any) {
+          toast.success("Thank you for your donation!");
+          console.log(response);
+        },
+        prefill: {
+          email: session?.user?.email,
+        },
+        theme: {
+          color: "#00B388"
+        }
+      };
+
+      const razorpay = new Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error('Error processing donation:', error);
+      toast.error("Failed to process donation. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -57,9 +89,11 @@ export default function Donate() {
           </p>
           <Button
             onClick={() => handleDonate(customAmount[0])}
+            disabled={isProcessing}
             className="bg-[#00B388] hover:bg-[#00B388]/90 text-white px-8 py-6 text-xl rounded-full animate-float"
           >
-            <Heart className="w-6 h-6 mr-2" /> Donate Now
+            <Heart className="w-6 h-6 mr-2" /> 
+            {isProcessing ? "Processing..." : "Donate Now"}
           </Button>
         </div>
       </section>
@@ -104,24 +138,24 @@ export default function Donate() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
             <DonationTier 
-              amount={10} 
+              amount={299} 
               description="Help us identify more plant species"
-              onClick={() => handleDonate(10)}
+              onClick={() => handleDonate(299)}
             />
             <DonationTier 
-              amount={25} 
+              amount={599} 
               description="Support AI model improvements"
-              onClick={() => handleDonate(25)}
+              onClick={() => handleDonate(599)}
             />
             <DonationTier 
-              amount={50} 
+              amount={999} 
               description="Enable global plant care access"
-              onClick={() => handleDonate(50)}
+              onClick={() => handleDonate(999)}
             />
             <DonationTier 
-              amount={100} 
+              amount={1999} 
               description="Fund major platform enhancements"
-              onClick={() => handleDonate(100)}
+              onClick={() => handleDonate(1999)}
             />
           </div>
           
@@ -131,19 +165,25 @@ export default function Donate() {
               <Slider
                 value={customAmount}
                 onValueChange={setCustomAmount}
-                max={500}
-                step={5}
+                max={10000}
+                step={100}
                 className="py-4"
               />
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-[#00B388]">
-                  ${customAmount[0]}
-                </span>
+                <input
+                  type="number"
+                  value={customAmount[0]}
+                  onChange={(e) => setCustomAmount([Number(e.target.value)])}
+                  className="text-2xl font-bold text-[#00B388] bg-transparent border-b border-[#00B388]/20 w-32 focus:outline-none focus:border-[#00B388]"
+                  min={100}
+                  max={10000}
+                />
                 <Button
                   onClick={() => handleDonate(customAmount[0])}
+                  disabled={isProcessing}
                   className="bg-[#00B388] hover:bg-[#00B388]/90 text-white"
                 >
-                  Donate Custom Amount
+                  {isProcessing ? "Processing..." : "Donate Custom Amount"}
                 </Button>
               </div>
             </div>
