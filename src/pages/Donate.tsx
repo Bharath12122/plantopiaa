@@ -14,8 +14,6 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-declare const Razorpay: any;
-
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
   description: string;
