@@ -48,21 +48,32 @@ export default function Donate() {
       setIsProcessing(true);
       const { data: { session } } = await supabase.auth.getSession();
       
+      if (!session?.user?.email) {
+        toast.error("Please login to make a donation");
+        return;
+      }
+
       const options = {
-        key: process.env.RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Using Vite's environment variable syntax
         amount: amount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Plantopiaa",
         description: "Donation to support plant care",
         handler: function(response: any) {
+          console.log("Payment successful:", response);
           toast.success("Thank you for your donation!");
-          console.log(response);
         },
         prefill: {
-          email: session?.user?.email,
+          email: session.user.email,
         },
         theme: {
           color: "#00B388"
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+            console.log("Payment modal closed");
+          }
         }
       };
 
