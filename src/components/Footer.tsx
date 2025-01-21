@@ -23,10 +23,6 @@ export const Footer = () => {
 
   const handleDonate = () => {
     navigate("/donate");
-    toast({
-      title: "Thank you for your support! 💚",
-      description: "Your contribution helps us grow and maintain our plant community.",
-    });
   };
 
   return (
