@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Footer } from "@/components/Footer";
@@ -43,6 +43,18 @@ export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // Add Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+  
   const handleDonate = async (amount: number) => {
     try {
       setIsProcessing(true);
@@ -50,11 +62,18 @@ export default function Donate() {
       
       if (!session?.user?.email) {
         toast.error("Please login to make a donation");
+        setIsProcessing(false);
+        return;
+      }
+
+      if (typeof Razorpay === 'undefined') {
+        toast.error("Payment system is loading. Please try again in a moment.");
+        setIsProcessing(false);
         return;
       }
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Using Vite's environment variable syntax
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Plantopiaa",
@@ -62,6 +81,7 @@ export default function Donate() {
         handler: function(response: any) {
           console.log("Payment successful:", response);
           toast.success("Thank you for your donation!");
+          setIsProcessing(false);
         },
         prefill: {
           email: session.user.email,
@@ -82,7 +102,6 @@ export default function Donate() {
     } catch (error) {
       console.error('Error processing donation:', error);
       toast.error("Failed to process donation. Please try again.");
-    } finally {
       setIsProcessing(false);
     }
   };
