@@ -22,6 +22,7 @@ export const Footer = () => {
   };
 
   const handleDonate = () => {
+    console.log("Navigating to donate page");
     navigate("/donate");
   };
 
