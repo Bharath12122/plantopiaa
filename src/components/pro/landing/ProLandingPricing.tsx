@@ -59,7 +59,7 @@ export const ProLandingPricing = () => {
         </ul>
         
         <Button
-          onClick={() => navigate("/pro")}
+          onClick={() => navigate("/pro/landing")}
           className="w-full bg-[#9cff3d] hover:bg-[#8bef2c] text-black py-6 text-xl font-semibold rounded-xl transition-all duration-300 group"
         >
           Get Full Access <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" />
