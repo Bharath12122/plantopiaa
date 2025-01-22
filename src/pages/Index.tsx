@@ -238,6 +238,17 @@ const Index = () => {
           </Accordion>
         </section>
 
+        {/* Support Our Project Button - Above footer */}
+        <div className="flex justify-center pb-16">
+          <Button
+            onClick={() => navigate("/donate")}
+            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-4 rounded-full shadow-md hover:shadow-lg text-lg"
+          >
+            <Heart className="w-5 h-5" /> 
+            Support Our Project
+          </Button>
+        </div>
+
         <button
           className="fixed bottom-8 right-8 p-4 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
           onClick={() => toast({

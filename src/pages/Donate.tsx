@@ -1,42 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { Footer } from "@/components/Footer";
-import { 
-  Heart, 
-  Sprout, 
-  Globe, 
-  Database, 
-  Shield, 
-  ChevronRight,
-  Star
-} from "lucide-react";
+import { Heart, Sprout, Globe, Database, Shield } from "lucide-react";
 import { toast } from "sonner";
+import { DonationTier } from "@/components/donate/DonationTier";
+import { Testimonial } from "@/components/donate/Testimonial";
+import { CustomDonation } from "@/components/donate/CustomDonation";
 
 const RAZORPAY_URL = "https://rzp.io/l/XQF70pCm"; // Updated Razorpay payment link format
-
-const DonationTier = ({ amount, description, onClick }: { 
-  amount: number;
-  description: string;
-  onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className="p-6 border border-[#00B388]/20 rounded-xl hover:border-[#00B388] transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group"
-  >
-    <div className="text-2xl font-bold text-[#00B388] mb-2">₹{amount}</div>
-    <p className="text-gray-600 text-sm">{description}</p>
-    <ChevronRight className="w-5 h-5 text-[#00B388] opacity-0 group-hover:opacity-100 transition-all duration-300 ml-auto mt-2" />
-  </button>
-);
-
-const Testimonial = ({ quote, author }: { quote: string; author: string }) => (
-  <div className="p-6 bg-white/50 backdrop-blur-sm rounded-xl border border-[#00B388]/20">
-    <Star className="w-6 h-6 text-[#9b87f5] mb-4" />
-    <p className="text-gray-600 italic mb-4">{quote}</p>
-    <p className="text-[#00B388] font-semibold">{author}</p>
-  </div>
-);
 
 export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
@@ -115,57 +86,26 @@ export default function Donate() {
             Choose Your Impact
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            <DonationTier 
-              amount={299} 
-              description="Help us identify more plant species"
-              onClick={() => handleDonate(299)}
-            />
-            <DonationTier 
-              amount={599} 
-              description="Support AI model improvements"
-              onClick={() => handleDonate(599)}
-            />
-            <DonationTier 
-              amount={999} 
-              description="Enable global plant care access"
-              onClick={() => handleDonate(999)}
-            />
-            <DonationTier 
-              amount={1999} 
-              description="Fund major platform enhancements"
-              onClick={() => handleDonate(1999)}
-            />
+            {[
+              { amount: 299, description: "Help us identify more plant species" },
+              { amount: 599, description: "Support AI model improvements" },
+              { amount: 999, description: "Enable global plant care access" },
+              { amount: 1999, description: "Fund major platform enhancements" }
+            ].map((tier) => (
+              <DonationTier
+                key={tier.amount}
+                {...tier}
+                onClick={() => handleDonate(tier.amount)}
+              />
+            ))}
           </div>
           
-          <div className="bg-white/50 backdrop-blur-sm p-6 rounded-xl border border-[#00B388]/20">
-            <h3 className="text-xl font-semibold mb-4">Custom Amount</h3>
-            <div className="space-y-4">
-              <Slider
-                value={customAmount}
-                onValueChange={setCustomAmount}
-                max={10000}
-                step={100}
-                className="py-4"
-              />
-              <div className="flex justify-between items-center">
-                <input
-                  type="number"
-                  value={customAmount[0]}
-                  onChange={(e) => setCustomAmount([Number(e.target.value)])}
-                  className="text-2xl font-bold text-[#00B388] bg-transparent border-b border-[#00B388]/20 w-32 focus:outline-none focus:border-[#00B388]"
-                  min={100}
-                  max={10000}
-                />
-                <Button
-                  onClick={() => handleDonate(customAmount[0])}
-                  disabled={isProcessing}
-                  className="bg-[#00B388] hover:bg-[#00B388]/90 text-white"
-                >
-                  {isProcessing ? "Processing..." : "Donate Custom Amount"}
-                </Button>
-              </div>
-            </div>
-          </div>
+          <CustomDonation
+            amount={customAmount}
+            onAmountChange={setCustomAmount}
+            onDonate={() => handleDonate(customAmount[0])}
+            isProcessing={isProcessing}
+          />
         </div>
       </section>
       
@@ -191,18 +131,6 @@ export default function Donate() {
           </div>
         </div>
       </section>
-      
-      {/* Support Our Project Button - Above footer */}
-      <div className="flex justify-center pb-16">
-        <Button
-          onClick={() => handleDonate(customAmount[0])}
-          disabled={isProcessing}
-          className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-4 rounded-full shadow-md hover:shadow-lg text-lg"
-        >
-          <Heart className="w-5 h-5" /> 
-          {isProcessing ? "Processing..." : "Support Our Project"}
-        </Button>
-      </div>
       
       <Footer />
     </div>
