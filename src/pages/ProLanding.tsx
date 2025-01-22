@@ -6,6 +6,7 @@ import { ProLandingFeatures } from "@/components/pro/landing/ProLandingFeatures"
 import { ProLandingPricing } from "@/components/pro/landing/ProLandingPricing";
 import { ProLandingTestimonials } from "@/components/pro/landing/ProLandingTestimonials";
 import { ProLandingFAQ } from "@/components/pro/landing/ProLandingFAQ";
+import { Toaster } from "@/components/ui/toaster";
 
 export const ProLanding = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export const ProLanding = () => {
         <ProLandingTestimonials />
         <ProLandingFAQ />
       </div>
+      <Toaster />
     </div>
   );
 };
