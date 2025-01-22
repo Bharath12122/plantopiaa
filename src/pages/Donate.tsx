@@ -40,12 +40,32 @@ const Testimonial = ({ quote, author }: { quote: string; author: string }) => (
 export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [razorpayKey, setRazorpayKey] = useState<string>("");
   
   useEffect(() => {
+    // Load Razorpay script
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     document.body.appendChild(script);
+    
+    // Fetch Razorpay key from Supabase
+    const fetchRazorpayKey = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        const { data, error } = await supabase.functions.invoke('get-razorpay-key');
+        if (error) {
+          console.error('Error fetching Razorpay key:', error);
+          toast.error("Failed to initialize payment system");
+          return;
+        }
+        if (data?.key) {
+          setRazorpayKey(data.key);
+        }
+      }
+    };
+
+    fetchRazorpayKey();
     
     return () => {
       document.body.removeChild(script);
@@ -63,6 +83,12 @@ export default function Donate() {
         return;
       }
 
+      if (!razorpayKey) {
+        toast.error("Payment system is not ready. Please try again in a moment.");
+        setIsProcessing(false);
+        return;
+      }
+
       // Check if Razorpay is loaded
       if (typeof window.Razorpay === 'undefined') {
         toast.error("Payment system is loading. Please try again in a moment.");
@@ -70,11 +96,8 @@ export default function Donate() {
         return;
       }
 
-      // Log the key to debug
-      console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
-
       const options: RazorpayOptions = {
-        key: "rzp_test_dZHpGXt1ALSXqc", // Hardcoding test key temporarily for debugging
+        key: razorpayKey,
         amount: amount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Plantopiaa",
@@ -260,4 +283,4 @@ export default function Donate() {
       <Footer />
     </div>
   );
-}
+};
