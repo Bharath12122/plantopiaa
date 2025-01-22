@@ -94,7 +94,7 @@ export default function Donate() {
       document.body.removeChild(script);
     };
   }, []);
-  
+
   const handleDonate = async (amount: number) => {
     try {
       setIsProcessing(true);
