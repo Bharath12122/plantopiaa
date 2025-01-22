@@ -14,6 +14,8 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')
+    console.log('Auth header received:', !!authHeader)
+    
     if (!authHeader) {
       console.error('No authorization header found')
       return new Response(
@@ -25,7 +27,7 @@ serve(async (req) => {
       )
     }
 
-    // Create a Supabase client with the Auth context of the logged in user
+    // Create a Supabase client with the Auth context
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -36,11 +38,13 @@ serve(async (req) => {
       }
     )
 
-    // Get the session of the logged-in user
+    // Verify the session
     const {
       data: { session },
-      error: sessionError
+      error: sessionError,
     } = await supabaseClient.auth.getSession()
+
+    console.log('Session verification:', { hasSession: !!session, error: sessionError?.message })
 
     if (sessionError || !session) {
       console.error('Session error or no session found:', sessionError)
@@ -95,6 +99,7 @@ serve(async (req) => {
     })
 
     const orderData = await response.json()
+    console.log('Razorpay order creation response:', { status: response.status, success: response.ok })
 
     if (!response.ok) {
       console.error('Error creating Razorpay order:', orderData)
@@ -109,7 +114,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(orderData),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error in create-razorpay-order function:', error)

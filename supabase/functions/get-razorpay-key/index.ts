@@ -13,11 +13,12 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Fetching Razorpay key...');
-    const authHeader = req.headers.get('Authorization');
+    // Get the authorization header
+    const authHeader = req.headers.get('Authorization')
+    console.log('Auth header received:', !!authHeader)
     
     if (!authHeader) {
-      console.error('No authorization header found');
+      console.error('No authorization header')
       return new Response(
         JSON.stringify({ error: 'No authorization header' }),
         { 
@@ -27,7 +28,7 @@ serve(async (req) => {
       )
     }
 
-    // Create a Supabase client with the Auth context of the logged in user
+    // Create a Supabase client with the Auth context
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -38,16 +39,16 @@ serve(async (req) => {
       }
     )
 
-    // Get the session of the logged-in user
+    // Verify the session
     const {
       data: { session },
-      error: sessionError
+      error: sessionError,
     } = await supabaseClient.auth.getSession()
 
-    console.log('Session check:', !!session);
+    console.log('Session verification:', { hasSession: !!session, error: sessionError?.message })
 
     if (sessionError || !session) {
-      console.error('Session error or no session found:', sessionError);
+      console.error('Invalid session:', sessionError)
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { 
@@ -57,11 +58,11 @@ serve(async (req) => {
       )
     }
 
-    const razorpayKey = Deno.env.get('RAZORPAY_KEY_ID');
-    console.log('Razorpay key retrieved:', !!razorpayKey);
+    const razorpayKey = Deno.env.get('RAZORPAY_KEY_ID')
+    console.log('Razorpay key retrieved:', !!razorpayKey)
 
     if (!razorpayKey) {
-      console.error('Razorpay key not found in environment');
+      console.error('Razorpay key not found in environment')
       return new Response(
         JSON.stringify({ error: 'Payment configuration missing' }),
         { 
@@ -71,15 +72,14 @@ serve(async (req) => {
       )
     }
 
-    // Return the Razorpay key
     return new Response(
       JSON.stringify({ key: razorpayKey }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      },
+      }
     )
   } catch (error) {
-    console.error('Error in get-razorpay-key function:', error);
+    console.error('Error in get-razorpay-key function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
