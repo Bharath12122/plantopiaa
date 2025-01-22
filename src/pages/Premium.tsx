@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Video, Calendar, Shield, MessageSquare, Crown, Gem, Star } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BusinessGuidance } from "@/components/premium/BusinessGuidance";
 import { ConsultationSection } from "@/components/premium/ConsultationSection";
 import { DashboardPreview } from "@/components/premium/DashboardPreview";
+import { Toaster } from "@/components/ui/toaster";
 
 const Premium = () => {
   const navigate = useNavigate();
@@ -118,6 +119,7 @@ const Premium = () => {
           </Button>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };
