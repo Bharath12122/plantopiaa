@@ -41,7 +41,6 @@ export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Add Razorpay script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -71,13 +70,13 @@ export default function Donate() {
         return;
       }
 
-      const options = {
+      const options: RazorpayOptions = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Plantopiaa",
         description: "Donation to support plant care",
-        handler: function(response: any) {
+        handler: function(response) {
           console.log("Payment successful:", response);
           toast.success("Thank you for your donation!");
           setIsProcessing(false);
@@ -243,7 +242,7 @@ export default function Donate() {
         </div>
       </section>
 
-      {/* Support Our Project Button - Moved above footer */}
+      {/* Support Our Project Button - Above footer */}
       <div className="flex justify-center pb-16">
         <Button
           onClick={() => handleDonate(customAmount[0])}
