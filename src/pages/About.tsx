@@ -128,10 +128,10 @@ export default function About() {
         </div>
 
         {/* Donate Button Section */}
-        <div className="text-center mb-16">
+        <div className="flex justify-center items-center mb-16">
           <Button
             onClick={handleDonate}
-            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-6 rounded-full shadow-md hover:shadow-lg text-lg"
+            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-6 rounded-full shadow-md hover:shadow-lg text-lg mx-auto"
           >
             <Heart className="w-6 h-6" /> Support Our Mission
           </Button>
