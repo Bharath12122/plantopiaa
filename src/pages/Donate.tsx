@@ -310,4 +310,4 @@ export default function Donate() {
       <Footer />
     </div>
   );
-};
+}

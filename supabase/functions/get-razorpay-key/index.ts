@@ -26,7 +26,7 @@ serve(async (req) => {
         }
       )
     }
-    
+
     // Create a Supabase client with the Auth context of the logged in user
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
