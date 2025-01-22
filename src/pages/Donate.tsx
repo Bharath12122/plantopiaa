@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const RAZORPAY_URL = "https://rzp.io/i/your-payment-link"; // Replace with your actual Razorpay payment link
+const RAZORPAY_URL = "https://rzp.io/rzp/XQF70pCm"; // Your Razorpay payment link
 
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
