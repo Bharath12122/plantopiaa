@@ -14,6 +14,8 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+const RAZORPAY_URL = "https://rzp.io/i/your-payment-link"; // Replace with your actual Razorpay payment link
+
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
   description: string;
@@ -40,107 +42,15 @@ const Testimonial = ({ quote, author }: { quote: string; author: string }) => (
 export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [razorpayKey, setRazorpayKey] = useState<string>("");
-  
-  useEffect(() => {
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    
-    // Fetch Razorpay key
-    const fetchRazorpayKey = async () => {
-      try {
-        console.log('Fetching Razorpay key...');
-        const { data, error } = await supabase.functions.invoke('get-razorpay-key', {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        
-        if (error || !data?.key) {
-          console.error('Error fetching Razorpay key:', error);
-          toast.error("Payment system configuration is missing");
-          return;
-        }
-
-        console.log('Razorpay key fetched successfully');
-        setRazorpayKey(data.key);
-      } catch (error) {
-        console.error('Error fetching Razorpay key:', error);
-        toast.error("Failed to initialize payment system");
-      }
-    };
-
-    fetchRazorpayKey();
-    
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const handleDonate = async (amount: number) => {
     try {
       setIsProcessing(true);
-      console.log('Starting donation process...');
-
-      // Create Razorpay order
-      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
-        body: { amount },
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (orderError || !orderData?.id) {
-        console.error('Error creating order:', orderError || 'No order ID received');
-        toast.error("Failed to create payment order");
-        setIsProcessing(false);
-        return;
-      }
-
-      if (!razorpayKey) {
-        toast.error("Payment system is not ready. Please try again in a moment.");
-        setIsProcessing(false);
-        return;
-      }
-
-      // Check if Razorpay is loaded
-      if (typeof window.Razorpay === 'undefined') {
-        toast.error("Payment system is loading. Please try again in a moment.");
-        setIsProcessing(false);
-        return;
-      }
-
-      console.log('Creating Razorpay instance with key:', razorpayKey);
-
-      const options: RazorpayOptions = {
-        key: razorpayKey,
-        amount: amount * 100, // Razorpay expects amount in paise
-        currency: "INR",
-        name: "Plantopiaa",
-        description: "Donation to support plant care",
-        order_id: orderData.id,
-        handler: function(response) {
-          console.log("Payment successful:", response);
-          toast.success("Thank you for your donation!");
-          setIsProcessing(false);
-        },
-        modal: {
-          ondismiss: function() {
-            setIsProcessing(false);
-            console.log("Payment modal closed");
-          }
-        }
-      };
-
-      console.log('Opening Razorpay modal...');
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
+      console.log('Redirecting to Razorpay payment page...');
+      window.location.href = RAZORPAY_URL;
     } catch (error) {
-      console.error('Error processing donation:', error);
-      toast.error("Failed to process donation. Please try again.");
+      console.error('Error redirecting to payment page:', error);
+      toast.error("Failed to redirect to payment page. Please try again.");
       setIsProcessing(false);
     }
   };
