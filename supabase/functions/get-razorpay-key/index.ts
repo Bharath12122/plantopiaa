@@ -13,10 +13,12 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting Razorpay key retrieval...')
+
     // Get the authorization header
     const authHeader = req.headers.get('Authorization')
-    console.log('Auth header received:', !!authHeader)
-    
+    console.log('Auth header present:', !!authHeader)
+
     if (!authHeader) {
       console.error('No authorization header')
       return new Response(
@@ -28,7 +30,7 @@ serve(async (req) => {
       )
     }
 
-    // Create a Supabase client with the Auth context
+    // Create Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -39,16 +41,12 @@ serve(async (req) => {
       }
     )
 
-    // Verify the session
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabaseClient.auth.getSession()
+    // Verify the user session
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
+    console.log('User verification result:', { hasUser: !!user, error: userError?.message })
 
-    console.log('Session verification:', { hasSession: !!session, error: sessionError?.message })
-
-    if (sessionError || !session) {
-      console.error('Invalid session:', sessionError)
+    if (userError || !user) {
+      console.error('Invalid session:', userError)
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { 
@@ -75,9 +73,10 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ key: razorpayKey }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
+
   } catch (error) {
     console.error('Error in get-razorpay-key function:', error)
     return new Response(
