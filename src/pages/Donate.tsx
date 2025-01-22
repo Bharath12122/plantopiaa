@@ -12,8 +12,6 @@ import {
   Star
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { LoginPrompt } from "@/components/LoginPrompt";
 
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
@@ -42,7 +40,6 @@ export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [razorpayKey, setRazorpayKey] = useState<string>("");
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   
   useEffect(() => {
     // Load Razorpay script
@@ -51,32 +48,15 @@ export default function Donate() {
     script.async = true;
     document.body.appendChild(script);
     
-    // Fetch Razorpay key from Supabase
+    // Fetch Razorpay key
     const fetchRazorpayKey = async () => {
       try {
-        console.log('Fetching Razorpay key from Edge Function...');
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log('Fetching Razorpay key...');
+        const response = await fetch('https://wdxxbsnienjuyyjrduwo.supabase.co/functions/v1/get-razorpay-key');
+        const data = await response.json();
         
-        if (!session?.access_token) {
-          console.log('No session found, user needs to login');
-          return;
-        }
-
-        const { data, error } = await supabase.functions.invoke('get-razorpay-key', {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (error) {
-          console.error('Error fetching Razorpay key:', error);
-          toast.error("Failed to initialize payment system");
-          return;
-        }
-
         if (!data?.key) {
-          console.error('No Razorpay key returned from Edge Function');
+          console.error('No Razorpay key returned');
           toast.error("Payment system configuration is missing");
           return;
         }
@@ -84,7 +64,7 @@ export default function Donate() {
         console.log('Razorpay key fetched successfully');
         setRazorpayKey(data.key);
       } catch (error) {
-        console.error('Error in fetchRazorpayKey:', error);
+        console.error('Error fetching Razorpay key:', error);
         toast.error("Failed to initialize payment system");
       }
     };
@@ -98,27 +78,22 @@ export default function Donate() {
 
   const handleDonate = async (amount: number) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.access_token) {
-        setShowLoginPrompt(true);
-        return;
-      }
-
       setIsProcessing(true);
       console.log('Starting donation process...');
 
       // Create Razorpay order
-      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
-        body: { amount },
+      const orderResponse = await fetch('https://wdxxbsnienjuyyjrduwo.supabase.co/functions/v1/create-razorpay-order', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ amount })
       });
 
-      if (orderError || !orderData?.id) {
-        console.error('Error creating order:', orderError || 'No order ID received');
+      const orderData = await orderResponse.json();
+
+      if (!orderData?.id) {
+        console.error('Error creating order:', orderData);
         toast.error("Failed to create payment order");
         setIsProcessing(false);
         return;
@@ -150,12 +125,6 @@ export default function Donate() {
           console.log("Payment successful:", response);
           toast.success("Thank you for your donation!");
           setIsProcessing(false);
-        },
-        prefill: {
-          email: session.user.email,
-        },
-        theme: {
-          color: "#00B388"
         },
         modal: {
           ondismiss: function() {
@@ -198,7 +167,7 @@ export default function Donate() {
           </Button>
         </div>
       </section>
-
+      
       {/* Impact Section */}
       <section className="py-16 px-4 bg-white/50">
         <div className="max-w-6xl mx-auto">
@@ -230,7 +199,7 @@ export default function Donate() {
           </div>
         </div>
       </section>
-
+      
       {/* Donation Options */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
@@ -291,7 +260,7 @@ export default function Donate() {
           </div>
         </div>
       </section>
-
+      
       {/* Trust Signals */}
       <section className="py-16 px-4 bg-white/50">
         <div className="max-w-4xl mx-auto">
@@ -314,7 +283,7 @@ export default function Donate() {
           </div>
         </div>
       </section>
-
+      
       {/* Support Our Project Button - Above footer */}
       <div className="flex justify-center pb-16">
         <Button
@@ -326,9 +295,8 @@ export default function Donate() {
           {isProcessing ? "Processing..." : "Support Our Project"}
         </Button>
       </div>
-
+      
       <Footer />
-      <LoginPrompt open={showLoginPrompt} onOpenChange={setShowLoginPrompt} />
     </div>
   );
 }

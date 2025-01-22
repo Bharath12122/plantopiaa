@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,57 +6,11 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const authHeader = req.headers.get('Authorization')
-    console.log('Auth header received:', !!authHeader)
-    
-    if (!authHeader) {
-      console.error('No authorization header found')
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    // Create a Supabase client with the Auth context
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
-    )
-
-    // Verify the session
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabaseClient.auth.getSession()
-
-    console.log('Session verification:', { hasSession: !!session, error: sessionError?.message })
-
-    if (sessionError || !session) {
-      console.error('Session error or no session found:', sessionError)
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    // Get request body
     const { amount } = await req.json()
     
     if (!amount || amount < 1) {
