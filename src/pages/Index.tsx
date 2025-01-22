@@ -16,7 +16,7 @@ import { DailyRewards } from "@/components/DailyRewards";
 import { GamificationSection } from "@/components/gamification/GamificationSection";
 import { PlantCareTips } from "@/components/PlantCareTips";
 import { Footer } from "@/components/Footer";
-import { Leaf, Camera } from "lucide-react";
+import { Leaf, Camera, Heart } from "lucide-react";
 import { Features } from "@/components/Features";
 import {
   Accordion,
