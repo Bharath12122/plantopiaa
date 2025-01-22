@@ -108,6 +108,22 @@ export default function Donate() {
         return;
       }
 
+      // Create Razorpay order
+      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
+        body: { amount },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (orderError || !orderData?.id) {
+        console.error('Error creating order:', orderError || 'No order ID received');
+        toast.error("Failed to create payment order");
+        setIsProcessing(false);
+        return;
+      }
+
       if (!razorpayKey) {
         toast.error("Payment system is not ready. Please try again in a moment.");
         setIsProcessing(false);
@@ -129,6 +145,7 @@ export default function Donate() {
         currency: "INR",
         name: "Plantopiaa",
         description: "Donation to support plant care",
+        order_id: orderData.id,
         handler: function(response) {
           console.log("Payment successful:", response);
           toast.success("Thank you for your donation!");
@@ -311,4 +328,4 @@ export default function Donate() {
       <Footer />
     </div>
   );
-}
+};
