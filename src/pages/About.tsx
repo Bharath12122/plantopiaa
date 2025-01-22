@@ -1,8 +1,16 @@
 import React from "react";
 import { Footer } from "@/components/Footer";
-import { Leaf, Sprout, TreeDeciduous, FlowerIcon } from "lucide-react";
+import { Leaf, Sprout, TreeDeciduous, FlowerIcon, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function About() {
+  const navigate = useNavigate();
+
+  const handleDonate = () => {
+    navigate("/donate");
+  };
+
   return (
     <div className="min-h-screen bg-[#FCFDF7]">
       <main className="container mx-auto px-4 py-12">
@@ -117,6 +125,16 @@ export default function About() {
           <p className="text-xl font-semibold text-[#00B388] mt-4">
             Explore. Learn. Grow. Welcome to Plantopiaa!
           </p>
+        </div>
+
+        {/* Donate Button Section */}
+        <div className="text-center mb-16">
+          <Button
+            onClick={handleDonate}
+            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-6 rounded-full shadow-md hover:shadow-lg text-lg"
+          >
+            <Heart className="w-6 h-6" /> Support Our Mission
+          </Button>
         </div>
       </main>
       <Footer />
