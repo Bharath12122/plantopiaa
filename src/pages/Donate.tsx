@@ -12,6 +12,7 @@ import {
   Star
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
@@ -52,11 +53,10 @@ export default function Donate() {
     const fetchRazorpayKey = async () => {
       try {
         console.log('Fetching Razorpay key...');
-        const response = await fetch('https://wdxxbsnienjuyyjrduwo.supabase.co/functions/v1/get-razorpay-key');
-        const data = await response.json();
+        const { data, error } = await supabase.functions.invoke('get-razorpay-key');
         
-        if (!data?.key) {
-          console.error('No Razorpay key returned');
+        if (error || !data?.key) {
+          console.error('Error fetching Razorpay key:', error);
           toast.error("Payment system configuration is missing");
           return;
         }
@@ -82,18 +82,12 @@ export default function Donate() {
       console.log('Starting donation process...');
 
       // Create Razorpay order
-      const orderResponse = await fetch('https://wdxxbsnienjuyyjrduwo.supabase.co/functions/v1/create-razorpay-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ amount })
+      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
+        body: { amount }
       });
 
-      const orderData = await orderResponse.json();
-
-      if (!orderData?.id) {
-        console.error('Error creating order:', orderData);
+      if (orderError || !orderData?.id) {
+        console.error('Error creating order:', orderError || 'No order ID received');
         toast.error("Failed to create payment order");
         setIsProcessing(false);
         return;
@@ -143,8 +137,6 @@ export default function Donate() {
       setIsProcessing(false);
     }
   };
-
-  // ... keep existing code (JSX for the component)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F2FCE2] to-white">

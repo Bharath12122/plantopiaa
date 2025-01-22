@@ -37,6 +37,8 @@ serve(async (req) => {
       )
     }
 
+    console.log('Creating Razorpay order with amount:', amount)
+
     // Create order using Razorpay API
     const response = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
