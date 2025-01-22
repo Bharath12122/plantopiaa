@@ -51,17 +51,34 @@ export default function Donate() {
     
     // Fetch Razorpay key from Supabase
     const fetchRazorpayKey = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.access_token) {
+      try {
+        console.log('Fetching Razorpay key from Edge Function...');
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session?.access_token) {
+          console.log('No session found, user needs to login');
+          return;
+        }
+
         const { data, error } = await supabase.functions.invoke('get-razorpay-key');
+        
         if (error) {
           console.error('Error fetching Razorpay key:', error);
           toast.error("Failed to initialize payment system");
           return;
         }
-        if (data?.key) {
-          setRazorpayKey(data.key);
+
+        if (!data?.key) {
+          console.error('No Razorpay key returned from Edge Function');
+          toast.error("Payment system configuration is missing");
+          return;
         }
+
+        console.log('Razorpay key fetched successfully');
+        setRazorpayKey(data.key);
+      } catch (error) {
+        console.error('Error in fetchRazorpayKey:', error);
+        toast.error("Failed to initialize payment system");
       }
     };
 
@@ -75,6 +92,8 @@ export default function Donate() {
   const handleDonate = async (amount: number) => {
     try {
       setIsProcessing(true);
+      console.log('Starting donation process...');
+      
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user?.email) {
@@ -95,6 +114,8 @@ export default function Donate() {
         setIsProcessing(false);
         return;
       }
+
+      console.log('Creating Razorpay instance with key:', razorpayKey);
 
       const options: RazorpayOptions = {
         key: razorpayKey,
@@ -121,6 +142,7 @@ export default function Donate() {
         }
       };
 
+      console.log('Opening Razorpay modal...');
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
