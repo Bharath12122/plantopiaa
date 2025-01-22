@@ -50,7 +50,7 @@ export const SubscriptionCard = ({
         navigate("/pro/landing");
         break;
       case "premium":
-        navigate("/premium/landing");
+        navigate("/premium");
         break;
       default:
         break;
