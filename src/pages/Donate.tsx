@@ -64,6 +64,7 @@ export default function Donate() {
         const { data, error } = await supabase.functions.invoke('get-razorpay-key', {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
           }
         });
         
