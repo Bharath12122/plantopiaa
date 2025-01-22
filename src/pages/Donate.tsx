@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { LoginPrompt } from "@/components/LoginPrompt";
 
 const DonationTier = ({ amount, description, onClick }: { 
   amount: number;
@@ -41,6 +42,7 @@ export default function Donate() {
   const [customAmount, setCustomAmount] = useState([500]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [razorpayKey, setRazorpayKey] = useState<string>("");
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   
   useEffect(() => {
     // Load Razorpay script
@@ -57,7 +59,6 @@ export default function Donate() {
         
         if (!session?.access_token) {
           console.log('No session found, user needs to login');
-          toast.error("Please login to make a donation");
           return;
         }
 
@@ -97,16 +98,15 @@ export default function Donate() {
 
   const handleDonate = async (amount: number) => {
     try {
-      setIsProcessing(true);
-      console.log('Starting donation process...');
-      
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session?.user?.email) {
-        toast.error("Please login to make a donation");
-        setIsProcessing(false);
+      if (!session?.access_token) {
+        setShowLoginPrompt(true);
         return;
       }
+
+      setIsProcessing(true);
+      console.log('Starting donation process...');
 
       // Create Razorpay order
       const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
@@ -174,6 +174,8 @@ export default function Donate() {
       setIsProcessing(false);
     }
   };
+
+  // ... keep existing code (JSX for the component)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F2FCE2] to-white">
@@ -326,6 +328,7 @@ export default function Donate() {
       </div>
 
       <Footer />
+      <LoginPrompt open={showLoginPrompt} onOpenChange={setShowLoginPrompt} />
     </div>
   );
-};
+}
