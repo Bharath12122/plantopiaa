@@ -70,8 +70,11 @@ export default function Donate() {
         return;
       }
 
+      // Log the key to debug
+      console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
+
       const options: RazorpayOptions = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: "rzp_test_dZHpGXt1ALSXqc", // Hardcoding test key temporarily for debugging
         amount: amount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Plantopiaa",
@@ -249,7 +252,8 @@ export default function Donate() {
           disabled={isProcessing}
           className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2 px-8 py-4 rounded-full shadow-md hover:shadow-lg text-lg"
         >
-          <Heart className="w-5 h-5" /> Support Our Project
+          <Heart className="w-5 h-5" /> 
+          {isProcessing ? "Processing..." : "Support Our Project"}
         </Button>
       </div>
 
