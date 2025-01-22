@@ -4,6 +4,7 @@ interface RazorpayOptions {
   currency: string;
   name: string;
   description: string;
+  order_id: string; // Added this property
   handler: (response: any) => void;
   prefill?: {
     email?: string;
