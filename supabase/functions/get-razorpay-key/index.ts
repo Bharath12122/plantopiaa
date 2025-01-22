@@ -41,12 +41,13 @@ serve(async (req) => {
     // Get the session of the logged-in user
     const {
       data: { session },
+      error: sessionError
     } = await supabaseClient.auth.getSession()
 
     console.log('Session check:', !!session);
 
-    if (!session) {
-      console.error('No session found');
+    if (sessionError || !session) {
+      console.error('Session error or no session found:', sessionError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { 
