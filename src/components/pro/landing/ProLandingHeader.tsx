@@ -1,9 +1,19 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 export const ProLandingHeader = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleClick = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "Pro features are currently under development. Stay tuned!",
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="text-center mb-20">
@@ -22,7 +32,7 @@ export const ProLandingHeader = () => {
       </p>
       
       <Button
-        onClick={() => navigate("/pro")}
+        onClick={handleClick}
         className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-xl font-semibold rounded-xl transition-all duration-300 inline-flex items-center gap-2"
       >
         Learn More About Pro <ArrowRight className="w-6 h-6" />
