@@ -57,10 +57,15 @@ export default function Donate() {
         
         if (!session?.access_token) {
           console.log('No session found, user needs to login');
+          toast.error("Please login to make a donation");
           return;
         }
 
-        const { data, error } = await supabase.functions.invoke('get-razorpay-key');
+        const { data, error } = await supabase.functions.invoke('get-razorpay-key', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          }
+        });
         
         if (error) {
           console.error('Error fetching Razorpay key:', error);
