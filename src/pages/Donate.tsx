@@ -53,7 +53,11 @@ export default function Donate() {
     const fetchRazorpayKey = async () => {
       try {
         console.log('Fetching Razorpay key...');
-        const { data, error } = await supabase.functions.invoke('get-razorpay-key');
+        const { data, error } = await supabase.functions.invoke('get-razorpay-key', {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         
         if (error || !data?.key) {
           console.error('Error fetching Razorpay key:', error);
@@ -83,7 +87,10 @@ export default function Donate() {
 
       // Create Razorpay order
       const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
-        body: { amount }
+        body: { amount },
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (orderError || !orderData?.id) {
