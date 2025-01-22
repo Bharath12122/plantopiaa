@@ -8,6 +8,7 @@ import Support from "@/pages/Support";
 import { ProLanding } from "@/pages/ProLanding";
 import ProDashboard from "@/pages/ProDashboard";
 import Donate from "@/pages/Donate";
+import About from "@/pages/About";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/pro/landing" element={<ProLanding />} />
         <Route path="/pro/dashboard" element={<ProDashboard />} />
         <Route path="/donate" element={<Donate />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </Router>
   );
