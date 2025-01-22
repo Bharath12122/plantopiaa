@@ -43,6 +43,13 @@ const Premium = () => {
     },
   ];
 
+  const handlePremiumClick = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "Premium features are currently under development.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-[#9b87f5]/5">
       <div className="container mx-auto px-4 py-12">
@@ -105,7 +112,7 @@ const Premium = () => {
         <div className="text-center mb-16">
           <Button 
             className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:shadow-lg"
-            onClick={() => navigate('/premium/landing')}
+            onClick={handlePremiumClick}
           >
             Join Premium Today
           </Button>
