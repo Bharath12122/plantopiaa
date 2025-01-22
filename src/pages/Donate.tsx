@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Footer } from "@/components/Footer";
@@ -12,7 +12,6 @@ import {
   Star
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 const RAZORPAY_URL = "https://rzp.io/i/your-payment-link"; // Replace with your actual Razorpay payment link
 
