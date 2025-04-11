@@ -1,4 +1,1 @@
 project_id = "wdxxbsnienjuyyjrduwo"
-
-[functions.business-insights]
-verify_jwt = true
